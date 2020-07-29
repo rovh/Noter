@@ -358,6 +358,7 @@ class NOTES_LIST_UL_items_scene(UIList):
             column.prop(item, "text", emboss=1, text = "")
         
         column_main.separator(factor=1.1)
+
 class Notes_List_PT_scene(Panel):
     """Adds a custom panel to the TEXT_EDITOR"""
 
@@ -396,9 +397,9 @@ class Notes_List_PT_scene(Panel):
         col.scale_y = 1.2
 
         col.operator("notes_list_scene.list_action_add", icon='ADD', text="")
-        # col.operator("object.note", icon='ADD', text="").type = "object*"
-        col.operator("object.note", icon='REMOVE', text="").type = "scene_delete*"
-        # col.operator("notes_list_scene.list_action", icon='REMOVE', text="").action = 'REMOVE'
+        # col.operator("window_manager.export_note_text", icon='ADD', text="").type = "object*"
+        # col.operator("window_manager.export_note_text", icon='REMOVE', text="").type = "scene_delete*"
+        col.operator("notes_list_scene.list_action", icon='REMOVE', text="").action = 'REMOVE'
         
         col.separator(factor = 0.4)
 
@@ -407,11 +408,11 @@ class Notes_List_PT_scene(Panel):
 
         col.separator(factor = 0.4)
 
-        col.operator('object.note', text = '', icon = 'IMPORT').type = 'scene*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'scene*'
 
         col.separator(factor = 0.4)
 
-        col.operator('object.note', text = '', icon = 'EXPORT').type = 'scene_get*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'scene_get*'
 
         col.separator(factor = 0.4)
 
@@ -568,9 +569,9 @@ class Notes_List_PT(Panel):
         col.scale_y = 1.2
 
         col.operator("notes_list_object.list_action_add", icon='ADD', text="")
-        # col.operator("object.note", icon='ADD', text="").type = "object*"
-        col.operator("object.note", icon='REMOVE', text="").type = "object_delete*"
-        # col.operator("notes_list_object.list_action", icon='REMOVE', text="").action = 'REMOVE'
+        # col.operator("window_manager.export_note_text", icon='ADD', text="").type = "object*"
+        # col.operator("window_manager.export_note_text", icon='REMOVE', text="").action = "object_delete*"
+        col.operator("notes_list_object.list_action", icon='REMOVE', text="").action = 'REMOVE'
         
         col.separator(factor = 0.4)
 
@@ -579,11 +580,11 @@ class Notes_List_PT(Panel):
 
         col.separator(factor = 0.4)
 
-        col.operator('object.note', text = '', icon = 'EXPORT').type = 'object*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'object*'
 
         col.separator(factor = 0.4)
 
-        col.operator('object.note', text = '', icon = 'IMPORT').type = 'object_get*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'object_get*'
 
         col.separator(factor = 0.4)
 

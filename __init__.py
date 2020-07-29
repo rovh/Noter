@@ -44,7 +44,7 @@ class Note_Actions(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     action: StringProperty(options = {"SKIP_SAVE"})
-    # eyedropper: bpy.props.BoolProperty(options = {"SKIP_SAVE"})
+    header_note: BoolProperty(options = {"SKIP_SAVE"}, default = True)
     # draw:       bpy.props.BoolProperty(options = {"SKIP_SAVE"})
     # lengthbool_SKIP_SAVE: bpy.props.BoolProperty(options = {"SKIP_SAVE"})
     # @classmethod
@@ -64,7 +64,34 @@ class Note_Actions(bpy.types.Operator):
     #     else:
     #         pass
 
+    def item_object(self, context):
+        act_obj = context.active_object
+        idx = act_obj.notes_list_object_index
+
+        try:
+            item = act_obj.notes_list_object[idx]
+        except IndexError:
+            pass
+        return item
+
+    def item_scene(self, context):
+        scene = context.scene
+        idx = scene.notes_list_scene_index
+
+        try:
+            item = scene.notes_list_scene[idx]
+        except IndexError:
+            pass
+
+        return item
+
+
     def execute(self, context):
+
+        if self.action.count("*") != 0:
+            self.action = self.action.replace("*", "")
+            header_note = False
+
         action = self.action
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
@@ -72,15 +99,45 @@ class Note_Actions(bpy.types.Operator):
         main_text = bpy.data.texts['Text'].as_string()
 
         # action = 'object'
-        
 
         if action == 'object':
-            bpy.context.active_object.note_text_object = main_text
+            if header_note == True:
+                bpy.context.active_object.note_text_object = main_text
+            else:
+                item = self.item_object(context)
+                item.text = main_text
+
         elif action == "object_get":
             bpy.data.texts['Text'].clear()
-            bpy.data.texts['Text'].write(note_text_object)
+            if header_note == True:
+                bpy.data.texts['Text'].write(note_text_object)
+            else:
+                item = self.item_object(context)
+                bpy.data.texts['Text'].write(item.text)
+
         elif action == "object_delete":
-            bpy.context.active_object.note_text_object = ""
+            if header_note == True:
+                bpy.context.active_object.note_text_object = ""
+            else:
+                item = self.item_object(context)
+                item.text = ""
+
+
+
+        elif action == 'scene':
+            if header_note == True:
+                bpy.context.active_object.note_text_object = main_text
+            else:
+                item = self.item_scene(context)
+                item.text = main_text
+
+        elif action == 'scene_get':
+            pass
+
+        elif action == 'scene_delete':
+            pass
+
+
 
         return {'FINISHED'}
         
@@ -147,7 +204,7 @@ def register():
     bpy.types.Object.notes_list_object = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Object.notes_list_object_index = IntProperty()
 
-    bpy.types.Scene.notes_list_object = CollectionProperty(type=Notes_List_Collection)
+    bpy.types.Scene.notes_list_scene = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Scene.notes_list_scene_index = IntProperty()
     
 def unregister():
