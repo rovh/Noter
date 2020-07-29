@@ -87,18 +87,33 @@ class Note_Actions(bpy.types.Operator):
 
         return item
 
-
     def execute(self, context):
 
         if self.action.count("*") != 0:
             self.action = self.action.replace("*", "")
             header_note = False
+        else:
+            header_note = True
 
         action = self.action
+        file_name = bpy.context.window_manager.noter.file_name
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
 
-        main_text = bpy.data.texts['Text'].as_string()
+        if len(bpy.data.texts.values()) == 0:
+            bpy.ops.text.new()
+            text = "A new text file was created"
+            war = "INFO"
+            self.report({war}, text)
+            # return {'FINISHED'}
+
+        try:
+            main_text = bpy.data.texts[file_name].as_string()
+        except KeyError:
+            text = "File was not found"
+            war = "ERROR"
+            self.report({war}, text)
+            return {'FINISHED'}
 
         # action = 'object'
 
@@ -110,12 +125,12 @@ class Note_Actions(bpy.types.Operator):
                 item.text = main_text
 
         elif action == "object_get":
-            bpy.data.texts['Text'].clear()
+            bpy.data.texts[file_name].clear()
             if header_note == True:
-                bpy.data.texts['Text'].write(note_text_object)
+                bpy.data.texts[file_name].write(note_text_object)
             else:
                 item = self.item_object(context)
-                bpy.data.texts['Text'].write(item.text)
+                bpy.data.texts[file_name].write(item.text)
 
         elif action == "object_delete":
             if header_note == True:
@@ -134,7 +149,12 @@ class Note_Actions(bpy.types.Operator):
                 item.text = main_text
 
         elif action == 'scene_get':
-            pass
+            bpy.data.texts[file_name].clear()
+            if header_note == True:
+                bpy.data.texts[file_name].write(note_text_scene)
+            else:
+                item = self.item_scene(context)
+                bpy.data.texts[file_name].write(item.text)
 
         elif action == 'scene_delete':
             pass
@@ -185,7 +205,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         # move_x = 0
         # move_y = 60
 
-        bpy.context.window.cursor_warp(0 , 0)
+        bpy.context.window.cursor_warp(0 , 1000)
 
         # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
@@ -227,11 +247,11 @@ blender_classes = Notes_list_blender_classes + blender_classes
 
 @persistent
 def load_handler(dummy):
-    print("Load Handler:", bpy.data.filepath)
+    # print("Load Handler:", bpy.data.filepath)
     bpy.ops.screen.animation_play()
 
 def my_handler(scene):
-    print("Frame Change", scene.frame_current)
+    # print("Frame Change", scene.frame_current)
 
     bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
 
