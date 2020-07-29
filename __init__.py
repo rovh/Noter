@@ -143,7 +143,6 @@ class Note_Actions(bpy.types.Operator):
 
         return {'FINISHED'}
         
-
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -168,7 +167,7 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
 
-class Note_Pop_Up_Operator   (bpy.types.Operator):
+class Note_Pop_Up_Operator(bpy.types.Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Warning Panel Operator"
 
@@ -180,14 +179,28 @@ class Note_Pop_Up_Operator   (bpy.types.Operator):
         # settings = bpy.context.preferences.addons[__name__].preferences
         # bool_warning_global = settings.bool_warning_global
 
+        x = event.mouse_x
+        y = event.mouse_y 
 
-        return context.window_manager.invoke_props_dialog(self)
+        # move_x = 0
+        # move_y = 60
+
+        bpy.context.window.cursor_warp(0 , 0)
+
+        # bpy.context.window.cursor_warp(x + move_x, y + move_y)
+
+
+        invoke = context.window_manager.invoke_props_dialog(self)
         # return context.window_manager.invoke_popup(self, width=700)
         # return context.window_manager.invoke_popup(self)
         # return context.window_manager.invoke_props_popup(self, event)
         # return context.window_manager.invoke_confirm(self, event)
+
+        bpy.context.window.cursor_warp(x , y)
+
+        return invoke
     
-        return {'FINISHED'}
+        # return {'FINISHED'}
 
 
     def draw(self, context):
@@ -220,10 +233,12 @@ def load_handler(dummy):
 def my_handler(scene):
     print("Frame Change", scene.frame_current)
 
+    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+
     bpy.app.handlers.frame_change_post.remove(my_handler)
+    bpy.app.handlers.load_post.remove(load_handler)
     bpy.ops.screen.animation_play()
     bpy.context.scene.frame_current = 1
-    # bpy.app.handlers.load_post.remove(load_handler)
 
 
 def register():
@@ -259,6 +274,12 @@ def unregister():
 
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)
+
+    if my_handler in bpy.app.handlers.frame_change_post:
+        bpy.app.handlers.frame_change_post.remove(my_handler)
+
+    if my_handler in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(load_handler)
 
     del bpy.types.Object.note_text_object
     del bpy.types.Scene.note_text_scene
