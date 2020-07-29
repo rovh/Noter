@@ -36,16 +36,6 @@ bl_info = {
 }
 
 # print(44444444444444)
-def draw_text(self, text):
-    text_parts_list = text.split('\n')
-    layout = self.layout
-    box = layout.box()
-    # column.separator(factor=.5)
-    col = box.column(align = 1)
-    for i in text_parts_list:
-        row = col.row(align = 1)
-        row.label(text = i)
-        row.scale_y = 0
 
 
 class Note_Actions(bpy.types.Operator):
@@ -117,7 +107,6 @@ class Note_Actions(bpy.types.Operator):
             war = "INFO"
             self.report({war}, text)
             # return {'FINISHED'}
-
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
@@ -152,7 +141,7 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'scene':
             if header_note == True:
-                bpy.context.active_object.note_text_object = main_text
+                bpy.context.scene.note_text_scene = main_text
             else:
                 item = self.item_scene(context)
                 item.text = main_text
@@ -166,7 +155,11 @@ class Note_Actions(bpy.types.Operator):
                 bpy.data.texts[file_name].write(item.text)
 
         elif action == 'scene_delete':
-            pass
+            if header_note == True:
+                bpy.context.scene.note_text_scene = ""
+            else:
+                item = self.item_scene(context)
+                item.text = ""
 
 
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
@@ -193,10 +186,32 @@ class TEXT_PT_noter(Panel):
         column.separator(factor = 1)
 
         box = column.box()
+        box.label(text = "Header Note", icon = 'TOPBAR')
+
+        box = column.box()
         col = box.column(align = 1)
         col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Scene', icon = 'OBJECT_DATAMODE').action = "scene"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "scene_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "scene_delete"
+
+
+
+def draw_text(self, text):
+    text_parts_list = text.split('\n')
+    layout = self.layout
+    box = layout.box()
+    # column.separator(factor=.5)
+    col = box.column(align = 1)
+    for i in text_parts_list:
+        row = col.row(align = 1)
+        row.label(text = i)
+        row.scale_y = 0
 
 class Note_Pop_Up_Operator(bpy.types.Operator):
     bl_idname = "window_manager.note_popup_operator"
@@ -246,12 +261,21 @@ class OBJECT_PT_note(Panel):
     bl_options = {'HIDE_HEADER'}
 
     def draw(self, context):
-        # layout = self.layout
-        # box = layout.box()
-        # box.label(text = 'qqqqqqqqqqqqqqqq')
         text = bpy.context.active_object.note_text_object
-        draw_text(self, text)
-        
+        if bool(text) == True:
+            draw_text(self, text)
+
+class SCENE_PT_note(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "scene"
+    bl_label = ""
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        text = bpy.context.scene.note_text_scene
+        if bool(text) == True:
+            draw_text(self, text)
 
 
 
@@ -269,6 +293,7 @@ blender_classes = [
     Note_Actions,
     Note_Pop_Up_Operator,
     OBJECT_PT_note,
+    SCENE_PT_note,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
