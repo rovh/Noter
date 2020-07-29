@@ -60,7 +60,10 @@ class Notes_List_actions(Operator):
                 act_obj.notes_list_object_index -= 1
                 
             elif self.action == 'REMOVE':
-                act_obj.notes_list_object_index -= 1
+                if idx == 0:
+                    act_obj.notes_list_object_index = 0
+                else:
+                    act_obj.notes_list_object_index -= 1
                 act_obj.notes_list_object.remove(idx)
 
         return {"FINISHED"}
@@ -216,7 +219,11 @@ class Notes_List_actions_scene(Operator):
                 scene.notes_list_scene_index -= 1
                 
             elif self.action == 'REMOVE':
-                scene.notes_list_scene_index -= 1
+                if idx == 0:
+                    scene.notes_list_scene_index = 0
+                else:
+                    scene.notes_list_scene_index -= 1
+                
                 scene.notes_list_scene.remove(idx)
 
         return {"FINISHED"}
@@ -600,7 +607,6 @@ class Notes_List_PT(Panel):
         # col = row.column(align=True)
         # row = col.row(align=True)
         # row.operator("presets_angle.remove_duplicates", icon="GHOST_ENABLED")
-
 
 
 class Notes_List_Collection(PropertyGroup):

@@ -145,6 +145,7 @@ class Note_Actions(bpy.types.Operator):
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
         note_text_blender = bpy.context.window_manager.noter.note_text_blender
+        note_text_splash_screen = bpy.context.window_manager.noter.note_text_splash_screen
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -231,6 +232,30 @@ class Note_Actions(bpy.types.Operator):
                 item.text = ""
 
 
+        
+        elif action == 'splash_screen':
+            if header_note == True:
+                bpy.context.window_manager.noter.note_text_splash_screen = main_text
+            else:
+                item = self.item_object(context)
+                item.text = main_text
+
+        elif action == "splash_screen_get":
+            bpy.data.texts[file_name].clear()
+            if header_note == True:
+                bpy.data.texts[file_name].write(note_text_splash_screen)
+            else:
+                item = self.item_object(context)
+                bpy.data.texts[file_name].write(item.text)
+
+        elif action == "splash_screen_delete":
+            if header_note == True:
+                bpy.context.window_manager.noter.note_text_splash_screen = ""
+            else:
+                item = self.item_object(context)
+                item.text = ""
+
+
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
         print("Warning because of Noter")
 
@@ -272,6 +297,12 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
 
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
+
 
 
 def draw_text(self, text):
@@ -289,6 +320,8 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
 
+    location_cursor: BoolProperty(default = True, options = {"SKIP_SAVE"})
+
     def execute(self, context):
         return {'FINISHED'}
 
@@ -298,9 +331,12 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         row.label(text='' , icon="MOUSE_LMB_DRAG")
         row.alignment = 'RIGHT'
 
-        # layout.template_preview(bpy.context.material)
+        # materials = [mat for mat in bpy.data.materials]
+        # tex = bpy.data.textures['.hidden']
+        # layout.template_preview(tex)
 
-        text = bpy.context.window_manager.noter.note_text_blender
+        # text = bpy.context.window_manager.noter.note_text_blender
+        text = bpy.context.window_manager.noter.note_text_splash_screen
         if bool(text) == True:
             draw_text(self, text)
 
@@ -311,28 +347,37 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         # height = bpy.context.area.spaces.data.height
         # width = bpy.context.area.spaces.data.width
 
-        x = event.mouse_x
-        y = event.mouse_y 
+    
+        if self.location_cursor == True:
+            return context.window_manager.invoke_props_dialog(self)
+        else:
+            x = event.mouse_x
+            y = event.mouse_y 
 
-        # location_x = height / 100 * 50
-        # location_y = width / 100 * 40
-        location_x = 300
-        location_y = 550
+            # location_x = height / 100 * 50
+            # location_y = width / 100 * 40
+            location_x = 300
+            location_y = 550
 
-        bpy.context.window.cursor_warp(location_x , location_y)
+            bpy.context.window.cursor_warp(location_x , location_y)
 
-        # bpy.context.window.cursor_warp(x + move_x, y + move_y)
+            # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
 
-        invoke = context.window_manager.invoke_props_dialog(self)
-        # return context.window_manager.invoke_popup(self, width=700)
-        # return context.window_manager.invoke_popup(self)
-        # return context.window_manager.invoke_props_popup(self, event)
-        # return context.window_manager.invoke_confirm(self, event)
+            invoke = context.window_manager.invoke_props_dialog(self)
+            # return context.window_manager.invoke_popup(self, width=700)
+            # return context.window_manager.invoke_popup(self)
+            # return context.window_manager.invoke_props_popup(self, event)
+            # return context.window_manager.invoke_confirm(self, event)
 
-        bpy.context.window.cursor_warp(x , y)
+            bpy.context.window.cursor_warp(x , y)
 
-        return invoke
+            return invoke
+
+        
+
+
+        
     
         # return {'FINISHED'}
 
@@ -373,6 +418,8 @@ class Noter_Props (bpy.types.PropertyGroup):
 
     note_text_blender: StringProperty()
 
+    note_text_splash_screen: StringProperty()
+
 blender_classes = [
     TEXT_PT_noter,
     Noter_Props,
@@ -392,7 +439,8 @@ def load_handler(dummy):
 def my_handler(scene):
     # print("Frame Change", scene.frame_current)
 
-    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
 
     bpy.app.handlers.frame_change_post.remove(my_handler)
     bpy.app.handlers.load_post.remove(load_handler)
