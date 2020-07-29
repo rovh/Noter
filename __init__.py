@@ -19,6 +19,8 @@ from bpy.props import (
         CollectionProperty,
         )
 
+from bpy.app.handlers import persistent
+
 from .Notes_list import *
 
 
@@ -166,6 +168,33 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
 
+class Note_Pop_Up_Operator   (bpy.types.Operator):
+    bl_idname = "window_manager.note_popup_operator"
+    bl_label = "Warning Panel Operator"
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def invoke(self, context, event): 
+        # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
+        # settings = bpy.context.preferences.addons[__name__].preferences
+        # bool_warning_global = settings.bool_warning_global
+
+
+        return context.window_manager.invoke_props_dialog(self)
+        # return context.window_manager.invoke_popup(self, width=700)
+        # return context.window_manager.invoke_popup(self)
+        # return context.window_manager.invoke_props_popup(self, event)
+        # return context.window_manager.invoke_confirm(self, event)
+    
+        return {'FINISHED'}
+
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text='Warning' , icon="ERROR")
+
+
 class Noter_Props (bpy.types.PropertyGroup):
     """
     Fake module like class
@@ -178,11 +207,29 @@ blender_classes = [
     TEXT_PT_noter,
     Noter_Props,
     Note_Actions,
+    Note_Pop_Up_Operator,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
+@persistent
+def load_handler(dummy):
+    print("Load Handler:", bpy.data.filepath)
+    bpy.ops.screen.animation_play()
+
+def my_handler(scene):
+    print("Frame Change", scene.frame_current)
+
+    bpy.app.handlers.frame_change_post.remove(my_handler)
+    bpy.ops.screen.animation_play()
+    bpy.context.scene.frame_current = 1
+    # bpy.app.handlers.load_post.remove(load_handler)
+
+
 def register():
+
+    for blender_class in blender_classes:
+        bpy.utils.register_class(blender_class)
 
     # if kc:
     #     km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
@@ -193,8 +240,9 @@ def register():
     # bpy.app.handlers.depsgraph_update_post.append(my_handler)
     # bpy.app.handlers.on_scene_update_pre.append(my_handler)
 
-    for blender_class in blender_classes:
-        bpy.utils.register_class(blender_class)
+    bpy.app.handlers.frame_change_post.append(my_handler)
+    bpy.app.handlers.load_post.append(load_handler)
+
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
@@ -210,14 +258,15 @@ def register():
 def unregister():
 
     for blender_class in blender_classes:
-            bpy.utils.unregister_class(blender_class)
+        bpy.utils.unregister_class(blender_class)
 
     del bpy.types.Object.note_text_object
     del bpy.types.Scene.note_text_scene
 
     del bpy.types.Object.notes_list_object
     del bpy.types.Object.notes_list_object_index
-    del bpy.types.Scene.notes_list_object
+
+    del bpy.types.Scene.notes_list_scene
     del bpy.types.Scene.notes_list_scene_index
 
 
