@@ -143,8 +143,11 @@ class Notes_actions_bool(Operator):
         
         if act_obj.notes_list_object[idx].bool == True:
             act_obj.notes_list_object[idx].bool = False
+            if len(act_obj.notes_list_object)>1:
+                act_obj.notes_list_object.move(idx, 0)
         else:
             act_obj.notes_list_object[idx].bool = True
+            act_obj.notes_list_object.move(idx, len(act_obj.notes_list_object) - 1)
 
         # if bpy.context.active_object:
     
@@ -296,8 +299,12 @@ class Notes_actions_bool_scene(Operator):
         
         if scene.notes_list_scene[idx].bool == True:
             scene.notes_list_scene[idx].bool = False
+            if len(scene.notes_list_scene) > 1:
+                scene.notes_list_scene.move(idx, 0)
         else:
             scene.notes_list_scene[idx].bool = True
+            scene.notes_list_scene.move(idx, len(scene.notes_list_scene) - 1)
+
 
         return {"FINISHED"}
 

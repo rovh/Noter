@@ -88,7 +88,51 @@ class Note_Actions(bpy.types.Operator):
 
         return item
 
-    def execute(self, context):
+    def window(self, context):
+        # Call user prefs window
+        # bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+        # # Change area type
+        # area = bpy.context.window_manager.windows[-1].screen.areas[0]
+        # area.type = 'TEXT_EDITOR'
+            
+        # Copy context member
+        context = bpy.context.copy()
+
+        stop_space = False
+        # # Iterate through the areas
+        for area in bpy.context.screen.areas:
+            if area.type == ('TEXT_EDITOR'):
+                stop_space = True
+                break
+        # for area in bpy.context.window.screen.areas:
+        #     if area.type == ('TEXT_EDITOR'):
+        #         stop_space = True
+        #         break
+            
+
+        if stop_space == False:
+            for area in bpy.context.screen.areas:
+                    # if area.type in ('IMAGE_EDITOR', 'VIEW_3D', 'NODE_EDITOR'):
+                if area.type in ('PROPERTIES', 'EMPTY' 'VIEW_3D', 'NODE_EDITOR'):
+                    
+                    old_area = area.type        # Store current area type
+                    area.type = 'TEXT_EDITOR'  # Set the area to the Image editor
+                    context['area'] = area      # Override the area member
+                    bpy.ops.screen.area_dupli(context, 'INVOKE_DEFAULT')
+                    area.type = old_area        # Restore the old area
+                    break 
+
+        # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
+
+    def execute(self, context):       
+
+        action = self.action
+
+        # if action == 'object_get*' or\
+        #     action == 'scene_get*' or\
+        #     action == 'object*' or\
+        #     action == 'scene*':
+        #     self.window(context)
 
         if self.action.count("*") != 0:
             self.action = self.action.replace("*", "")
@@ -96,10 +140,11 @@ class Note_Actions(bpy.types.Operator):
         else:
             header_note = True
 
-        action = self.action
+        
         file_name = bpy.context.window_manager.noter.file_name
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
+        note_text_blender = bpy.context.window_manager.noter.note_text_blender
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -162,6 +207,30 @@ class Note_Actions(bpy.types.Operator):
                 item.text = ""
 
 
+
+        elif action == 'blender':
+            if header_note == True:
+                bpy.context.window_manager.noter.note_text_blender = main_text
+            else:
+                item = self.item_object(context)
+                item.text = main_text
+
+        elif action == "blender_get":
+            bpy.data.texts[file_name].clear()
+            if header_note == True:
+                bpy.data.texts[file_name].write(note_text_blender)
+            else:
+                item = self.item_object(context)
+                bpy.data.texts[file_name].write(item.text)
+
+        elif action == "blender_delete":
+            if header_note == True:
+                bpy.context.window_manager.noter.note_text_blender = ""
+            else:
+                item = self.item_object(context)
+                item.text = ""
+
+
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
         print("Warning because of Noter")
 
@@ -171,10 +240,7 @@ class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Noter"
-    # bl_category = "Text"
     bl_label = "Noter"
-
-    
 
     def draw(self, context):
         noter = bpy.context.window_manager.noter
@@ -196,9 +262,15 @@ class TEXT_PT_noter(Panel):
 
         box = column.box()
         col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Scene', icon = 'OBJECT_DATAMODE').action = "scene"
+        col.operator("window_manager.export_note_text", text = 'Scene', icon = 'SCENE_DATA').action = "scene"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "scene_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "scene_delete"
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'File', icon = 'BLENDER').action = "blender"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
 
 
 
@@ -215,23 +287,39 @@ def draw_text(self, text):
 
 class Note_Pop_Up_Operator(bpy.types.Operator):
     bl_idname = "window_manager.note_popup_operator"
-    bl_label = "Warning Panel Operator"
+    bl_label = "Noter Splash Screen"
 
     def execute(self, context):
         return {'FINISHED'}
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.label(text='' , icon="MOUSE_LMB_DRAG")
+        row.alignment = 'RIGHT'
+
+        # layout.template_preview(bpy.context.material)
+
+        text = bpy.context.window_manager.noter.note_text_blender
+        if bool(text) == True:
+            draw_text(self, text)
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
         # settings = bpy.context.preferences.addons[__name__].preferences
         # bool_warning_global = settings.bool_warning_global
+        # height = bpy.context.area.spaces.data.height
+        # width = bpy.context.area.spaces.data.width
 
         x = event.mouse_x
         y = event.mouse_y 
 
-        # move_x = 0
-        # move_y = 60
+        # location_x = height / 100 * 50
+        # location_y = width / 100 * 40
+        location_x = 300
+        location_y = 550
 
-        bpy.context.window.cursor_warp(0 , 1000)
+        bpy.context.window.cursor_warp(location_x , location_y)
 
         # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
@@ -248,10 +336,6 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
     
         # return {'FINISHED'}
 
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text='Warning' , icon="ERROR")
 
 class OBJECT_PT_note(Panel):
     bl_space_type = 'PROPERTIES'
@@ -286,6 +370,8 @@ class Noter_Props (bpy.types.PropertyGroup):
     """
     file_name: StringProperty(name = 'Name of the file',\
         default = 'Text')
+
+    note_text_blender: StringProperty()
 
 blender_classes = [
     TEXT_PT_noter,
