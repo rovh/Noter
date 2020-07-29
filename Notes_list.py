@@ -358,7 +358,6 @@ class NOTES_LIST_UL_items_scene(UIList):
             column.prop(item, "text", emboss=1, text = "")
         
         column_main.separator(factor=1.1)
-
 class Notes_List_PT_scene(Panel):
     """Adds a custom panel to the TEXT_EDITOR"""
 

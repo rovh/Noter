@@ -36,6 +36,17 @@ bl_info = {
 }
 
 # print(44444444444444)
+def draw_text(self, text):
+    text_parts_list = text.split('\n')
+    layout = self.layout
+    box = layout.box()
+    # column.separator(factor=.5)
+    col = box.column(align = 1)
+    for i in text_parts_list:
+        row = col.row(align = 1)
+        row.label(text = i)
+        row.scale_y = 0
+
 
 class Note_Actions(bpy.types.Operator):
     """Tooltip"""
@@ -115,8 +126,6 @@ class Note_Actions(bpy.types.Operator):
             self.report({war}, text)
             return {'FINISHED'}
 
-        # action = 'object'
-
         if action == 'object':
             if header_note == True:
                 bpy.context.active_object.note_text_object = main_text
@@ -160,6 +169,8 @@ class Note_Actions(bpy.types.Operator):
             pass
 
 
+        bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
+        print("Warning because of Noter")
 
         return {'FINISHED'}
         
@@ -227,6 +238,22 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         layout = self.layout
         layout.label(text='Warning' , icon="ERROR")
 
+class OBJECT_PT_note(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+    bl_label = ""
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        # layout = self.layout
+        # box = layout.box()
+        # box.label(text = 'qqqqqqqqqqqqqqqq')
+        text = bpy.context.active_object.note_text_object
+        draw_text(self, text)
+        
+
+
 
 class Noter_Props (bpy.types.PropertyGroup):
     """
@@ -241,6 +268,7 @@ blender_classes = [
     Noter_Props,
     Note_Actions,
     Note_Pop_Up_Operator,
+    OBJECT_PT_note,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
