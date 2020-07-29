@@ -293,15 +293,18 @@ class TEXT_PT_noter(Panel):
 
         box = column.box()
         col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'File', icon = 'BLENDER').action = "blender"
+        col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'BLENDER').action = "blender"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
 
         box = column.box()
         col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
+    
+        col.prop (noter, 'splash_screen', text = 'Show Splash Screen')
+        if bpy.context.window_manager.noter.splash_screen == True:
+            col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
+            col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
+            col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
 
 
 
@@ -420,6 +423,8 @@ class Noter_Props (bpy.types.PropertyGroup):
 
     note_text_splash_screen: StringProperty()
 
+    splash_screen: BoolProperty()
+
 blender_classes = [
     TEXT_PT_noter,
     Noter_Props,
@@ -439,8 +444,8 @@ def load_handler(dummy):
 def my_handler(scene):
     # print("Frame Change", scene.frame_current)
 
-    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
-    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    if bpy.context.window_manager.noter.splash_screen == True:
+        bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
 
     bpy.app.handlers.frame_change_post.remove(my_handler)
     bpy.app.handlers.load_post.remove(load_handler)
