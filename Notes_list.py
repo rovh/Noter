@@ -612,6 +612,7 @@ class Notes_List_Collection(PropertyGroup):
 
 Notes_list_blender_classes = [
     Notes_List_Collection,
+    
     Notes_List_actions,
     Notes_List_actions_add,
     NOTES_LIST_UL_items,
