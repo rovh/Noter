@@ -23,6 +23,10 @@ from bpy.app.handlers import persistent
 
 from .Notes_list import *
 
+import random
+
+# from . import Image
+
 
 bl_info = {
     "name" : "Noter",
@@ -334,8 +338,138 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         row.label(text='' , icon="MOUSE_LMB_DRAG")
         row.alignment = 'RIGHT'
 
+        row_text = layout.row(align = 1)
+        # row_text.scale_y = 0.2
+        row_text.scale_x = 0.6
+
+        ic = ['MATCUBE',
+        'ANTIALIASED',
+        'COLLAPSEMENU',
+        'OUTLINER_DATA_LIGHTPROBE',
+        'MESH_CYLINDER',
+        'META_PLANE',
+        'SOLO_ON',
+        'FILE_BLEND',
+        'OUTLINER_OB_POINTCLOUD',
+        'SEQ_CHROMA_SCOPE',
+        'MATSPHERE',
+        'AUTO',
+        'FREEZE'
+        'FUND',
+        'COLORSET_02_VEC',
+        'MONKEY',
+        'SHADING_SOLID',
+        ]
+
+        ic = random.choice(ic)
+
+        def label_draw(length):
+            for i in range(0, length):
+                column_text.label(icon = ic)
+
+        column_text = row_text.column(align = 1)
+        column_text.separator(factor = 1)
+        column_text.scale_y = .6
+        label_draw(4)
+
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_x = .8
+        column_text.separator(factor = 1.8)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_x = .8
+        column_text.separator(factor = 3)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_x = .8
+        column_text.separator(factor = 5)
+        label_draw(1)
+
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_y = .6
+        column_text.separator(factor = 1.7)
+        label_draw(4)
+
+
+        row_text.separator(factor = 7)
+
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_y = .5
+        column_text.scale_x = .8
+        column_text.separator(factor = 5)
+        label_draw(3)
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+        column_text.separator(factor = 3.5)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+        column_text.separator(factor = 3.5)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_y = .5
+        column_text.separator(factor = 5)
+        label_draw(3)
+
+
+
+        row_text.separator(factor = 5)
+
+
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        column_text.separator(factor = .9)
+        column_text.scale_y = .7
+        label_draw(4)
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+
+        column_text = row_text.column(align = 1)
+        label_draw(1)
+
+
+
+        row_text.separator(factor = 6)
+
+
+        column_text = row_text.column(align = 1)
+        column_text.scale_y = .51
+        column_text.separator(factor = 2 )
+        label_draw(5)
+
+        column_text = row_text.column(align = 1)
+        label_draw(3)
+
+        column_text = row_text.column(align = 1)
+        label_draw(3)
+
+
+        # col_f = layout.column_flow(columns=3, align=False)
+        # col_f = layout.grid_flow(row_major=1, columns=1, even_columns=False, even_rows=0, align=1)
+        # for i in range(0, 10):
+            # col_f.label(icon = 'SHADING_SOLID')
+        # col_f.label(icon = 'SHADING_SOLID')
+
+
+
         # materials = [mat for mat in bpy.data.materials]
         # tex = bpy.data.textures['.hidden']
+        # tex = img.jpg
         # layout.template_preview(tex)
 
         # text = bpy.context.window_manager.noter.note_text_blender
@@ -350,7 +484,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         # height = bpy.context.area.spaces.data.height
         # width = bpy.context.area.spaces.data.width
 
-    
+        self.location_cursor = False
         if self.location_cursor == True:
             return context.window_manager.invoke_props_dialog(self)
         else:
@@ -377,13 +511,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
 
             return invoke
 
-        
-
-
-        
-    
         # return {'FINISHED'}
-
 
 class OBJECT_PT_note(Panel):
     bl_space_type = 'PROPERTIES'
@@ -439,13 +567,19 @@ blender_classes = Notes_list_blender_classes + blender_classes
 @persistent
 def load_handler(dummy):
     # print("Load Handler:", bpy.data.filepath)
-    bpy.ops.screen.animation_play()
+    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    # bpy.ops.screen.animation_play()
+    # bpy.app.handlers.load_post.remove(load_handler)
+    # bpy.app.handlers.load_post.remove(load_handler)
 
+@persistent
 def my_handler(scene):
     # print("Frame Change", scene.frame_current)
 
-    if bpy.context.window_manager.noter.splash_screen == True:
-        bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    # if bpy.context.window_manager.noter.splash_screen == True:
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
 
     bpy.app.handlers.frame_change_post.remove(my_handler)
     bpy.app.handlers.load_post.remove(load_handler)
@@ -467,7 +601,7 @@ def register():
     # bpy.app.handlers.depsgraph_update_post.append(my_handler)
     # bpy.app.handlers.on_scene_update_pre.append(my_handler)
 
-    bpy.app.handlers.frame_change_post.append(my_handler)
+    # bpy.app.handlers.frame_change_post.append(my_handler)
     bpy.app.handlers.load_post.append(load_handler)
 
 
@@ -484,14 +618,15 @@ def register():
     
 def unregister():
 
+    # if my_handler in bpy.app.handlers.frame_change_post:
+    #     bpy.app.handlers.frame_change_post.remove(my_handler)
+
+    # if my_handler in bpy.app.handlers.load_post:
+    #     bpy.app.handlers.load_post.remove(load_handler)
+
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)
 
-    if my_handler in bpy.app.handlers.frame_change_post:
-        bpy.app.handlers.frame_change_post.remove(my_handler)
-
-    if my_handler in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.remove(load_handler)
 
     del bpy.types.Object.note_text_object
     del bpy.types.Scene.note_text_scene
