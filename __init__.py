@@ -354,7 +354,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         'SEQ_CHROMA_SCOPE',
         'MATSPHERE',
         'AUTO',
-        'FREEZE'
+        'FREEZE',
         'FUND',
         'COLORSET_02_VEC',
         'MONKEY',
@@ -621,8 +621,8 @@ def unregister():
     # if my_handler in bpy.app.handlers.frame_change_post:
     #     bpy.app.handlers.frame_change_post.remove(my_handler)
 
-    # if my_handler in bpy.app.handlers.load_post:
-    #     bpy.app.handlers.load_post.remove(load_handler)
+    if my_handler in bpy.app.handlers.load_post:
+        bpy.app.handlers.load_post.remove(load_handler)
 
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)
