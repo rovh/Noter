@@ -1,7 +1,98 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
 
-# Implementation of custom nodes from Python
+
+class NodeOperator(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "node.noter_operator"
+    bl_label = "Simple Node Operator"
+
+    action: bpy.props.StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        # space = False
+        # for area in bpy.context.screen.areas:
+        #     if area.type == ('NODE_EDITOR'):
+        #         space = True
+        #         break
+        # return space
+        space = context.space_data
+        return space.type == 'NODE_EDITOR'
+
+    def execute(self, context):
+        # space = None
+        # for area in bpy.context.screen.areas:
+        #     if area.type == ('NODE_EDITOR'):
+        #         space = area
+        #         print (space)
+        #         break
+
+        # space = context.space_data
+        # return space.type == 'NODE_EDITOR'
+
+        
+        action = self.action
+        space = context.space_data
+        node_tree = space.node_tree
+        node_active = context.active_node
+        text_node = node_active.text
+        node_selected = context.selected_nodes
+        file_name = bpy.context.window_manager.noter.file_name
+
+        if len(bpy.data.texts.values()) == 0:
+            bpy.ops.text.new()
+            text = "A new text file was created"
+            war = "INFO"
+            self.report({war}, text)
+            # return {'FINISHED'}
+        try:
+            main_text = bpy.data.texts[file_name].as_string()
+        except KeyError:
+            text = "File was not found"
+            war = "ERROR"
+            self.report({war}, text)
+            return {'FINISHED'}
+
+
+        print(node_active.text, 1111111111111)
+
+        if action == 'node':
+            node_active.text = main_text
+
+        elif action == 'node_get':
+            bpy.data.texts[file_name].clear()
+            bpy.data.texts[file_name].write(text_node)
+
+        elif action == 'node_delete':
+            node_active.text = ""
+
+        # now we have the context, perform a simple operation
+        # if node_active in node_selected:
+        #     node_selected.remove(node_active)
+        # if len(node_selected) != 1:
+        #     operator.report({'ERROR'}, "2 nodes must be selected")
+        #     return
+
+        # node_other, = node_selected
+
+        # now we have 2 nodes to operate on
+        # if not node_active.inputs:
+            # operator.report({'ERROR'}, "Active node has no inputs")
+            # return
+
+        # if not node_other.outputs:
+        #     operator.report({'ERROR'}, "Selected node has no outputs")
+        #     return
+
+        # socket_in = node_active.inputs[0]
+        # socket_out = node_other.outputs[0]
+
+        # add a link between the two nodes
+        # node_link = node_tree.links.new(socket_in, socket_out)
+        return {'FINISHED'}
+
+
 
 
 # Derived from the NodeTree base type, similar to Menu, Operator, Panel, etc.
@@ -59,6 +150,16 @@ class MyCustomTreeNode:
     def poll(cls, ntree):
         return ntree.bl_idname == 'CustomTreeType'
 
+def draw_text_node(self, text):
+    text_parts_list = text.split('\n')
+    # layout = self.layout
+    box = layout.box()
+    # column.separator(factor=.5)
+    col = box.column(align = 1)
+    for i in text_parts_list:
+        row = col.row(align = 1)
+        row.label(text = i)
+        row.scale_y = 0
 
 # Derived from the Node base type.
 class MyCustomNode(Node, MyCustomTreeNode):
@@ -70,13 +171,14 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Label for nice name display
     bl_label = "Custom Node"
     # Icon identifier
-    bl_icon = 'SOUND'
+    # bl_icon = 'SOUND'
 
     # === Custom Properties ===
     # These work just like custom properties in ID data blocks
     # Extensive information can be found under
     # http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Properties
     my_string_prop: bpy.props.StringProperty()
+    text: bpy.props.StringProperty()
     my_float_prop: bpy.props.FloatProperty(default=3.1415926)
 
     # === Optional Functions ===
@@ -105,7 +207,31 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Additional buttons displayed on the node.
     def draw_buttons(self, context, layout):
         layout.label(text="Node settings")
-        layout.prop(self, "my_string_prop", text = '')
+        text = self.text
+
+        if text.count("\n") == 0:
+            layout.prop(self, "text", text = '')
+        else:
+            # draw_text_node(self, self.text)
+            text_parts_list = text.split('\n')
+            # layout = self.layout
+            box = layout.box()
+            # column.separator(factor=.5)
+            col = box.column(align = 1)
+            for i in text_parts_list:
+                row = col.row(align = 1)
+                row.label(text = i)
+                row.scale_y = 0
+        # col = layout.column(align = 1)
+        # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
+        # col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
+        # col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
+
+        # col.operator("window_manager.export_note_text", text = 'Node', icon = 'IMPORT').action = "node"
+        # col.operator("window_manager.export_note_text", text = '', icon = 'EXPORT').action = "node_get"
+        # col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
+
+
 
     # Detail buttons in the sidebar.
     # If this function is not defined, the draw_buttons function is used instead
@@ -136,6 +262,20 @@ class MyNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'CustomTreeType'
+
+class NODE_PT_active_node_generic(bpy.types.Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Noter"
+    bl_label = "Noter"
+
+    def draw(self, context):
+        layout = self.layout
+        # layout.prop(self, "text", text = '')
+        col = layout.column(align = 1)
+        col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
+        col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
+        col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
 
 
 # all categories in a list

@@ -168,7 +168,6 @@ class Note_Actions(bpy.types.Operator):
                 item = self.item_object(context)
                 bpy.data.texts[file_name].write(item.text)
                 
-
         elif action == "object_delete":
             if header_note == True:
                 bpy.context.active_object.note_text_object = ""
@@ -251,6 +250,31 @@ class Note_Actions(bpy.types.Operator):
             else:
                 item = self.item_object(context)
                 item.text = ""
+
+
+
+        # elif action == 'node':
+        #     if header_note == True:
+        #         bpy.context.active_object.note_text_object = main_text
+        #     else:
+        #         print(11111111111111111111111111111111)
+        #         item = self.item_object(context)
+        #         item.text = main_text
+
+        # elif action == "node_get":
+        #     bpy.data.texts[file_name].clear()
+        #     if header_note == True:
+        #         bpy.data.texts[file_name].write(note_text_object)
+        #     else:
+        #         item = self.item_object(context)
+        #         bpy.data.texts[file_name].write(item.text)
+                
+        # elif action == "node_delete":
+        #     if header_note == True:
+        #         bpy.context.active_object.note_text_object = ""
+        #     else:
+        #         item = self.item_object(context)
+        #         item.text = ""
 
 
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
@@ -360,13 +384,11 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
 
-        box = column.box()
-        col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Node', icon = 'NODE').action = "node"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "node_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
-
-
+        # box = column.box()
+        # col = box.column(align = 1)
+        # col.operator("node.noter_operator", text = 'Node', icon = 'NODE').action = "node"
+        # col.operator("node.noter_operator", text = '', icon = 'FILE_TICK').action = "node_get"
+        # col.operator("node.noter_operator", text = '', icon = 'TRASH').action = "node_delete"
 
 
         box = column.box()
@@ -766,6 +788,8 @@ blender_classes = [
     SCENE_PT_note,
     Noter_Preferences,
     Global_Bool,
+    NodeOperator,
+    NODE_PT_active_node_generic,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
