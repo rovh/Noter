@@ -68,10 +68,12 @@ class Note_Actions(bpy.types.Operator):
     #         return "Get Length / Distance"
     #     else:
     #         pass
+ 
 
     def execute(self, context):       
 
         action = self.action
+        header_note = self.header_note
 
         # if action == 'object_get*' or\
         #     action == 'scene_get*' or\
@@ -79,23 +81,25 @@ class Note_Actions(bpy.types.Operator):
         #     action == 'scene*':
         #     self.window(context)
 
-        if self.action.count("*") != 0:
-            self.action = self.action.replace("*", "")
+        if action.count("*") != 0:
+            action = self.action.replace("*", "")
             header_note = False
         else:
             header_note = True
 
+       
+
         if (action == 'object' or\
             action == 'object_get' or\
             action == 'object_delete') and\
-            context.active_object is not None:
+            context.active_object is None:
             # len(bpy.context.selected_objects) != 0 and\
-                pass
-        else:
-            text = "No Object was found"
-            war = "ERROR"
-            self.report({war}, text)
-            return {'FINISHED'}
+                # pass
+        # else:
+                text = "No Object was found"
+                war = "ERROR"
+                self.report({war}, text)
+                return {'FINISHED'}
         # else:
         #     text = "No Object was found"
         #     war = "ERROR"
@@ -107,6 +111,7 @@ class Note_Actions(bpy.types.Operator):
         note_text_scene = bpy.context.scene.note_text_scene
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
+        
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -126,6 +131,7 @@ class Note_Actions(bpy.types.Operator):
             if header_note == True:
                 bpy.context.active_object.note_text_object = main_text
             else:
+                print(11111111111111111111111111111111)
                 item = self.item_object(context)
                 item.text = main_text
 
@@ -136,6 +142,7 @@ class Note_Actions(bpy.types.Operator):
             else:
                 item = self.item_object(context)
                 bpy.data.texts[file_name].write(item.text)
+                
 
         elif action == "object_delete":
             if header_note == True:
@@ -227,7 +234,7 @@ class Note_Actions(bpy.types.Operator):
         return {'FINISHED'}
        
 
-
+       
     def item_object(self, context):
         act_obj = context.active_object
         idx = act_obj.notes_list_object_index
@@ -292,6 +299,8 @@ class Note_Actions(bpy.types.Operator):
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
  
+
+    
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -554,7 +563,12 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         # layout.template_preview(tex)
 
         # text = bpy.context.window_manager.noter.note_text_blender
-        text = bpy.context.scene.note_text_splash_screen
+        for i in bpy.data.scenes:
+            if bool(i.note_text_splash_screen) == True:
+                find = i.note_text_splash_screen
+                break
+
+        text = find
         if bool(text) == True:
             draw_text(self, text)
 
@@ -584,6 +598,73 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
 
             invoke = context.window_manager.invoke_props_dialog(self)
             # return context.window_manager.invoke_popup(self, width=700)
+            # return context.window_manager.invoke_popup(self)
+            # return context.window_manager.invoke_props_popup(self, event)
+            # return context.window_manager.invoke_confirm(self, event)
+
+            bpy.context.window.cursor_warp(x , y)
+
+            return invoke
+
+        # return {'FINISHED'}
+
+class Note_Pop_Up_Operator_2 (bpy.types.Operator):
+    bl_idname = "window_manager.note_popup_operator_2"
+    bl_label = "Noter Pop-up Menu"
+
+    location_cursor: BoolProperty(default = True, options = {"SKIP_SAVE"})
+
+    @classmethod
+    def poll(cls, context):
+        find = False
+        for i in bpy.data.scenes:
+            if bool(i.note_text_blender) == True:
+                find = True
+                break
+
+        return find
+
+    def execute(self, context):
+        return {'FINISHED'}
+
+    def draw(self, context):
+        for i in bpy.data.scenes:
+            if bool(i.note_text_blender) == True:
+                find = i.note_text_blender
+                break
+
+        text = find
+        # text = bpy.context.scene.note_text_blender
+        if bool(text) == True:
+            draw_text(self, text)
+
+    def invoke(self, context, event): 
+        # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
+        # settings = bpy.context.preferences.addons[__name__].preferences
+        # bool_warning_global = settings.bool_warning_global
+        # height = bpy.context.area.spaces.data.height
+        # width = bpy.context.area.spaces.data.width
+
+        self.location_cursor = True
+        if self.location_cursor == True:
+            return context.window_manager.invoke_props_dialog(self)
+            # return context.window_manager.invoke_popup(self)
+        else:
+            x = event.mouse_x
+            y = event.mouse_y 
+
+            # location_x = height / 100 * 50
+            # location_y = width / 100 * 40
+            location_x = 300
+            location_y = 550
+
+            bpy.context.window.cursor_warp(location_x , location_y)
+
+            # bpy.context.window.cursor_warp(x + move_x, y + move_y)
+
+
+            # invoke = context.window_manager.invoke_props_dialog(self)
+            invoke = context.window_manager.invoke_popup(self, width=250)
             # return context.window_manager.invoke_popup(self)
             # return context.window_manager.invoke_props_popup(self, event)
             # return context.window_manager.invoke_confirm(self, event)
@@ -648,6 +729,7 @@ blender_classes = [
     Noter_Props,
     Note_Actions,
     Note_Pop_Up_Operator,
+    Note_Pop_Up_Operator_2,
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
