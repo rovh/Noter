@@ -393,6 +393,7 @@ class Notes_List_PT_scene(Panel):
     def draw_header(self, context):
         layout = self.layout
         layout.label(text = 'Notes List', icon = 'FILE')
+        # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
         # if bpy.context.scene != None:

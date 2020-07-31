@@ -58,16 +58,40 @@ class Note_Actions(bpy.types.Operator):
     #         and context.active_object.mode in {'EDIT'}\
             # and context.active_object.type == "MESH"
 
-    # @classmethod
-    # def description(cls, context, properties):
-    #     if properties.plus_length == 1:
-    #         return "Plus Length / Distance"
-    #     elif properties.plus_length == -1:
-    #         return "Minus Length / Distance"
-    #     elif properties.eyedropper == True:
-    #         return "Get Length / Distance"
-    #     else:
-    #         pass
+    @classmethod
+    def description(cls, context, properties):
+        if properties.action == 'object':
+            return "Plus Length / Distance"
+        elif properties.action == 'object_get':
+            return "Minus Length / Distance"
+        elif properties.action == 'object_delete':
+            return "Get Length / Distance"
+
+
+        elif properties.action == 'scene':
+            return "Get Length / Distance"
+        elif properties.action == 'scene_delete':
+            return "Get Length / Distance"
+        elif properties.action == 'scene_delete':
+            return "Get Length / Distance"
+
+
+        elif properties.action == 'blender':
+            return "Get Length / Distance"
+        elif properties.action == 'blender_get':
+            return "Get Length / Distance"
+        elif properties.action == 'blender_delete':
+            return "Get Length / Distance"
+
+
+        elif properties.action == 'splash_screen':
+            return "Get Length / Distance"
+        elif properties.action == 'splash_screen_get':
+            return "Get Length / Distance"
+        elif properties.action == 'splash_screen_delete':
+            return "Get Length / Distance"
+        else:
+            pass
  
 
     def execute(self, context):       
@@ -234,7 +258,7 @@ class Note_Actions(bpy.types.Operator):
         return {'FINISHED'}
        
 
-       
+
     def item_object(self, context):
         act_obj = context.active_object
         idx = act_obj.notes_list_object_index
@@ -298,9 +322,7 @@ class Note_Actions(bpy.types.Operator):
                     break 
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
- 
 
-    
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -397,7 +419,7 @@ def draw_text(self, text):
         row.label(text = i)
         row.scale_y = 0
 
-class Note_Pop_Up_Operator(bpy.types.Operator):
+class Note_Pop_Up_Operator(Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
 
@@ -608,7 +630,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
 
         # return {'FINISHED'}
 
-class Note_Pop_Up_Operator_2 (bpy.types.Operator):
+class Note_Pop_Up_Operator_2 (Operator):
     bl_idname = "window_manager.note_popup_operator_2"
     bl_label = "Noter Pop-up Menu"
 
