@@ -39,8 +39,6 @@ bl_info = {
     "category" : "Interface"
 }
 
-# print(44444444444444)
-
 
 class Note_Actions(bpy.types.Operator):
     """Tooltip"""
@@ -71,63 +69,6 @@ class Note_Actions(bpy.types.Operator):
     #     else:
     #         pass
 
-    def item_object(self, context):
-        act_obj = context.active_object
-        idx = act_obj.notes_list_object_index
-
-        try:
-            item = act_obj.notes_list_object[idx]
-        except IndexError:
-            pass
-        return item
-
-    def item_scene(self, context):
-        scene = context.scene
-        idx = scene.notes_list_scene_index
-
-        try:
-            item = scene.notes_list_scene[idx]
-        except IndexError:
-            pass
-
-        return item
-
-    def window(self, context):
-        # Call user prefs window
-        # bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
-        # # Change area type
-        # area = bpy.context.window_manager.windows[-1].screen.areas[0]
-        # area.type = 'TEXT_EDITOR'
-            
-        # Copy context member
-        context = bpy.context.copy()
-
-        stop_space = False
-        # # Iterate through the areas
-        for area in bpy.context.screen.areas:
-            if area.type == ('TEXT_EDITOR'):
-                stop_space = True
-                break
-        # for area in bpy.context.window.screen.areas:
-        #     if area.type == ('TEXT_EDITOR'):
-        #         stop_space = True
-        #         break
-            
-
-        if stop_space == False:
-            for area in bpy.context.screen.areas:
-                    # if area.type in ('IMAGE_EDITOR', 'VIEW_3D', 'NODE_EDITOR'):
-                if area.type in ('PROPERTIES', 'EMPTY' 'VIEW_3D', 'NODE_EDITOR'):
-                    
-                    old_area = area.type        # Store current area type
-                    area.type = 'TEXT_EDITOR'  # Set the area to the Image editor
-                    context['area'] = area      # Override the area member
-                    bpy.ops.screen.area_dupli(context, 'INVOKE_DEFAULT')
-                    area.type = old_area        # Restore the old area
-                    break 
-
-        # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
-
     def execute(self, context):       
 
         action = self.action
@@ -144,12 +85,28 @@ class Note_Actions(bpy.types.Operator):
         else:
             header_note = True
 
-        
+        if (action == 'object' or\
+            action == 'object_get' or\
+            action == 'object_delete') and\
+            context.active_object is not None:
+            # len(bpy.context.selected_objects) != 0 and\
+                pass
+        else:
+            text = "No Object was found"
+            war = "ERROR"
+            self.report({war}, text)
+            return {'FINISHED'}
+        # else:
+        #     text = "No Object was found"
+        #     war = "ERROR"
+        #     self.report({war}, text)
+        #     return {'FINISHED'}
+
         file_name = bpy.context.window_manager.noter.file_name
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
-        note_text_blender = bpy.context.window_manager.noter.note_text_blender
-        note_text_splash_screen = bpy.context.window_manager.noter.note_text_splash_screen
+        note_text_blender = bpy.context.scene.note_text_blender
+        note_text_splash_screen = bpy.context.scene.note_text_splash_screen
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -215,7 +172,8 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender':
             if header_note == True:
-                bpy.context.window_manager.noter.note_text_blender = main_text
+                for i in bpy.data.scenes:
+                    i.note_text_blender = main_text
             else:
                 item = self.item_object(context)
                 item.text = main_text
@@ -230,7 +188,8 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == "blender_delete":
             if header_note == True:
-                bpy.context.window_manager.noter.note_text_blender = ""
+                for i in bpy.data.scenes:
+                    i.note_text_blender = ""
             else:
                 item = self.item_object(context)
                 item.text = ""
@@ -239,7 +198,8 @@ class Note_Actions(bpy.types.Operator):
         
         elif action == 'splash_screen':
             if header_note == True:
-                bpy.context.window_manager.noter.note_text_splash_screen = main_text
+                for i in bpy.data.scenes:
+                    i.note_text_splash_screen = main_text   
             else:
                 item = self.item_object(context)
                 item.text = main_text
@@ -254,7 +214,8 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == "splash_screen_delete":
             if header_note == True:
-                bpy.context.window_manager.noter.note_text_splash_screen = ""
+                for i in bpy.data.scenes:
+                    i.note_text_splash_screen = ""  
             else:
                 item = self.item_object(context)
                 item.text = ""
@@ -264,7 +225,73 @@ class Note_Actions(bpy.types.Operator):
         print("Warning because of Noter")
 
         return {'FINISHED'}
-        
+       
+
+
+    def item_object(self, context):
+        act_obj = context.active_object
+        idx = act_obj.notes_list_object_index
+
+        try:
+            item = act_obj.notes_list_object[idx]
+        except IndexError:
+            pass
+        return item
+
+    def item_scene(self, context):
+        scene = context.scene
+        idx = scene.notes_list_scene_index
+
+        try:
+            item = scene.notes_list_scene[idx]
+        except IndexError:
+            pass
+
+        return item
+
+    def window(self, context):
+        # Call user prefs window
+        # bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
+        # # Change area type
+        # area = bpy.context.window_manager.windows[-1].screen.areas[0]
+        # area.type = 'TEXT_EDITOR'
+            
+        # Copy context member
+        context = bpy.context.copy()
+        # context = bpy.context.window.workspace.copy()
+        # context = bpy.data.screens['Default'].copy()
+        # context =  bpy.context.window.workspace
+        # context = bpy.data.workspaces['Scripting'].copy()
+        # print(bpy.context.window.screen.areas.data)
+
+        stop_space = False
+        # # Iterate through the areas
+        for area in bpy.context.screen.areas:
+            if area.type == ('TEXT_EDITOR'):
+                stop_space = True
+                break
+        # for area in bpy.context.window.screen.areas:
+        #     if area.type == ('TEXT_EDITOR'):
+        #         stop_space = True
+        #         break
+            
+
+        if stop_space == False:
+            for area in bpy.context.screen.areas:
+                    # if area.type in ('IMAGE_EDITOR', 'VIEW_3D', 'NODE_EDITOR'):
+                if area.type in ('PROPERTIES', 'EMPTY' 'VIEW_3D', 'NODE_EDITOR'):
+                    
+                    old_area = area.type        # Store current area type
+                    area.type = 'TEXT_EDITOR'  # Set the area to the Image editor
+                    # context['area'] = area      # Override the area member
+                    context['area'] = area
+                    bpy.ops.screen.area_dupli(context, 'INVOKE_DEFAULT')
+                    # bpy.ops.wm.window_duplicate(context, 'INVOKE_DEFAULT')
+                    area.type = old_area        # Restore the old area
+                    break 
+
+        # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
+ 
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -304,11 +331,49 @@ class TEXT_PT_noter(Panel):
         box = column.box()
         col = box.column(align = 1)
     
-        col.prop (noter, 'splash_screen', text = 'Show Splash Screen')
-        if bpy.context.window_manager.noter.splash_screen == True:
+        # settings = bpy.context.preferences.addons[__name__].preferences
+        # col.prop (bpy.context.space_data, 'splash_screen', text = 'Show Splash Screen')
+        # col.prop (settings, 'splash_screen', text = 'Show Splash Screen')
+        # col.prop (bpy.context.scene, 'splash_screen', text = 'Show Splash Screen')
+        # if bpy.context.space_data.splash_screen == True:
+        col.separator(factor = 1)
+        
+        row = col.row(align = 1)
+        find = False
+        for i in bpy.data.scenes:
+            if i.splash_screen == True:
+                find = True
+                break
+        row.operator("window_manager.global_bool", text = 'Splash Screen', icon = 'WINDOW', depress= find)
+        row.alignment = 'RIGHT'
+        row.scale_x = .5
+
+        col.separator(factor = 1)
+        if bpy.context.scene.splash_screen == True:
             col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
             col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
             col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
+
+class Global_Bool(Operator):
+    """Tooltip"""
+    bl_idname = "window_manager.global_bool"
+    bl_label = "111"
+    bl_description = 'You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    # bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'UNDO'}
+
+    
+    def execute(self, context):
+        
+        if bpy.context.scene.splash_screen == True:
+            for i in bpy.data.scenes:
+                i.splash_screen = False
+        else:
+            for i in bpy.data.scenes:
+                i.splash_screen = True
+
+            # print(i.name_full)
+        return {'FINISHED'}
 
 
 
@@ -329,6 +394,17 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
 
     location_cursor: BoolProperty(default = True, options = {"SKIP_SAVE"})
 
+    @classmethod
+    def poll(cls, context):
+        find = False
+        for i in bpy.data.scenes:
+            if i.splash_screen == True:
+                find = True
+                break
+
+        return find
+
+
     def execute(self, context):
         return {'FINISHED'}
 
@@ -343,22 +419,23 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         row_text.scale_x = 0.6
 
         ic = ['MATCUBE',
-        'ANTIALIASED',
-        'COLLAPSEMENU',
-        'OUTLINER_DATA_LIGHTPROBE',
-        'MESH_CYLINDER',
-        'META_PLANE',
-        'SOLO_ON',
-        'FILE_BLEND',
-        'OUTLINER_OB_POINTCLOUD',
-        'SEQ_CHROMA_SCOPE',
-        'MATSPHERE',
-        'AUTO',
-        'FREEZE',
-        'FUND',
-        'COLORSET_02_VEC',
-        'MONKEY',
-        'SHADING_SOLID',
+            'ANTIALIASED',
+            'COLLAPSEMENU',
+            'OUTLINER_DATA_LIGHTPROBE',
+            'MESH_CYLINDER',
+            'META_PLANE',
+            'SOLO_ON',
+            'FILE_BLEND',
+            'OUTLINER_OB_POINTCLOUD',
+            'SEQ_CHROMA_SCOPE',
+            'MATSPHERE',
+            'AUTO',
+            'FREEZE',
+            'FUND',
+            'COLORSET_02_VEC',
+            'MONKEY',
+            'SHADING_SOLID',
+            'BRUSH_TEXFILL',
         ]
 
         ic = random.choice(ic)
@@ -367,8 +444,9 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
             for i in range(0, length):
                 column_text.label(icon = ic)
 
+
         column_text = row_text.column(align = 1)
-        column_text.separator(factor = 1)
+        column_text.separator(factor = 1.7)
         column_text.scale_y = .6
         label_draw(4)
 
@@ -393,6 +471,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         column_text.scale_y = .6
         column_text.separator(factor = 1.7)
         label_draw(4)
+
 
 
         row_text.separator(factor = 7)
@@ -453,9 +532,11 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         label_draw(5)
 
         column_text = row_text.column(align = 1)
+        column_text.scale_y = 1
         label_draw(3)
 
         column_text = row_text.column(align = 1)
+        column_text.scale_y = 1
         label_draw(3)
 
 
@@ -473,7 +554,7 @@ class Note_Pop_Up_Operator(bpy.types.Operator):
         # layout.template_preview(tex)
 
         # text = bpy.context.window_manager.noter.note_text_blender
-        text = bpy.context.window_manager.noter.note_text_splash_screen
+        text = bpy.context.scene.note_text_splash_screen
         if bool(text) == True:
             draw_text(self, text)
 
@@ -551,7 +632,16 @@ class Noter_Props (bpy.types.PropertyGroup):
 
     note_text_splash_screen: StringProperty()
 
-    splash_screen: BoolProperty()
+class Noter_Preferences (bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    splash_screen: BoolProperty(
+            name="bool",
+            description="",
+            default=False,
+            )
 
 blender_classes = [
     TEXT_PT_noter,
@@ -560,6 +650,8 @@ blender_classes = [
     Note_Pop_Up_Operator,
     OBJECT_PT_note,
     SCENE_PT_note,
+    Noter_Preferences,
+    Global_Bool,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
@@ -567,6 +659,10 @@ blender_classes = Notes_list_blender_classes + blender_classes
 @persistent
 def load_handler(dummy):
     # print("Load Handler:", bpy.data.filepath)
+    # if bpy.context.window_manager.noter.splash_screen == True: 
+    # if bpy.context.space_data.splash_screen == True:
+
+    # if bpy.context.scene.splash_screen == True:
     bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
     # bpy.ops.screen.animation_play()
@@ -604,9 +700,14 @@ def register():
     # bpy.app.handlers.frame_change_post.append(my_handler)
     bpy.app.handlers.load_post.append(load_handler)
 
+    # bpy.types.WindowManager.splash_screen = BoolProperty()
+    bpy.types.Scene.splash_screen = BoolProperty()
+
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
+    bpy.types.Scene.note_text_blender = StringProperty()
+    bpy.types.Scene.note_text_splash_screen = StringProperty()
 
     bpy.types.WindowManager.noter = PointerProperty(type=Noter_Props)
 
@@ -628,14 +729,20 @@ def unregister():
         bpy.utils.unregister_class(blender_class)
 
 
+    del bpy.types.Scene.splash_screen
+
+
     del bpy.types.Object.note_text_object
     del bpy.types.Scene.note_text_scene
+    del bpy.types.Scene.note_text_blender
+    del bpy.types.Scene.note_text_splash_screen
 
     del bpy.types.Object.notes_list_object
     del bpy.types.Object.notes_list_object_index
 
     del bpy.types.Scene.notes_list_scene
     del bpy.types.Scene.notes_list_scene_index
+    
 
 
 if __name__ == "__main__":
