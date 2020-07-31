@@ -22,6 +22,7 @@ from bpy.props import (
 from bpy.app.handlers import persistent
 
 from .Notes_list import *
+from .Nodes import *
 
 import random
 
@@ -358,6 +359,15 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'BLENDER').action = "blender"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Node', icon = 'NODE').action = "node"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "node_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
+
+
+
 
         box = column.box()
         col = box.column(align = 1)
@@ -760,6 +770,8 @@ blender_classes = [
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
+# blender_classes = Nodes_blender_classes + blender_classes
+
 @persistent
 def load_handler(dummy):
     # print("Load Handler:", bpy.data.filepath)
@@ -820,8 +832,21 @@ def register():
 
     bpy.types.Scene.notes_list_scene = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Scene.notes_list_scene_index = IntProperty()
+
+    from bpy.utils import register_class
+    for cls in Nodes_blender_classes:
+        register_class(cls)
+
+    nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
     
 def unregister():
+
+    nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
+
+    from bpy.utils import unregister_class
+    for cls in reversed(Nodes_blender_classes):
+        unregister_class(cls)
+
 
     # if my_handler in bpy.app.handlers.frame_change_post:
     #     bpy.app.handlers.frame_change_post.remove(my_handler)
