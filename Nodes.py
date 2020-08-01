@@ -275,10 +275,9 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # These work just like custom properties in ID data blocks
     # Extensive information can be found under
     # http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Properties
-    my_string_prop: bpy.props.StringProperty()
     text: bpy.props.StringProperty()
     my_bool: bpy.props.BoolProperty()
-    my_float_prop: bpy.props.FloatProperty(default=3.1415926)
+    draw_extra: bpy.props.StringProperty(default = "++")
 
     # === Optional Functions ===
     # Initialization function, called when a new node is created.
@@ -312,7 +311,8 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     # Free function to clean up on removal.
     def free(self):
-        print("Removing node ", self, ", Goodbye!")
+        # print("Removing node ", self, ", Goodbye!")
+        pass
 
     # Additional buttons displayed on the node.
     # def draw_buttons_ext(self, context, layout):
@@ -362,29 +362,35 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 row.label(text = i)
                 row.scale_y = 0
 
-        layout.separator(factor = 2)
+        draw_extra_count = self.draw_extra.count("+")
 
-        row_header = layout.row()
+        if draw_extra_count >= 1:
 
-        ic = 'CHECKMARK' if self.mute else 'BLANK1'
+            layout.separator(factor = 2)
 
-        row = row_header.row()
-        row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
-        row.alignment = 'LEFT'
-        if self.mute == True:
-            row.scale_y = 2
-            row.scale_x = 2
-        else:
-            row.scale_y = 1
-            row.scale_x = 1
+            row_header = layout.row()
 
-        row = row_header.row()
-        row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
-        row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
-        row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
-        row.alignment = 'RIGHT'
-        row.scale_y = 1.3
-        row.scale_x = 1.3
+            ic = 'CHECKMARK' if self.mute else 'BLANK1'
+
+            row = row_header.row()
+            row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
+            row.alignment = 'LEFT'
+            if self.mute == True:
+                row.scale_y = 2
+                row.scale_x = 2
+            else:
+                row.scale_y = 1
+                row.scale_x = 1
+
+            if draw_extra_count >= 2:
+
+                row = row_header.row()
+                row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
+                row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
+                row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
+                row.alignment = 'RIGHT'
+                row.scale_y = 1.3
+                row.scale_x = 1.3
 
         # col = layout.column(align = 1)
         # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
@@ -516,22 +522,27 @@ class NODE_PT_active_node_color_2 (bpy.types.Panel):
 # all categories in a list
 node_categories = [
     # identifier, label, items list
-    MyNodeCategory('SOMENODES', "Some Nodes", items=[
+    # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("CustomNodeType") ),
+
+    # NodeItem("CustomNodeType"),
+
+    MyNodeCategory('SOMENODES', "Note", items=[
         # our basic node
-        NodeItem("CustomNodeType"),
+    NodeItem("CustomNodeType", label = 'Note Node'),
     ]),
-    MyNodeCategory('OTHERNODES', "Other Nodes", items=[
+
+    # MyNodeCategory("CustomNodeType"),
+
+    MyNodeCategory('OTHERNODES', "Other Notes", items=[
         # the node item can have additional settings,
         # which are applied to new nodes
         # NB: settings values are stored as string expressions,
         # for this reason they should be converted to strings using repr()
-        NodeItem("CustomNodeType", label="Node A", settings={
-            "my_string_prop": repr("Lorem ipsum dolor sit amet"),
-            "my_float_prop": repr(1.0),
+        NodeItem("CustomNodeType", label="Without extra buttons", settings={
+            "draw_extra": repr("+"),
         }),
-        NodeItem("CustomNodeType", label="Node B", settings={
-            "my_string_prop": repr("consectetur adipisicing elit"),
-            "my_float_prop": repr(2.0),
+        NodeItem("CustomNodeType", label="Without extra buttons +", settings={
+            "draw_extra": repr(""),
         }),
     ]),
 ]
@@ -541,6 +552,9 @@ Nodes_blender_classes = (
     MyCustomSocket,
     MyCustomNode,
 )
+
+
+
 
 
 # def register():

@@ -826,6 +826,14 @@ def my_handler(scene):
     bpy.context.scene.frame_current = 1
 
 
+def extra_draw_menu(self, context):
+    layout = self.layout
+
+    layout.separator()
+
+    layout.operator("node.noter_operator", text="Set Color").action = 'colour'
+    layout.operator("node.noter_operator", text="Set Label name").action = 'label'
+
 def register():
 
     for blender_class in blender_classes:
@@ -865,8 +873,12 @@ def register():
         register_class(cls)
 
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
+
+    bpy.types.NODE_MT_node.append(extra_draw_menu)
     
 def unregister():
+
+    bpy.types.NODE_MT_node.remove(extra_draw_menu)
 
     nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
