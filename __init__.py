@@ -790,6 +790,8 @@ blender_classes = [
     Global_Bool,
     NodeOperator,
     NODE_PT_active_node_generic,
+    NODE_PT_active_node_color_2,
+    MyCustomSocket_2,
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes

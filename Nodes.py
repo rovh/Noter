@@ -55,7 +55,9 @@ class NodeOperator(bpy.types.Operator):
             return {'FINISHED'}
 
 
-        print(node_active.text, 1111111111111)
+        # print(node_active.text, 1111111111111)
+        # print(len(node_active.internal_links))
+        # print(node_active.inputs[0].is_linked)
 
         if action == 'node':
             node_active.text = main_text
@@ -77,8 +79,8 @@ class NodeOperator(bpy.types.Operator):
         # node_other, = node_selected
 
         # now we have 2 nodes to operate on
-        # if not node_active.inputs:
-            # operator.report({'ERROR'}, "Active node has no inputs")
+        # 
+            # operaif not node_active.inputs:tor.report({'ERROR'}, "Active node has no inputs")
             # return
 
         # if not node_other.outputs:
@@ -133,33 +135,66 @@ class MyCustomSocket(NodeSocket):
 
     # Optional function for drawing the socket input value
     def draw(self, context, layout, node, text):
-        if self.is_output or self.is_linked:
-            layout.label(text=text)
-        else:
-            layout.prop(self, "my_enum_prop", text=text)
+        # if self.is_output or self.is_linked:
+        #     layout.label(text=text)
+        # else:
+        #     layout.prop(self, "my_enum_prop", text=text)
+
+        # layout.label(text="Text")
+        # if len(node.inputs)
+        # for i in range(0, len(node.inputs) ):
+            # if i == 0: 
+            # self.inputs.new('CustomSocketType', "")
+
+        # text = node.text
+        # if text.count("\n") == 0:
+        #     layout.prop(node, "text", text = '')
+        # else:
+        #     text_parts_list = text.split('\n')
+        #     box = layout.box()
+        #     box = box.box()
+        #     col = box.column(align = 1)
+        #     for i in text_parts_list:
+        #         row = col.row(align = 1)
+        #         row.label(text = i)
+        #         row.scale_y = 0
+        #         # break
+        pass
 
     # Socket color
     def draw_color(self, context, node):
-        return (1.0, 0.4, 0.216, 0.5)
+        # return (1.0, 0.4, 0.216, 1)
+        # return (1, 1, 0.035, .9)
+        return (0.8, 0.8, 0.03, 1.000000)
+
+class MyCustomSocket_2(NodeSocket):
+    # Description string
+    '''Custom node socket type'''
+    # Optional identifier string. If not explicitly defined, the python class name is used.
+    bl_idname = 'CustomSocketType_2'
+    # Label for nice name display
+    bl_label = "Custom Node Socket"
 
 
+    # Optional function for drawing the socket input value
+    def draw(self, context, layout, node, text):
+        # if self.is_output or self.is_linked:
+        #     layout.label(text=text)
+        # else:
+        #     layout.prop(self, "my_enum_prop", text=text)
+        pass
+
+    # Socket color
+    def draw_color(self, context, node):
+        # return (1.0, 0.4, 0.216, 1)
+        # return (1, 1, 0.035, .9)
+        return (0.8, 0.8, 0.03, 1.000000)
 # Mix-in class for all custom nodes in this tree type.
 # Defines a poll function to enable instantiation.
 class MyCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'CustomTreeType'
-
-def draw_text_node(self, text):
-    text_parts_list = text.split('\n')
-    # layout = self.layout
-    box = layout.box()
-    # column.separator(factor=.5)
-    col = box.column(align = 1)
-    for i in text_parts_list:
-        row = col.row(align = 1)
-        row.label(text = i)
-        row.scale_y = 0
 
 # Derived from the Node base type.
 class MyCustomNode(Node, MyCustomTreeNode):
@@ -179,6 +214,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Properties
     my_string_prop: bpy.props.StringProperty()
     text: bpy.props.StringProperty()
+    my_bool: bpy.props.BoolProperty()
     my_float_prop: bpy.props.FloatProperty(default=3.1415926)
 
     # === Optional Functions ===
@@ -186,13 +222,23 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # This is the most common place to create the sockets for a node, as shown below.
     # NOTE: this is not the same as the standard __init__ function in Python, which is
     #       a purely internal Python method and unknown to the node system!
+
+    def draw_label(self):
+        return "Press f2"
+        # return self.my_bool
+
     def init(self, context):
-        # self.inputs.new('CustomSocketType', "")
+        
+        self.inputs.new('CustomSocketType', "")
+        # self.inputs[0].display_shape = 'DIAMOND'
+        
         # self.inputs.new('NodeSocketFloat', "World")
         # self.inputs.new('NodeSocketVector', "!")
-        self.inputs.new('NodeSocketColor', "")
+        # self.inputs.new('NodeSocketColor', "")
 
-        self.outputs.new('NodeSocketColor', "")
+        # self.outputs.new('NodeSocketColor', "")
+        self.outputs.new('CustomSocketType', "")
+        # self.outputs.new('CustomSocketType_2', "")
         # self.outputs.new('NodeSocketColor', "are")
         # self.outputs.new('NodeSocketFloat', "you")
 
@@ -205,23 +251,37 @@ class MyCustomNode(Node, MyCustomTreeNode):
         print("Removing node ", self, ", Goodbye!")
 
     # Additional buttons displayed on the node.
+    # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
-        layout.label(text="Node settings")
-        text = self.text
+        # layout.label(text="Text")
+        row = layout.row()
+        row.prop(self, 'my_bool', text = '')
+        
+        if self.my_bool == True:
+            row.scale_y = 2.5
+            row.scale_x = 2.5
+        else:
+            row.scale_y = 1.2
+            row.scale_x = 1.2
 
+
+
+
+        # # self.inputs.new('CustomSocketType', "")
+
+        text = self.text
         if text.count("\n") == 0:
             layout.prop(self, "text", text = '')
         else:
-            # draw_text_node(self, self.text)
             text_parts_list = text.split('\n')
-            # layout = self.layout
             box = layout.box()
-            # column.separator(factor=.5)
+            box = box.box()
             col = box.column(align = 1)
             for i in text_parts_list:
                 row = col.row(align = 1)
                 row.label(text = i)
                 row.scale_y = 0
+
         # col = layout.column(align = 1)
         # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
         # col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
@@ -230,6 +290,51 @@ class MyCustomNode(Node, MyCustomTreeNode):
         # col.operator("window_manager.export_note_text", text = 'Node', icon = 'IMPORT').action = "node"
         # col.operator("window_manager.export_note_text", text = '', icon = 'EXPORT').action = "node_get"
         # col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
+        pass
+
+
+    def update(self):
+
+        if self.my_bool == True:
+            self.mute = True
+        else:
+            self.mute = False
+
+
+        count = 0
+        for i in self.inputs:
+            if i.is_linked == True:
+                count += 1
+
+        if len(self.inputs) - count == 0:
+            self.inputs.new('CustomSocketType', "")
+            # self.inputs.new('CustomSocketType_2', "")
+
+        elif len(self.inputs) - count > 1:
+
+            for i in self.inputs:
+                if i.is_linked == False:
+                    # if i.bl_idname == 'CustomSocketType_2':
+                    self.inputs.remove(i)
+                    break
+
+    def insert_link(self, link):
+        count = 0
+        for i in self.inputs:
+            if i.is_linked == True:
+                count += 1
+
+        if len(self.inputs) - count == 0:
+            self.inputs.new('CustomSocketType', "")
+        elif len(self.inputs) - count == 1:
+            pass
+        elif len(self.inputs) - count > 1:
+
+            for i in self.inputs:
+                if i.is_linked == False:
+                    self.inputs.remove(i)
+                    break
+
 
 
 
@@ -242,8 +347,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
-    def draw_label(self):
-        return "I am a custom node"
+    
 
 
 ### Node Categories ###
@@ -273,9 +377,39 @@ class NODE_PT_active_node_generic(bpy.types.Panel):
         layout = self.layout
         # layout.prop(self, "text", text = '')
         col = layout.column(align = 1)
+        col.scale_y = 1.3
         col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
         col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
         col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
+
+class NODE_PT_active_node_color_2 (bpy.types.Panel):
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Noter"
+    bl_label = "Color"
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_parent_id = 'NODE_PT_active_node_generic'
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_node is not None
+
+    def draw_header(self, context):
+        node = context.active_node
+        self.layout.prop(node, "use_custom_color", text="")
+
+    def draw_header_preset(self, _context):
+        bpy.types.NODE_PT_node_color_presets.draw_panel_header(self.layout)
+
+    def draw(self, context):
+        layout = self.layout
+        node = context.active_node
+
+        layout.enabled = node.use_custom_color
+
+        row = layout.row()
+        row.prop(node, "color", text="")
+        row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
 # all categories in a list
