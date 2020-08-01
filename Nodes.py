@@ -58,16 +58,45 @@ class NodeOperator(bpy.types.Operator):
         # print(node_active.text, 1111111111111)
         # print(len(node_active.internal_links))
         # print(node_active.inputs[0].is_linked)
+        from_node = False
+
+        if action.count("*"):
+            action, from_node_name = action.split("*")[0], action.split("*")[1]
+            from_node = True
 
         if action == 'node':
-            node_active.text = main_text
+            if from_node == True:
+                bpy.data.node_groups[node_tree.name].nodes[from_node_name].text = main_text
+            else:
+                node_active.text = main_text
 
         elif action == 'node_get':
             bpy.data.texts[file_name].clear()
-            bpy.data.texts[file_name].write(text_node)
+            if from_node == True:
+                text_node = bpy.data.node_groups[node_tree.name].nodes[from_node_name].text
+                bpy.data.texts[file_name].write(text_node)
+            else:
+                bpy.data.texts[file_name].write(text_node)
 
         elif action == 'node_delete':
-            node_active.text = ""
+            if from_node == True:
+                bpy.data.node_groups[node_tree.name].nodes[from_node_name].text = ''
+            else:
+                node_active.text = ""
+
+        elif action == 'colour':
+
+            for i in node_selected:
+                # node_selected.use_custom_color = bpy.data.node_groups[node_tree.name].nodes[from_node_name].use_custom_color
+                i.use_custom_color = node_active.use_custom_color
+                i.color = node_active.color
+
+        elif action == "label":
+            for i in node_selected:
+                # i.use_custom_color = node_active.use_custom_color
+                i.label = node_active.label
+
+
 
         # now we have the context, perform a simple operation
         # if node_active in node_selected:
@@ -94,7 +123,39 @@ class NodeOperator(bpy.types.Operator):
         # node_link = node_tree.links.new(socket_in, socket_out)
         return {'FINISHED'}
 
+  
+class Node_Bool_Operator(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "node.noter_bool_operator"
+    bl_label = "Simple Node Operator"
 
+    # my_bool: bpy.props.FloatProperty()
+    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
+    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
+    # my_bool: bpy.props.StringProperty()
+    name: bpy.props.StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return space.type == 'NODE_EDITOR'
+
+    def execute(self, context):
+
+        space = context.space_data
+        node_tree = space.node_tree
+        mute = bpy.data.node_groups[node_tree.name].nodes[self.name].mute
+        
+   
+        if mute == True:
+            bpy.data.node_groups[node_tree.name].nodes[self.name].mute = False
+        else:
+            bpy.data.node_groups[node_tree.name].nodes[self.name].mute = True
+    
+
+        
+
+        return {'FINISHED'}
 
 
 # Derived from the NodeTree base type, similar to Menu, Operator, Panel, etc.
@@ -175,11 +236,13 @@ class MyCustomSocket_2(NodeSocket):
     # Label for nice name display
     bl_label = "Custom Node Socket"
 
+    my_bool: bpy.props.BoolProperty()
+
 
     # Optional function for drawing the socket input value
     def draw(self, context, layout, node, text):
         # if self.is_output or self.is_linked:
-        #     layout.label(text=text)
+        layout.prop(self, 'my_bool', text = '')
         # else:
         #     layout.prop(self, "my_enum_prop", text=text)
         pass
@@ -230,6 +293,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
     def init(self, context):
         
         self.inputs.new('CustomSocketType', "")
+        # self.inputs.new('CustomSocketType_2', "")
         # self.inputs[0].display_shape = 'DIAMOND'
         
         # self.inputs.new('NodeSocketFloat', "World")
@@ -254,26 +318,42 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
         # layout.label(text="Text")
-        row = layout.row()
-        row.prop(self, 'my_bool', text = '')
+        # row_header = layout.row()
+
+        # ic = 'CHECKMARK' if self.mute else 'BLANK1'
+
+        # row = row_header.row()
+        # row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
+        # row.alignment = 'LEFT'
+        # if self.mute == True:
+        #     row.scale_y = 2
+        #     row.scale_x = 2
+        # else:
+        #     row.scale_y = 1
+        #     row.scale_x = 1
+
+        # row = row_header.row()
+        # row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
+        # row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
+        # row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
+        # row.alignment = 'RIGHT'
+        # row.scale_y = 1.3
+        # row.scale_x = 1.3
+
         
-        if self.my_bool == True:
-            row.scale_y = 2.5
-            row.scale_x = 2.5
-        else:
-            row.scale_y = 1.2
-            row.scale_x = 1.2
 
-
-
+        
 
         # # self.inputs.new('CustomSocketType', "")
 
         text = self.text
         if text.count("\n") == 0:
-            layout.prop(self, "text", text = '')
+            layout.separator(factor = 1)
+            box = layout.box()
+            box.prop(self, "text", text = '')
         else:
             text_parts_list = text.split('\n')
+            layout.separator(factor = .5)
             box = layout.box()
             box = box.box()
             col = box.column(align = 1)
@@ -281,6 +361,30 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 row = col.row(align = 1)
                 row.label(text = i)
                 row.scale_y = 0
+
+        layout.separator(factor = 2)
+
+        row_header = layout.row()
+
+        ic = 'CHECKMARK' if self.mute else 'BLANK1'
+
+        row = row_header.row()
+        row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
+        row.alignment = 'LEFT'
+        if self.mute == True:
+            row.scale_y = 2
+            row.scale_x = 2
+        else:
+            row.scale_y = 1
+            row.scale_x = 1
+
+        row = row_header.row()
+        row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
+        row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
+        row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
+        row.alignment = 'RIGHT'
+        row.scale_y = 1.3
+        row.scale_x = 1.3
 
         # col = layout.column(align = 1)
         # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
@@ -292,14 +396,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
         # col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
         pass
 
-
     def update(self):
-
-        if self.my_bool == True:
-            self.mute = True
-        else:
-            self.mute = False
-
 
         count = 0
         for i in self.inputs:
@@ -347,8 +444,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
-    
-
+  
 
 ### Node Categories ###
 # Node categories are a python system for automatically
@@ -382,12 +478,17 @@ class NODE_PT_active_node_generic(bpy.types.Panel):
         col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
         col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
 
+        col.separator(factor = 1)
+
+        col.operator("node.noter_operator", text = '', icon = "BRUSH_DATA").action = 'colour'
+        col.operator("node.noter_operator", text = '', icon = "TOPBAR").action = 'label'
+
 class NODE_PT_active_node_color_2 (bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Noter"
     bl_label = "Color"
-    bl_options = {'DEFAULT_CLOSED'}
+    # bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = 'NODE_PT_active_node_generic'
 
     @classmethod
