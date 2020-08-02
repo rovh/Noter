@@ -375,6 +375,7 @@ class TEXT_PT_noter(Panel):
         
         layout = self.layout
         column = layout.column(align = 1)
+        column.scale_y = 1.3
         column.prop(noter, "file_name", text = '')
 
         column.separator(factor = 1)
