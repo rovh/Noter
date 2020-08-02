@@ -646,8 +646,8 @@ class Note_Pop_Up_Operator(Operator):
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
         # settings = bpy.context.preferences.addons[__name__].preferences
         # bool_warning_global = settings.bool_warning_global
-        # height = bpy.context.area.spaces.data.height
-        # width = bpy.context.area.spaces.data.width
+        height = bpy.context.area.spaces.data.height
+        width = bpy.context.area.spaces.data.width
 
         self.location_cursor = False
         if self.location_cursor == True:
@@ -888,7 +888,7 @@ def register():
     bpy.types.NODE_MT_node.append(extra_draw_menu)
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
-        default = [0.5, 0.5, 0.5], subtype = "COLOR",
+        default = [1, 1, 1], subtype = "COLOR",
         soft_min = 0.0, soft_max = 1.0)
 
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
