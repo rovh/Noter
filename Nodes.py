@@ -56,6 +56,8 @@ class NodeOperator(bpy.types.Operator):
             self.report({war}, text)
             return {'FINISHED'}
 
+        
+
 
         # print(node_active.text, 1111111111111)
         # print(len(node_active.internal_links))
@@ -182,13 +184,15 @@ class Node_Bool_Operator(bpy.types.Operator):
 # Derived from the NodeTree base type, similar to Menu, Operator, Panel, etc.
 class MyCustomTree(NodeTree):
     # Description string
-    '''A custom node tree type that will show up in the editor type list'''
+    bl_description = 'Notes Nodes'
     # Optional identifier string. If not explicitly defined, the python class name is used.
     bl_idname = 'CustomTreeType'
     # Label for nice name display
     bl_label = "Notes"
     # Icon identifier
     bl_icon = 'FILE'
+
+    # type = 'COMPOSITING'
 
 
 # Custom socket type

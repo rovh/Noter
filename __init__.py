@@ -139,18 +139,23 @@ class Note_Actions(bpy.types.Operator):
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
 
-        # bpy.data.texts.tag(bpy.context.space_data)
-        # bpy.data.texts.find()
-        # bpy.context.space_data.text.name = file_name
-        # if bpy.context.space_data.text.name != file_name:
-        #     for i in bpy.context.space_data.text.name:
-        #         if i == file_name:
-        #             # bpy.context.space_data.text = i
-        #             # bpy.data.texts[i].name = i
-        #             bpy.data.texts.get(bpy.context.space_data)
-        #             # print(i, 111111111111111)
-        #             break
+    
+        if bpy.context.space_data.text.name != file_name:
+            if action.count('get'):
+                bpy.context.space_data.text = bpy.data.texts[file_name]
+                text = "File was changed"
+                war = "INFO"
+                self.report({war}, text)
 
+            elif action.count('get') == 0 and action.count('delete') == 0:
+                text = "Wrong File"
+                war = "WARNING"
+                self.report({war}, text)
+                # file_name = bpy.context.space_data.text.name
+
+
+
+        
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
             text = "A new text file was created"
@@ -172,7 +177,6 @@ class Note_Actions(bpy.types.Operator):
             if header_note == True:
                 bpy.context.active_object.note_text_object = main_text
             else:
-                print(11111111111111111111111111111111)
                 item = self.item_object(context)
                 item.text = main_text
 
@@ -298,8 +302,6 @@ class Note_Actions(bpy.types.Operator):
 
         return {'FINISHED'}
        
-
-
     def item_object(self, context):
         act_obj = context.active_object
         idx = act_obj.notes_list_object_index
@@ -371,12 +373,13 @@ class TEXT_PT_noter(Panel):
     bl_label = "Noter"
 
     def draw(self, context):
-        noter = bpy.context.window_manager.noter
+        # noter = bpy.context.window_manager.noter
+        scene = bpy.context.scene
         
         layout = self.layout
         column = layout.column(align = 1)
         column.scale_y = 1.3
-        column.prop(noter, "file_name", text = '')
+        column.prop(scene, "file_name", text = '')
 
         column.separator(factor = 1)
 
@@ -820,7 +823,6 @@ def load_handler(dummy):
     # if bpy.context.scene.splash_screen == True:
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
     bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
-    print(55555555555555555555555555555555555555555)
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
@@ -863,6 +865,8 @@ def register():
 
     # bpy.app.handlers.frame_change_post.append(my_handler)
     bpy.types.Scene.splash_screen = BoolProperty()
+
+    bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text')
 
     bpy.app.handlers.load_post.append(load_handler)
     # bpy.types.WindowManager.splash_screen = BoolProperty()
@@ -918,6 +922,8 @@ def unregister():
 
     del bpy.types.Scene.colorProperty
     del bpy.types.Scene.label_node_text
+
+    del bpy.types.Scene.file_name
 
     del bpy.types.Scene.splash_screen
 
