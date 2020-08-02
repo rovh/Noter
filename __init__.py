@@ -139,7 +139,7 @@ class Note_Actions(bpy.types.Operator):
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
 
-        bpy.data.texts.tag(bpy.context.space_data)
+        # bpy.data.texts.tag(bpy.context.space_data)
         # bpy.data.texts.find()
         # bpy.context.space_data.text.name = file_name
         # if bpy.context.space_data.text.name != file_name:
