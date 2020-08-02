@@ -40,6 +40,8 @@ class NodeOperator(bpy.types.Operator):
         node_selected = context.selected_nodes
         file_name = bpy.context.window_manager.noter.file_name
 
+        
+
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
             text = "A new text file was created"
@@ -64,12 +66,16 @@ class NodeOperator(bpy.types.Operator):
             action, from_node_name = action.split("*")[0], action.split("*")[1]
             from_node = True
 
+
+
         if action == 'node':
+
+
             if from_node == True:
                 bpy.data.node_groups[node_tree.name].nodes[from_node_name].text = main_text
             else:
                 node_active.text = main_text
-
+        
         elif action == 'node_get':
             bpy.data.texts[file_name].clear()
             if from_node == True:
@@ -83,6 +89,8 @@ class NodeOperator(bpy.types.Operator):
                 bpy.data.node_groups[node_tree.name].nodes[from_node_name].text = ''
             else:
                 node_active.text = ""
+  
+
 
         elif action == 'colour':
 
@@ -91,10 +99,23 @@ class NodeOperator(bpy.types.Operator):
                 i.use_custom_color = node_active.use_custom_color
                 i.color = node_active.color
 
+        elif action == 'colour_all':
+            for i in node_selected:
+                i.use_custom_color = True
+                i.color = bpy.context.scene.colorProperty
+
+
+
+
         elif action == "label":
             for i in node_selected:
                 # i.use_custom_color = node_active.use_custom_color
                 i.label = node_active.label
+
+        elif action == "label_all":
+            for i in node_selected:
+                # i.use_custom_color = node_active.use_custom_color
+                i.label = bpy.context.scene.label_node_text
 
 
 
@@ -165,7 +186,7 @@ class MyCustomTree(NodeTree):
     # Optional identifier string. If not explicitly defined, the python class name is used.
     bl_idname = 'CustomTreeType'
     # Label for nice name display
-    bl_label = "Notes Tree"
+    bl_label = "Notes"
     # Icon identifier
     bl_icon = 'FILE'
 
@@ -270,6 +291,8 @@ class MyCustomNode(Node, MyCustomTreeNode):
     bl_label = "Custom Node"
     # Icon identifier
     # bl_icon = 'SOUND'
+    bl_width_default = 200
+
 
     # === Custom Properties ===
     # These work just like custom properties in ID data blocks
@@ -376,8 +399,8 @@ class MyCustomNode(Node, MyCustomTreeNode):
             row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
             row.alignment = 'LEFT'
             if self.mute == True:
-                row.scale_y = 2
-                row.scale_x = 2
+                row.scale_y = 2.5
+                row.scale_x = 2.5
             else:
                 row.scale_y = 1
                 row.scale_x = 1
@@ -389,8 +412,8 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
                 row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
                 row.alignment = 'RIGHT'
-                row.scale_y = 1.3
-                row.scale_x = 1.3
+                row.scale_y = 1.6
+                row.scale_x = 1.6
 
         # col = layout.column(align = 1)
         # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
@@ -474,26 +497,50 @@ class NODE_PT_active_node_generic(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Noter"
     bl_label = "Noter"
-
+    
     def draw(self, context):
         layout = self.layout
         # layout.prop(self, "text", text = '')
-        col = layout.column(align = 1)
-        col.scale_y = 1.3
-        col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
-        col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
-        col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
+        box = layout.box()
+        column = box.column(align = 1)
+        column.scale_y = 1.3
+        column.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
+        column.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
+        column.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
 
-        col.separator(factor = 1)
+        column.separator(factor = 2)
+        # column.template_columnor_picker(self, "columnorProperty", value_slider = True)
+        # column.prop(self, "columnorProperty")
+        
 
-        col.operator("node.noter_operator", text = '', icon = "BRUSH_DATA").action = 'colour'
-        col.operator("node.noter_operator", text = '', icon = "TOPBAR").action = 'label'
+        column.operator("node.noter_operator", text = 'Copy-Paste', icon = "BRUSH_DATA").action = 'colour'
+        column.operator("node.noter_operator", text = 'Copy-Paste', icon = "TOPBAR").action = 'label'
+        
+        column.separator(factor = 2)
+
+        row = column.row(align = 1)
+        row_row = row.row(align = 1)
+        row_row.operator("node.noter_operator", text = 'Paint', icon = "BRUSH_DATA").action = 'colour_all'
+        
+        row_row = row.row(align = 1)
+        row_row.scale_x = .6
+        row_row.prop(bpy.context.scene, "colorProperty", text = "")
+
+        column.separator(factor = 2)
+
+        column.operator("node.noter_operator", text = 'Write Label', icon = "TOPBAR").action = 'label_all'
+        column.prop(bpy.context.scene, "label_node_text", text = "")
+
+        column.separator(factor = 1)
+        
+        # row_row = row.row(align = 1)
+        # row_row.scale_x = 2
 
 class NODE_PT_active_node_color_2 (bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Noter"
-    bl_label = "Color"
+    bl_label = "Node Color"
     # bl_options = {'DEFAULT_CLOSED'}
     bl_parent_id = 'NODE_PT_active_node_generic'
 
@@ -551,6 +598,12 @@ Nodes_blender_classes = (
     MyCustomTree,
     MyCustomSocket,
     MyCustomNode,
+    NodeOperator,
+    NODE_PT_active_node_generic,
+    NODE_PT_active_node_color_2,
+    MyCustomSocket_2,
+    Node_Bool_Operator,
+    
 )
 
 

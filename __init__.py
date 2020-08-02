@@ -94,7 +94,6 @@ class Note_Actions(bpy.types.Operator):
         else:
             pass
  
-
     def execute(self, context):       
 
         action = self.action
@@ -125,6 +124,9 @@ class Note_Actions(bpy.types.Operator):
                 war = "ERROR"
                 self.report({war}, text)
                 return {'FINISHED'}
+
+
+        
         # else:
         #     text = "No Object was found"
         #     war = "ERROR"
@@ -136,7 +138,18 @@ class Note_Actions(bpy.types.Operator):
         note_text_scene = bpy.context.scene.note_text_scene
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
-        
+
+        bpy.data.texts.tag(bpy.context.space_data)
+        # bpy.data.texts.find()
+        # bpy.context.space_data.text.name = file_name
+        # if bpy.context.space_data.text.name != file_name:
+        #     for i in bpy.context.space_data.text.name:
+        #         if i == file_name:
+        #             # bpy.context.space_data.text = i
+        #             # bpy.data.texts[i].name = i
+        #             bpy.data.texts.get(bpy.context.space_data)
+        #             # print(i, 111111111111111)
+        #             break
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -147,10 +160,13 @@ class Note_Actions(bpy.types.Operator):
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
+
             text = "File was not found"
             war = "ERROR"
             self.report({war}, text)
             return {'FINISHED'}
+
+
 
         if action == 'object':
             if header_note == True:
@@ -787,12 +803,7 @@ blender_classes = [
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
-    Global_Bool,
-    NodeOperator,
-    NODE_PT_active_node_generic,
-    NODE_PT_active_node_color_2,
-    MyCustomSocket_2,
-    Node_Bool_Operator,
+    Global_Bool
 ]
 
 blender_classes = Notes_list_blender_classes + blender_classes
@@ -875,6 +886,13 @@ def register():
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
 
     bpy.types.NODE_MT_node.append(extra_draw_menu)
+
+    bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
+        default = [0.5, 0.5, 0.5], subtype = "COLOR",
+        soft_min = 0.0, soft_max = 1.0)
+
+    bpy.types.Scene.label_node_text = bpy.props.StringProperty()
+
     
 def unregister():
 
@@ -896,6 +914,8 @@ def unregister():
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)
 
+    del bpy.types.Scene.colorProperty
+    del bpy.types.Scene.label_node_text
 
     del bpy.types.Scene.splash_screen
 
