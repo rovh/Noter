@@ -817,8 +817,8 @@ def load_handler(dummy):
     # if bpy.context.space_data.splash_screen == True:
 
     # if bpy.context.scene.splash_screen == True:
-    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
-    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
