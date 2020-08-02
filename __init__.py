@@ -646,8 +646,10 @@ class Note_Pop_Up_Operator(Operator):
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
         # settings = bpy.context.preferences.addons[__name__].preferences
         # bool_warning_global = settings.bool_warning_global
-        height = bpy.context.area.spaces.data.height
-        width = bpy.context.area.spaces.data.width
+        # height = bpy.context.area.spaces.data.height
+        # width = bpy.context.area.spaces.data.width
+        height = bpy.context.window.height
+        width = bpy.context.window.width
 
         self.location_cursor = False
         if self.location_cursor == True:
@@ -656,14 +658,12 @@ class Note_Pop_Up_Operator(Operator):
             x = event.mouse_x
             y = event.mouse_y 
 
-            # location_x = height / 100 * 50
-            # location_y = width / 100 * 40
-            location_x = 300
-            location_y = 550
+            location_x = width  * .5
+            location_y = height - 100
+            # location_x = 300
+            # location_y = 550
 
             bpy.context.window.cursor_warp(location_x , location_y)
-
-            # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
 
             invoke = context.window_manager.invoke_props_dialog(self)
@@ -819,6 +819,7 @@ def load_handler(dummy):
     # if bpy.context.scene.splash_screen == True:
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
     bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    print(55555555555555555555555555555555555555555)
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
@@ -860,10 +861,10 @@ def register():
     # bpy.app.handlers.on_scene_update_pre.append(my_handler)
 
     # bpy.app.handlers.frame_change_post.append(my_handler)
-    bpy.app.handlers.load_post.append(load_handler)
-
-    # bpy.types.WindowManager.splash_screen = BoolProperty()
     bpy.types.Scene.splash_screen = BoolProperty()
+
+    bpy.app.handlers.load_post.append(load_handler)
+    # bpy.types.WindowManager.splash_screen = BoolProperty()
 
 
     bpy.types.Object.note_text_object = StringProperty()
