@@ -44,66 +44,57 @@ bl_info = {
 class Note_Actions(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "window_manager.export_note_text"
-    bl_label = "note text actions"
+    bl_label = ""
     bl_description = 'You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     bl_options = {'UNDO'}
 
     action: StringProperty(options = {"SKIP_SAVE"})
     header_note: BoolProperty(options = {"SKIP_SAVE"}, default = True)
-    # draw:       bpy.props.BoolProperty(options = {"SKIP_SAVE"})
-    # lengthbool_SKIP_SAVE: bpy.props.BoolProperty(options = {"SKIP_SAVE"})
-    # @classmethod
-    # def poll(cls, context):
-    #     return context.active_object is not None\
-    #         and context.active_object.mode in {'EDIT'}\
-            # and context.active_object.type == "MESH"
 
     @classmethod
     def description(cls, context, properties):
         if properties.action == 'object':
-            return "Plus Length / Distance"
+            return "Assign text to the active object"
         elif properties.action == 'object_get':
-            return "Minus Length / Distance"
+            return "Get text from the active object"
         elif properties.action == 'object_delete':
-            return "Get Length / Distance"
+            return "Delete text in the active object"
+
+        elif properties.action == 'object*' or properties.action == 'scene*':
+            return "Import text to the active object"
+        elif properties.action == 'object_get*' or properties.action == 'scene_get*':
+            return "Export text from the active object"
+        
 
 
         elif properties.action == 'scene':
-            return "Get Length / Distance"
+            return "Assign text to the active scene"
+        elif properties.action == 'scene_get':
+            return "Get text from the active scene"
         elif properties.action == 'scene_delete':
-            return "Get Length / Distance"
-        elif properties.action == 'scene_delete':
-            return "Get Length / Distance"
+            return "Delete text in the active scene"
 
 
         elif properties.action == 'blender':
-            return "Get Length / Distance"
+            return "Assign text to the .blend file"
         elif properties.action == 'blender_get':
-            return "Get Length / Distance"
+            return "Get text from the .blend file"
         elif properties.action == 'blender_delete':
-            return "Get Length / Distance"
+            return "Delete text in the .blend file"
 
 
         elif properties.action == 'splash_screen':
-            return "Get Length / Distance"
+            return "Assign text to the Noter's splash screen"
         elif properties.action == 'splash_screen_get':
-            return "Get Length / Distance"
+            return "Get text from the Noter's splash screen"
         elif properties.action == 'splash_screen_delete':
-            return "Get Length / Distance"
-        else:
-            pass
+            return "Delete text in the Noter's splash screen"
  
     def execute(self, context):       
 
         action = self.action
         header_note = self.header_note
-
-        # if action == 'object_get*' or\
-        #     action == 'scene_get*' or\
-        #     action == 'object*' or\
-        #     action == 'scene*':
-        #     self.window(context)
 
         if action.count("*") != 0:
             action = self.action.replace("*", "")
@@ -117,9 +108,7 @@ class Note_Actions(bpy.types.Operator):
             action == 'object_get' or\
             action == 'object_delete') and\
             context.active_object is None:
-            # len(bpy.context.selected_objects) != 0 and\
-                # pass
-        # else:
+
                 text = "No Object was found"
                 war = "ERROR"
                 self.report({war}, text)
@@ -133,35 +122,39 @@ class Note_Actions(bpy.types.Operator):
         #     self.report({war}, text)
         #     return {'FINISHED'}
 
-        file_name = bpy.context.window_manager.noter.file_name
+        if len(bpy.data.texts.values()) == 0:
+            bpy.ops.text.new()
+            bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
+            text = "A new text file was created"
+            war = "INFO"
+            self.report({war}, text)
+            # return {'FINISHED'}
+
+        # file_name = bpy.context.window_manager.noter.file_name
+        file_name = bpy.context.scene.file_name
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
 
-    
-        if bpy.context.space_data.text.name != file_name:
-            if action.count('get'):
-                bpy.context.space_data.text = bpy.data.texts[file_name]
-                text = "File was changed"
-                war = "INFO"
-                self.report({war}, text)
+        try:
+            if bpy.context.space_data.text.name != file_name:
+                if action.count('get'):
+                    bpy.context.space_data.text = bpy.data.texts[file_name]
+                    text = "File was changed"
+                    war = "INFO"
+                    self.report({war}, text)
 
-            elif action.count('get') == 0 and action.count('delete') == 0:
-                text = "Wrong File"
-                war = "WARNING"
-                self.report({war}, text)
-                # file_name = bpy.context.space_data.text.name
+                elif action.count('get') == 0 and action.count('delete') == 0:
+                    text = "Wrong File"
+                    war = "WARNING"
+                    self.report({war}, text)
+                    # file_name = bpy.context.space_data.text.name
+        except AttributeError:
+            pass
 
 
 
-        
-        if len(bpy.data.texts.values()) == 0:
-            bpy.ops.text.new()
-            text = "A new text file was created"
-            war = "INFO"
-            self.report({war}, text)
-            # return {'FINISHED'}
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
@@ -441,7 +434,7 @@ class Global_Bool(Operator):
     """Tooltip"""
     bl_idname = "window_manager.global_bool"
     bl_label = "111"
-    bl_description = 'You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    bl_description = 'Display Noter splash screen on startup \n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     bl_options = {'UNDO'}
 
@@ -455,7 +448,6 @@ class Global_Bool(Operator):
             for i in bpy.data.scenes:
                 i.splash_screen = True
 
-            # print(i.name_full)
         return {'FINISHED'}
 
 
@@ -636,11 +628,20 @@ class Note_Pop_Up_Operator(Operator):
         # tex = img.jpg
         # layout.template_preview(tex)
 
+
+
         # text = bpy.context.window_manager.noter.note_text_blender
+        find = None
         for i in bpy.data.scenes:
             if bool(i.note_text_splash_screen) == True:
                 find = i.note_text_splash_screen
                 break
+
+        # find = None
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         find = i.note_text_splash_screen
+        #         break
 
         text = find
         if bool(text) == True:
@@ -663,7 +664,7 @@ class Note_Pop_Up_Operator(Operator):
             y = event.mouse_y 
 
             location_x = width  * .5
-            location_y = height - 100
+            location_y = height * .9
             # location_x = 300
             # location_y = 550
 
@@ -787,6 +788,7 @@ class Noter_Props (bpy.types.PropertyGroup):
 
     note_text_splash_screen: StringProperty()
 
+
 class Noter_Preferences (bpy.types.AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
@@ -807,12 +809,9 @@ blender_classes = [
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
-    Global_Bool
-]
+    Global_Bool]
 
 blender_classes = Notes_list_blender_classes + blender_classes
-
-# blender_classes = Nodes_blender_classes + blender_classes
 
 @persistent
 def load_handler(dummy):
@@ -827,18 +826,18 @@ def load_handler(dummy):
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
 
-@persistent
-def my_handler(scene):
+# @persistent
+# def my_handler(scene):
     # print("Frame Change", scene.frame_current)
 
     # if bpy.context.window_manager.noter.splash_screen == True:
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
-    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
 
-    bpy.app.handlers.frame_change_post.remove(my_handler)
-    bpy.app.handlers.load_post.remove(load_handler)
-    bpy.ops.screen.animation_play()
-    bpy.context.scene.frame_current = 1
+    # bpy.app.handlers.frame_change_post.remove(my_handler)
+    # bpy.app.handlers.load_post.remove(load_handler)
+    # bpy.ops.screen.animation_play()
+    # bpy.context.scene.frame_current = 1
 
 
 def extra_draw_menu(self, context):
@@ -864,20 +863,21 @@ def register():
     # bpy.app.handlers.on_scene_update_pre.append(my_handler)
 
     # bpy.app.handlers.frame_change_post.append(my_handler)
-    bpy.types.Scene.splash_screen = BoolProperty()
 
-    bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text')
-
-    bpy.app.handlers.load_post.append(load_handler)
     # bpy.types.WindowManager.splash_screen = BoolProperty()
 
+    bpy.types.Scene.splash_screen = BoolProperty()
+    bpy.app.handlers.load_post.append(load_handler)
+
+
+    bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text')
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
     bpy.types.Scene.note_text_blender = StringProperty()
     bpy.types.Scene.note_text_splash_screen = StringProperty()
 
-    bpy.types.WindowManager.noter = PointerProperty(type=Noter_Props)
+    # bpy.types.WindowManager.noter = PointerProperty(type=Noter_Props)
 
     bpy.types.Object.notes_list_object = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Object.notes_list_object_index = IntProperty()
@@ -914,8 +914,8 @@ def unregister():
     # if my_handler in bpy.app.handlers.frame_change_post:
     #     bpy.app.handlers.frame_change_post.remove(my_handler)
 
-    if my_handler in bpy.app.handlers.load_post:
-        bpy.app.handlers.load_post.remove(load_handler)
+    # if my_handler in bpy.app.handlers.load_post:
+    #     bpy.app.handlers.load_post.remove(load_handler)
 
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)

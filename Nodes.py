@@ -334,7 +334,8 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     # Copy function to initialize a copied node from an existing one.
     def copy(self, node):
-        print("Copying from node ", node)
+        pass
+        # print("Copying from node ", node)
 
     # Free function to clean up on removal.
     def free(self):

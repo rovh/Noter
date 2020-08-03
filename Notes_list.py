@@ -19,17 +19,17 @@ from bpy.props import (
         CollectionProperty,
         )
 
-def draw_text(text_parts_list):
-    col = column
-    for i in text_parts_list:
-        row = col.row(align = 1)
-        row.label(text = i)
-        row.scale_y = 0
+# def draw_text(text_parts_list):
+#     # col = column
+#     for i in text_parts_list:
+#         row = col.row(align = 1)
+#         row.label(text = i)
+#         row.scale_y = 0
 
 class Notes_List_actions(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_object.list_action"
-    bl_label = "Actions"
+    bl_label = ""
     bl_description = "Move items up and down or remove"
     bl_options = {'REGISTER'}
 
@@ -40,6 +40,15 @@ class Notes_List_actions(Operator):
             ('REMOVE', "Remove", ""),
             # ('ADD', "Add", "") 
             ))
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.action == 'REMOVE':
+            return "Remove"
+        elif properties.action == 'UP':
+            return "Up"
+        elif properties.action == 'DOWN':
+            return "Down"
 
     def invoke(self, context, event):
 
@@ -124,11 +133,12 @@ class Notes_List_clearList(Operator):
 class Notes_actions_bool(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_object.list_action_bool"
-    bl_label = "Export"
-    bl_description = "Export item"
+    bl_label = ""
+    bl_description = "Checkmark"
     bl_options = {'REGISTER'}
 
     my_index: IntProperty()
+
 
     def execute(self, context):
 
@@ -188,7 +198,7 @@ class Notes_actions_bool(Operator):
 class Notes_List_actions_scene(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_scene.list_action"
-    bl_label = "Actions"
+    bl_label = ""
     bl_description = "Move items up and down or remove"
     bl_options = {'REGISTER'}
 
@@ -199,6 +209,15 @@ class Notes_List_actions_scene(Operator):
             ('REMOVE', "Remove", ""),
             # ('ADD', "Add", "") 
             ))
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.action == 'REMOVE':
+            return "Remove"
+        elif properties.action == 'UP':
+            return "Up"
+        elif properties.action == 'DOWN':
+            return "Down"
 
     def invoke(self, context, event):
 
@@ -284,8 +303,8 @@ class Notes_List_clearList_scene(Operator):
 class Notes_actions_bool_scene(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_scene.list_action_bool"
-    bl_label = "Export"
-    bl_description = "Export item"
+    bl_label = ""
+    bl_description = "Checkmark"
     bl_options = {'REGISTER'}
 
     my_index: IntProperty()
@@ -562,6 +581,7 @@ class Notes_List_PT(Panel):
     def poll(cls, context):
         return bpy.context.active_object != None\
             # and bpy.context.active_object.mode in {'EDIT'}
+
 
     def draw_header(self, context):
         layout = self.layout
