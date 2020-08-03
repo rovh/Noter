@@ -776,17 +776,17 @@ class SCENE_PT_note(Panel):
 
 
 
-class Noter_Props (bpy.types.PropertyGroup):
-    """
-    Fake module like class
-    bpy.context.window_manager.noter
-    """
-    file_name: StringProperty(name = 'Name of the file',\
-        default = 'Text')
+# class Noter_Props (bpy.types.PropertyGroup):
+    # """
+    # Fake module like class
+    # bpy.context.window_manager.noter
+    # """
+    # file_name: StringProperty(name = 'Name of the file',\
+    #     default = 'Text')
 
-    note_text_blender: StringProperty()
+    # note_text_blender: StringProperty()
 
-    note_text_splash_screen: StringProperty()
+    # note_text_splash_screen: StringProperty()
 
 
 class Noter_Preferences (bpy.types.AddonPreferences):
@@ -802,7 +802,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
 blender_classes = [
     TEXT_PT_noter,
-    Noter_Props,
+    # Noter_Props,
     Note_Actions,
     Note_Pop_Up_Operator,
     Note_Pop_Up_Operator_2,
