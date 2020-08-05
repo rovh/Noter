@@ -115,13 +115,6 @@ class Note_Actions(bpy.types.Operator):
                 return {'FINISHED'}
 
 
-        
-        # else:
-        #     text = "No Object was found"
-        #     war = "ERROR"
-        #     self.report({war}, text)
-        #     return {'FINISHED'}
-
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
             bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
@@ -130,28 +123,33 @@ class Note_Actions(bpy.types.Operator):
             self.report({war}, text)
             # return {'FINISHED'}
 
-        # file_name = bpy.context.window_manager.noter.file_name
-        file_name = bpy.context.scene.file_name
+
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
         note_text_blender = bpy.context.scene.note_text_blender
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
+        use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
 
-        try:
-            if bpy.context.space_data.text.name != file_name:
-                if action.count('get'):
-                    bpy.context.space_data.text = bpy.data.texts[file_name]
-                    text = "File was changed"
-                    war = "INFO"
-                    self.report({war}, text)
+        if use_file_path == 'OPENED':
+            file_name = bpy.context.space_data.text.name
 
-                elif action.count('get') == 0 and action.count('delete') == 0:
-                    text = "Wrong File"
-                    war = "WARNING"
-                    self.report({war}, text)
-                    # file_name = bpy.context.space_data.text.name
-        except AttributeError:
-            pass
+        else:
+            file_name = bpy.context.scene.file_name
+            try:
+                if bpy.context.space_data.text.name != file_name:
+                    if action.count('get'):
+                        bpy.context.space_data.text = bpy.data.texts[file_name]
+                        text = "File was changed"
+                        war = "INFO"
+                        self.report({war}, text)
+
+                    elif action.count('get') == 0 and action.count('delete') == 0:
+                        text = "Wrong File"
+                        war = "WARNING"
+                        self.report({war}, text)
+                        # file_name = bpy.context.space_data.text.name
+            except AttributeError:
+                pass
 
 
 
@@ -368,11 +366,22 @@ class TEXT_PT_noter(Panel):
     def draw(self, context):
         # noter = bpy.context.window_manager.noter
         scene = bpy.context.scene
+        preferences = bpy.context.preferences.addons[__name__].preferences
+        
         
         layout = self.layout
         column = layout.column(align = 1)
         column.scale_y = 1.3
-        column.prop(scene, "file_name", text = '')
+
+        row = column.row(align = 1)
+        row_sub = row.row(align = 1)
+        row_sub.prop(preferences, "use_file_path", text = '')
+        row_sub.scale_x = .4
+        row_sub.alignment = 'RIGHT'
+        if preferences.use_file_path == 'NAME':
+            column.separator(factor = .09)
+            column.prop(scene, "file_name", text = '')
+        
 
         column.separator(factor = 1)
 
@@ -520,6 +529,9 @@ class Note_Pop_Up_Operator(Operator):
                 column_text.label(icon = ic)
 
 
+        row_text.separator(factor = 2)
+
+
         column_text = row_text.column(align = 1)
         column_text.separator(factor = 1.7)
         column_text.scale_y = .6
@@ -614,6 +626,8 @@ class Note_Pop_Up_Operator(Operator):
         column_text.scale_y = 1
         label_draw(3)
 
+        row_text.separator(factor = 5)
+
 
         # col_f = layout.column_flow(columns=3, align=False)
         # col_f = layout.grid_flow(row_major=1, columns=1, even_columns=False, even_rows=0, align=1)
@@ -649,7 +663,7 @@ class Note_Pop_Up_Operator(Operator):
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
-        # settings = bpy.context.preferences.addons[__name__].preferences
+        preferences = bpy.context.preferences.addons[__name__].preferences
         # bool_warning_global = settings.bool_warning_global
         # height = bpy.context.area.spaces.data.height
         # width = bpy.context.area.spaces.data.width
@@ -663,10 +677,12 @@ class Note_Pop_Up_Operator(Operator):
             x = event.mouse_x
             y = event.mouse_y 
 
-            location_x = width  * .5
-            location_y = height * .9
-            # location_x = 300
-            # location_y = 550
+
+            
+            # location_x = width  * .5
+            # location_y = height * .9
+            location_x = width  * preferences.splash_screen_location_x
+            location_y = height * preferences.splash_screen_location_y
 
             bpy.context.window.cursor_warp(location_x , location_y)
 
@@ -799,6 +815,64 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             description="",
             default=False,
             )
+
+    splash_screen_location_x: FloatProperty(name="123", default = 0.5, precision = 6, \
+        min = 0, max = 1.0, description = "123")
+
+    splash_screen_location_y: FloatProperty(name="123", default = 0.9, precision = 6, \
+        min = 0, max = 1.0, description = "123")
+
+    use_file_path: bpy.props.EnumProperty(
+        items=(
+            ('OPENED', "Opened", ""),
+            ('NAME', "Name", ""),
+            ))
+
+    # use_opened_file_path: BoolProperty(
+            # name="bool",
+            # description="",
+            # default=False,
+            # )
+
+    def draw(self, context):
+        layout = self.layout
+        row_main = layout.row(align = 0)
+
+        col_1 = row_main.column(align = 1)
+        col_1.separator(factor = 4)
+
+        row = col_1.row(align = 1)
+
+        row.label(icon = 'BACK')
+        row.label(icon = 'TOPBAR')
+        row.label(icon = 'FORWARD')
+        row.alignment = 'CENTER'
+
+        col_1.separator(factor = 2.7)
+
+        col_1.prop(self, 'splash_screen_location_x', text = 'X')
+
+
+
+        row_main.separator(factor = 3)
+
+
+
+        col_2 = row_main.column(align = 1)
+        row = col_2.row(align = 1)
+        row.alignment = 'CENTER'
+
+        col_sub = row.column(align = 1)
+        col_sub.label(icon = 'SORT_DESC')
+        col_sub.label(icon = 'TOPBAR')
+        col_sub.label(icon = 'SORT_ASC')
+        
+        col_2.prop(self, 'splash_screen_location_y', text = 'Y')
+        
+
+
+
+
 
 blender_classes = [
     TEXT_PT_noter,
