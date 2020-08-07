@@ -126,12 +126,20 @@ class Note_Actions(bpy.types.Operator):
 
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
-        note_text_blender = bpy.context.scene.note_text_blender
+        note_text_blender = bpy.context.preferences.addons[__name__].preferences.note_text_blender
+        note_text_blender_file = bpy.context.scene.note_text_blender_file
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
         use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
 
+
         if use_file_path == 'OPENED':
-            file_name = bpy.context.space_data.text.name
+            try:
+                # for i in bpy.context.workspace:
+                #     file_name = i.text.name
+
+                file_name = bpy.data.screens['Scripting'].areas.data.text.name
+            except AttributeError:
+                pass
 
         else:
             file_name = bpy.context.scene.file_name
@@ -212,28 +220,52 @@ class Note_Actions(bpy.types.Operator):
 
 
 
-        elif action == 'blender':
+        elif action == 'blender_file':
             if header_note == True:
                 for i in bpy.data.scenes:
-                    i.note_text_blender = main_text
+                    i.note_text_blender_file = main_text
             else:
                 item = self.item_object(context)
                 item.text = main_text
 
-        elif action == "blender_get":
+        elif action == "blender_file_get":
             bpy.data.texts[file_name].clear()
             if header_note == True:
-                bpy.data.texts[file_name].write(note_text_blender)
+                bpy.data.texts[file_name].write(note_text_blender_file)
             else:
                 item = self.item_object(context)
                 bpy.data.texts[file_name].write(item.text)
 
-        elif action == "blender_delete":
+        elif action == "blender_file_delete":
             if header_note == True:
                 for i in bpy.data.scenes:
-                    i.note_text_blender = ""
+                    i.note_text_blender_file = ""
             else:
                 item = self.item_object(context)
+                item.text = ""
+
+
+
+        elif action == 'blender':
+            if header_note == True:
+                bpy.context.preferences.addons[__name__].preferences.note_text_blender = main_text
+            else:
+                item = self.item_scene(context)
+                item.text = main_text
+
+        elif action == 'blender_get':
+            bpy.data.texts[file_name].clear()
+            if header_note == True:
+                bpy.data.texts[file_name].write(note_text_blender)
+            else:
+                item = self.item_scene(context)
+                bpy.data.texts[file_name].write(item.text)
+
+        elif action == 'blender_delete':
+            if header_note == True:
+                bpy.context.preferences.addons[__name__].preferences.note_text_blender = ""
+            else:
+                item = self.item_scene(context)
                 item.text = ""
 
 
@@ -373,14 +405,15 @@ class TEXT_PT_noter(Panel):
         column = layout.column(align = 1)
         column.scale_y = 1.3
 
-        row = column.row(align = 1)
-        row_sub = row.row(align = 1)
-        row_sub.prop(preferences, "use_file_path", text = '')
-        row_sub.scale_x = .4
-        row_sub.alignment = 'RIGHT'
-        if preferences.use_file_path == 'NAME':
-            column.separator(factor = .09)
-            column.prop(scene, "file_name", text = '')
+        # row = column.row(align = 1)
+        # row_sub = row.row(align = 1)
+        # row_sub.prop(preferences, "use_file_path", text = '')
+        # row_sub.scale_x = .4
+        # row_sub.alignment = 'RIGHT'
+        # if preferences.use_file_path == 'NAME':
+            # column.separator(factor = .2)
+            # column.prop(scene, "file_name", text = '')
+        column.prop(scene, "file_name", text = '')
         
 
         column.separator(factor = 1)
@@ -388,11 +421,14 @@ class TEXT_PT_noter(Panel):
         box = column.box()
         box.label(text = "Header Note", icon = 'TOPBAR')
 
+
+            
         box = column.box()
         col = box.column(align = 1)
         col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
+
 
         box = column.box()
         col = box.column(align = 1)
@@ -402,9 +438,19 @@ class TEXT_PT_noter(Panel):
 
         box = column.box()
         col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'BLENDER').action = "blender"
+        col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'FILE_FOLDER').action = "blender_file"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_file_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_file_delete"
+
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Blender (Noter)', icon = 'BLENDER').action = "blender"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
+
+
+
 
         # box = column.box()
         # col = box.column(align = 1)
@@ -644,7 +690,7 @@ class Note_Pop_Up_Operator(Operator):
 
 
 
-        # text = bpy.context.window_manager.noter.note_text_blender
+        # text = bpy.context.window_manager.noter.note_text_blender_file
         find = None
         for i in bpy.data.scenes:
             if bool(i.note_text_splash_screen) == True:
@@ -709,7 +755,7 @@ class Note_Pop_Up_Operator_2 (Operator):
     def poll(cls, context):
         find = False
         for i in bpy.data.scenes:
-            if bool(i.note_text_blender) == True:
+            if bool(i.note_text_blender_file) == True:
                 find = True
                 break
 
@@ -720,12 +766,12 @@ class Note_Pop_Up_Operator_2 (Operator):
 
     def draw(self, context):
         for i in bpy.data.scenes:
-            if bool(i.note_text_blender) == True:
-                find = i.note_text_blender
+            if bool(i.note_text_blender_file) == True:
+                find = i.note_text_blender_file
                 break
 
         text = find
-        # text = bpy.context.scene.note_text_blender
+        # text = bpy.context.scene.note_text_blender_file
         if bool(text) == True:
             draw_text(self, text)
 
@@ -800,7 +846,7 @@ class SCENE_PT_note(Panel):
     # file_name: StringProperty(name = 'Name of the file',\
     #     default = 'Text')
 
-    # note_text_blender: StringProperty()
+    # note_text_blender_file: StringProperty()
 
     # note_text_splash_screen: StringProperty()
 
@@ -809,6 +855,8 @@ class Noter_Preferences (bpy.types.AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
     bl_idname = __name__
+
+    note_text_blender: StringProperty()
 
     splash_screen: BoolProperty(
             name="bool",
@@ -825,8 +873,8 @@ class Noter_Preferences (bpy.types.AddonPreferences):
     use_file_path: bpy.props.EnumProperty(
         items=(
             ('OPENED', "Opened", ""),
-            ('NAME', "Name", ""),
-            ))
+            ('NAME', "Name", "")),
+        default = 'NAME')
 
     # use_opened_file_path: BoolProperty(
             # name="bool",
@@ -948,7 +996,7 @@ def register():
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
-    bpy.types.Scene.note_text_blender = StringProperty()
+    bpy.types.Scene.note_text_blender_file = StringProperty()
     bpy.types.Scene.note_text_splash_screen = StringProperty()
 
     # bpy.types.WindowManager.noter = PointerProperty(type=Noter_Props)
@@ -1004,7 +1052,7 @@ def unregister():
 
     del bpy.types.Object.note_text_object
     del bpy.types.Scene.note_text_scene
-    del bpy.types.Scene.note_text_blender
+    del bpy.types.Scene.note_text_blender_file
     del bpy.types.Scene.note_text_splash_screen
 
     del bpy.types.Object.notes_list_object

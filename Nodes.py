@@ -5,9 +5,28 @@ from bpy.types import NodeTree, Node, NodeSocket
 class NodeOperator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_operator"
-    bl_label = "Simple Node Operator"
+    bl_label = ""
 
     action: bpy.props.StringProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.action == 'node':
+            return "Assign text to the node (or active node)"
+        elif properties.action == 'node_get':
+            return "Get text from the node (or active node)"
+        elif properties.action == 'node_delete':
+            return "Delete text in the node (or active node)"
+
+        elif properties.action == 'colour':
+            return "Paint the nodes in the color of the active node"
+        elif properties.action == 'colour_all':
+            return "Paint selected node (nodes)"
+
+        elif properties.action == 'label':
+            return "Write label text in the label text of the active node"
+        elif properties.action == 'label_all':
+            return "Write label text in the node (or active node)"
 
     @classmethod
     def poll(cls, context):
@@ -38,8 +57,7 @@ class NodeOperator(bpy.types.Operator):
         node_active = context.active_node
         text_node = node_active.text
         node_selected = context.selected_nodes
-        file_name = bpy.context.window_manager.noter.file_name
-
+        file_name = bpy.context.scene.file_name
         
 
         if len(bpy.data.texts.values()) == 0:
@@ -71,8 +89,6 @@ class NodeOperator(bpy.types.Operator):
 
 
         if action == 'node':
-
-
             if from_node == True:
                 bpy.data.node_groups[node_tree.name].nodes[from_node_name].text = main_text
             else:
