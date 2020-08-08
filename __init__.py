@@ -1,4 +1,5 @@
 import bpy
+import json
 
 # from .__init__ import draw_text
 
@@ -248,7 +249,10 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender':
             if header_note == True:
-                bpy.context.preferences.addons[__name__].preferences.note_text_blender = main_text
+                with open('note_text_blender.json', 'w') as f:
+                    json.dump(note_text_blender, f)
+                print('1212121212')
+                # bpy.context.preferences.addons[__name__].preferences.note_text_blender = main_text
             else:
                 item = self.item_scene(context)
                 item.text = main_text
@@ -256,6 +260,8 @@ class Note_Actions(bpy.types.Operator):
         elif action == 'blender_get':
             bpy.data.texts[file_name].clear()
             if header_note == True:
+                with open('note_text_blender.json') as f:
+                    note_text_blender = json.load(f)
                 bpy.data.texts[file_name].write(note_text_blender)
             else:
                 item = self.item_scene(context)
@@ -263,7 +269,9 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender_delete':
             if header_note == True:
-                bpy.context.preferences.addons[__name__].preferences.note_text_blender = ""
+                with open('note_text_blender.json', 'w') as f:
+                    json.dump('', f)
+                # bpy.context.preferences.addons[__name__].preferences.note_text_blender = ""
             else:
                 item = self.item_scene(context)
                 item.text = ""
