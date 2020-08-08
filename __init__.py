@@ -269,7 +269,7 @@ class Note_Actions(bpy.types.Operator):
                 item.text = ""
 
 
-        
+
         elif action == 'splash_screen':
             if header_note == True:
                 for i in bpy.data.scenes:
