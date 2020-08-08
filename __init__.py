@@ -1,5 +1,7 @@
 import bpy
 import json
+import os
+import pathlib
 
 # from .__init__ import draw_text
 
@@ -249,9 +251,14 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender':
             if header_note == True:
-                with open('note_text_blender.json', 'w') as f1:
-                    json.dump(main_text, f1)
+                file_folder_path = pathlib.Path(__file__).parent.absolute()
+                file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+                with open(file_folder_path, "w", encoding='utf-8') as data_file:
+                    json.dump(main_text, data_file)
+
                 # bpy.context.preferences.addons[__name__].preferences.note_text_blender = main_text
+                # bpy.context.preferences.use_preferences_save
             else:
                 item = self.item_scene(context)
                 item.text = main_text
@@ -259,7 +266,10 @@ class Note_Actions(bpy.types.Operator):
         elif action == 'blender_get':
             bpy.data.texts[file_name].clear()
             if header_note == True:
-                with open('note_text_blender.json') as f:
+                file_folder_path = pathlib.Path(__file__).parent.absolute()
+                file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+                with open(file_folder_path, encoding='utf-8') as f:
                     note_text_blender_json = json.load(f)
                 bpy.data.texts[file_name].write(note_text_blender_json)
             else:
@@ -268,7 +278,10 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender_delete':
             if header_note == True:
-                with open('note_text_blender.json', 'w') as f:
+                file_folder_path = pathlib.Path(__file__).parent.absolute()
+                file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+                with open(file_folder_path, 'w', encoding ='utf-8') as f:
                     json.dump('', f)
                 # bpy.context.preferences.addons[__name__].preferences.note_text_blender = ""
             else:
