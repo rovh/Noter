@@ -127,7 +127,7 @@ class Note_Actions(bpy.types.Operator):
 
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
-        note_text_blender = bpy.context.preferences.addons[__name__].preferences.note_text_blender
+        # note_text_blender = bpy.context.preferences.addons[__name__].preferences.note_text_blender
         note_text_blender_file = bpy.context.scene.note_text_blender_file
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
         use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
@@ -249,9 +249,8 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender':
             if header_note == True:
-                with open('note_text_blender.json', 'w') as f:
-                    json.dump(note_text_blender, f)
-                print('1212121212')
+                with open('note_text_blender.json', 'w') as f1:
+                    json.dump(main_text, f1)
                 # bpy.context.preferences.addons[__name__].preferences.note_text_blender = main_text
             else:
                 item = self.item_scene(context)
@@ -261,8 +260,8 @@ class Note_Actions(bpy.types.Operator):
             bpy.data.texts[file_name].clear()
             if header_note == True:
                 with open('note_text_blender.json') as f:
-                    note_text_blender = json.load(f)
-                bpy.data.texts[file_name].write(note_text_blender)
+                    note_text_blender_json = json.load(f)
+                bpy.data.texts[file_name].write(note_text_blender_json)
             else:
                 item = self.item_scene(context)
                 bpy.data.texts[file_name].write(item.text)
