@@ -42,7 +42,7 @@ bl_info = {
     "warning" : "",
     "category" : "Interface",
     "tracker_url": "https://github.com/rovh/Noter/issues",
-    "wiki_url": "https://github.com/rovh/Noter" ,
+    "wiki_url": "https://github.com/rovh/Noter#noter",
 
 }
 
