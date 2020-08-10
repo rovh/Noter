@@ -1,15 +1,17 @@
-# Noter 
+# <a name="noter">Noter</a>
 Noter is an add-on created to increase productivity in Blender by organizing the workflow.
 
 ---
 
 With Noter you can:
 
-* Annotate a specific object,  scene or file(.blend).
+* Annotate a specific object, scene or file(.blend).
+
+* Create notes lists for the object or scene.
 
 * Save the text in the Blender itself so that it will be available in any file(.blend).
 
-* Create note system using nodes. Thus, you can do something like a schema that will represent a chain of actions, for example, for one user or for the second if you work in a team.
+* Create notes tree using nodes. Thus, you can do something like a schema that will represent a chain of actions, for example, for one user or for the second if you work in a team.
 
 * Enable Noter Splash Screen for file(.blend) so as not to forget if there is anything unfinished left when you open a file(.blend).
 
@@ -39,7 +41,7 @@ The splash screen must be activated first. Then you need to save the file(.blend
 
 location: Editor Type > Notes Tree
 
-and Editor Type > Notes Tree Sidebar > Noter
+and Editor Type > Notes Tree > Sidebar > Noter
 
 ---
 
