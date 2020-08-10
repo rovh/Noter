@@ -13,7 +13,6 @@ With Noter you can:
 
 * Enable Noter Splash Screen for file(.blend) so as not to forget if there is anything unfinished left when you open a file(.blend).
 
----
 
 Noter can be divided into several parts:
 
@@ -24,17 +23,31 @@ Noter can be divided into several parts:
 
 ---
 
-# <a name="main_panel">Main Panel</a>
-"location" : "Text Editor > Sidebar > Noter Tab"
-Name of the file 
+## <a name="main_panel">Main Panel</a>
+location : Text Editor > Sidebar > Noter Tab
 
-# <a name="splash_screen">Splash Screen</a>
+At the top is the string for the file name. The default value is "Text".
+
+---
+
+## <a name="splash_screen">Splash Screen</a>
 The splash screen must be activated first. Then you need to save the file(.blend) and the next time you open the file(.blend) a splash screen will appear in a certain place (the position of the splash screen can be configured in the add-on preferences)
 
-# <a name="notes_tree">Notes Tree</a>
+---
 
-# <a name="notes_list">Notes List</a>
+## <a name="notes_tree">Notes Tree</a>
 
+location: Editor Type > Notes Tree
+
+and Editor Type > Notes Tree Sidebar > Noter
+
+---
+
+## <a name="notes_list">Notes List</a>
+
+There are two lists in total: for the object and for the scene.
+
+location: Editor Type > Properties > Scene or Object
 
 
 
