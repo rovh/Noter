@@ -35,10 +35,10 @@ import random
 bl_info = {
     "name" : "Noter",
     "author" : "Rovh",
-    "description" : "",
-    "blender" : (2, 83, 0),
+    "description" : "Noter is an add-on created to increase productivity in Blender by organizing the workflow.",
+    "blender" : (2, 83),
     "version" : (1, 0, 0),
-    "location" : "",
+    "location" : "Text Editor > Sidebar > Noter Tab",
     "warning" : "",
     "category" : "Interface"
 }
@@ -904,7 +904,13 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        row_main = layout.row(align = 0)
+
+        box = layout.box()
+
+        box.label(text = 'Splash Screen Position')
+
+
+        row_main = box.row(align = 0)
 
         col_1 = row_main.column(align = 1)
         col_1.separator(factor = 4)

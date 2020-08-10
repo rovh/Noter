@@ -204,7 +204,7 @@ class MyCustomTree(NodeTree):
     # Optional identifier string. If not explicitly defined, the python class name is used.
     bl_idname = 'CustomTreeType'
     # Label for nice name display
-    bl_label = "Notes"
+    bl_label = "Notes Tree"
     # Icon identifier
     bl_icon = 'FILE'
 
