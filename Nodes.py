@@ -24,7 +24,7 @@ class NodeOperator(bpy.types.Operator):
             return "Paint selected node (nodes)"
 
         elif properties.action == 'label':
-            return "Write label text in the label text of the active node"
+            return "Write label text from the label text of the active node"
         elif properties.action == 'label_all':
             return "Write label text in the node (or active node)"
 
@@ -112,12 +112,25 @@ class NodeOperator(bpy.types.Operator):
 
         elif action == 'colour':
 
+            if len(node_selected) == 0:
+                text = "No selected nodes was found"
+                war = "WARNING"
+                self.report({war}, text)
+                return {'FINISHED'}
+
             for i in node_selected:
                 # node_selected.use_custom_color = bpy.data.node_groups[node_tree.name].nodes[from_node_name].use_custom_color
                 i.use_custom_color = node_active.use_custom_color
                 i.color = node_active.color
 
         elif action == 'colour_all':
+
+            if len(node_selected) == 0:
+                text = "No selected nodes was found"
+                war = "WARNING"
+                self.report({war}, text)
+                return {'FINISHED'}
+
             for i in node_selected:
                 i.use_custom_color = True
                 i.color = bpy.context.scene.colorProperty
@@ -126,11 +139,25 @@ class NodeOperator(bpy.types.Operator):
 
 
         elif action == "label":
+
+            if len(node_selected) == 0:
+                text = "No selected nodes was found"
+                war = "WARNING"
+                self.report({war}, text)
+                return {'FINISHED'}
+
             for i in node_selected:
                 # i.use_custom_color = node_active.use_custom_color
                 i.label = node_active.label
 
         elif action == "label_all":
+
+            if len(node_selected) == 0:
+                text = "No selected nodes was found"
+                war = "WARNING"
+                self.report({war}, text)
+                return {'FINISHED'}
+
             for i in node_selected:
                 # i.use_custom_color = node_active.use_custom_color
                 i.label = bpy.context.scene.label_node_text
@@ -329,7 +356,12 @@ class MyCustomNode(Node, MyCustomTreeNode):
     #       a purely internal Python method and unknown to the node system!
 
     def draw_label(self):
-        return "Press f2"
+        # def draw_color(self, context, node):
+        # return (1.0, 0.4, 0.216, 1)
+        # return (1, 1, 0.035, .9)
+        # return (0.8, 0.8, 0.03, 1.000000)
+        return " "
+        # return "Press F2"
         # return self.my_bool
 
     def init(self, context):
@@ -467,6 +499,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     def insert_link(self, link):
         count = 0
+
         for i in self.inputs:
             if i.is_linked == True:
                 count += 1
