@@ -40,10 +40,9 @@ bl_info = {
     "version" : (1, 0, 0),
     "location" : "Text Editor > Sidebar > Noter Tab",
     "warning" : "",
-    "category" : "Interface"
-    # "tracker_url": "https://github.com/rovh/Noter/issues",
-    # "wiki_url": "https://github.com/rovh/Noter#noter",
-
+    "category" : "Interface",
+    "wiki_url": "https://github.com/rovh/Noter#noter",
+    "tracker_url": "https://github.com/rovh/Noter/issues",
 }
 
 
