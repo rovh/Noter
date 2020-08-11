@@ -320,8 +320,6 @@ class Note_Actions(bpy.types.Operator):
                 item = self.item_object(context)
                 item.text = ""
 
-
-
         # elif action == 'node':
         #     if header_note == True:
         #         bpy.context.active_object.note_text_object = main_text
@@ -560,14 +558,14 @@ class Note_Pop_Up_Operator(Operator):
 
         return find
 
-
     def execute(self, context):
         return {'FINISHED'}
 
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        row.label(text='' , icon="MOUSE_LMB_DRAG")
+        # row.label(text='' , icon="MOUSE_LMB_DRAG")
+        row.operator("window_manager.note_popup_operator_2",text='' , icon="MOUSE_LMB_DRAG").action = 'drag'
         row.alignment = 'RIGHT'
 
         row_text = layout.row(align = 1)
@@ -790,7 +788,7 @@ class Note_Pop_Up_Operator_2 (Operator):
         layout = self.layout
 
         if action == 'drag':
-            layout.label(text = 'You can drag this menu')
+            layout.label(text = 'You can drag this menu', icon = 'INFO')
         else:
             row = layout.row()
             # row.label(text='' , icon="MOUSE_LMB_DRAG")
@@ -1024,22 +1022,47 @@ def extra_draw_menu(self, context):
 def extra_draw_menu_2(self, context):
     layout = self.layout
 
-    layout.separator()
+    file_folder_path = pathlib.Path(__file__).parent.absolute()
+    file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
 
-    layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender'
+    with open(file_folder_path, encoding='utf-8') as f:
+        note_text_blender_json = json.load(f)
+    note_text_blender_json = bool(note_text_blender_json)
+    
+    find = False
+    for i in bpy.data.scenes:
+        if i.splash_screen == True:
+            find = True
+            break
 
-    layout.separator()
+    if note_text_blender_json == True:
 
-    layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
+        layout.separator()
+
+        layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender'
+
+    if find == True:
+        layout.separator()
+
+        layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
 
 def extra_draw_menu_3(self, context):
-    layout = self.layout
 
-    layout.separator(factor = 2)
+    find = False
+    for i in bpy.data.scenes:
+        if bool(i.note_text_blender_file) == True:
+            find = True
+            break
 
-    layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender_file'
+    if find == True:
 
-    # layout.separator()
+        layout = self.layout
+
+        layout.separator(factor = 2)
+
+        layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender_file'
+
+        # layout.separator()        
 
 
 def register():
