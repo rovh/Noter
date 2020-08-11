@@ -132,7 +132,11 @@ class Note_Actions(bpy.types.Operator):
         note_text_object = bpy.context.active_object.note_text_object
         note_text_scene = bpy.context.scene.note_text_scene
         # note_text_blender = bpy.context.preferences.addons[__name__].preferences.note_text_blender
-        note_text_blender_file = bpy.context.scene.note_text_blender_file
+        note_text_blender_file = ""
+        for i in bpy.data.scenes:
+            if bool(i.note_text_blender_file) == True:
+                note_text_blender_file = i.note_text_blender_file
+                break
         note_text_splash_screen = bpy.context.scene.note_text_splash_screen
         use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
 
@@ -440,8 +444,8 @@ class TEXT_PT_noter(Panel):
 
         column.separator(factor = 1)
 
-        box = column.box()
-        box.label(text = "Header Note", icon = 'TOPBAR')
+        # box = column.box()
+        # box.label(text = "Header Note", icon = 'TOPBAR')
 
 
             
@@ -771,31 +775,46 @@ class Note_Pop_Up_Operator_2 (Operator):
     bl_idname = "window_manager.note_popup_operator_2"
     bl_label = "Noter Pop-up Menu"
 
-    location_cursor: BoolProperty(default = True, options = {"SKIP_SAVE"})
+    action: StringProperty()
+    location_cursor: BoolProperty(default = False, options = {"SKIP_SAVE"})
 
     @classmethod
     def poll(cls, context):
-        find = False
-        for i in bpy.data.scenes:
-            if bool(i.note_text_blender_file) == True:
-                find = True
-                break
-
-        return find
+        return True
 
     def execute(self, context):
         return {'FINISHED'}
 
     def draw(self, context):
-        for i in bpy.data.scenes:
-            if bool(i.note_text_blender_file) == True:
-                find = i.note_text_blender_file
-                break
+        action = self.action
+        layout = self.layout
 
-        text = find
-        # text = bpy.context.scene.note_text_blender_file
-        if bool(text) == True:
-            draw_text(self, text)
+        if action == 'drag':
+            layout.label(text = 'You can drag this menu')
+        else:
+            row = layout.row()
+            # row.label(text='' , icon="MOUSE_LMB_DRAG")
+            row.operator("window_manager.note_popup_operator_2",text='' , icon="MOUSE_LMB_DRAG").action = 'drag'
+            row.alignment = 'RIGHT'
+
+        if action == 'blender':
+            file_folder_path = pathlib.Path(__file__).parent.absolute()
+            file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+            with open(file_folder_path, encoding='utf-8') as f:
+                note_text_blender_json = json.load(f)
+
+            draw_text(self, note_text_blender_json)
+
+        elif action == 'blender_file':
+
+            note_text_blender_file = ""
+            for i in bpy.data.scenes:
+                if bool(i.note_text_blender_file) == True:
+                    note_text_blender_file = i.note_text_blender_file
+                    break
+            draw_text(self, note_text_blender_file)
+
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
@@ -803,27 +822,30 @@ class Note_Pop_Up_Operator_2 (Operator):
         # bool_warning_global = settings.bool_warning_global
         # height = bpy.context.area.spaces.data.height
         # width = bpy.context.area.spaces.data.width
+        height = bpy.context.window.height
+        width = bpy.context.window.width
 
-        self.location_cursor = True
-        if self.location_cursor == True:
+        self.location_cursor = True if self.action == 'drag' else False
+        location_cursor = self.location_cursor
+
+        if location_cursor == True:
             return context.window_manager.invoke_props_dialog(self)
-            # return context.window_manager.invoke_popup(self)
         else:
             x = event.mouse_x
             y = event.mouse_y 
 
-            # location_x = height / 100 * 50
-            # location_y = width / 100 * 40
-            location_x = 300
-            location_y = 550
+            location_x = width * .5
+            location_y = height * .75
+            # location_x = 300
+            # location_y = 550
 
             bpy.context.window.cursor_warp(location_x , location_y)
 
             # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
 
-            # invoke = context.window_manager.invoke_props_dialog(self)
-            invoke = context.window_manager.invoke_popup(self, width=250)
+            invoke = context.window_manager.invoke_props_dialog(self)
+            # invoke = context.window_manager.invoke_popup(self, width=250)
             # return context.window_manager.invoke_popup(self)
             # return context.window_manager.invoke_props_popup(self, event)
             # return context.window_manager.invoke_confirm(self, event)
@@ -833,6 +855,7 @@ class Note_Pop_Up_Operator_2 (Operator):
             return invoke
 
         # return {'FINISHED'}
+
 
 class OBJECT_PT_note(Panel):
     bl_space_type = 'PROPERTIES'
@@ -998,6 +1021,27 @@ def extra_draw_menu(self, context):
     layout.operator("node.noter_operator", text="Set Color").action = 'colour'
     layout.operator("node.noter_operator", text="Set Label name").action = 'label'
 
+def extra_draw_menu_2(self, context):
+    layout = self.layout
+
+    layout.separator()
+
+    layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender'
+
+    layout.separator()
+
+    layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
+
+def extra_draw_menu_3(self, context):
+    layout = self.layout
+
+    layout.separator(factor = 2)
+
+    layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender_file'
+
+    # layout.separator()
+
+
 def register():
 
     for blender_class in blender_classes:
@@ -1042,6 +1086,8 @@ def register():
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
 
     bpy.types.NODE_MT_node.append(extra_draw_menu)
+    bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
+    bpy.types.TOPBAR_MT_file.append(extra_draw_menu_3)
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
@@ -1053,6 +1099,8 @@ def register():
 def unregister():
 
     bpy.types.NODE_MT_node.remove(extra_draw_menu)
+    bpy.types.TOPBAR_MT_app.remove(extra_draw_menu_2)
+    bpy.types.TOPBAR_MT_file.remove(extra_draw_menu_3)
 
     nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
