@@ -56,6 +56,13 @@ location: Editor Type > Properties > Scene or Object
 
 ## <a name="little_parts">Little Parts (Tips)</a>
 
+If Noter did not find the text the access button will not be displayed
+
+In order to read a specific note, you don't have to go to the Text Editor. You can access the note text in:
+* Topbar > Blender icon > Note(Blender Note) or Noter Splash Screen
+
+* Topbar > File > Note
+
 
 
 
