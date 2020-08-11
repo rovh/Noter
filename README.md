@@ -22,6 +22,7 @@ Noter can be divided into several parts:
 * <a href="#splash_screen">Splash Screen</a>
 * <a href="#notes_tree">Notes Tree</a>
 * <a href="#notes_list">Notes List</a>
+* <a href="#little_parts">Little Parts (Tips)</a>
 
 ---
 
@@ -50,6 +51,12 @@ and Editor Type > Notes Tree > Sidebar > Noter
 There are two lists in total: for the object and for the scene.
 
 location: Editor Type > Properties > Scene or Object
+
+---
+
+## <a name="little_parts">Little Parts (Tips)</a>
+
+
 
 
 

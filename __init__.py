@@ -107,18 +107,18 @@ class Note_Actions(bpy.types.Operator):
         else:
             header_note = True
 
-       
 
         if (action == 'object' or\
             action == 'object_get' or\
             action == 'object_delete') and\
-            context.active_object is None:
+            bpy.context.active_object is None:
 
-                text = "No Object was found"
+                text = "No Active Object was found"
                 war = "ERROR"
                 self.report({war}, text)
                 return {'FINISHED'}
 
+            
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
@@ -129,9 +129,12 @@ class Note_Actions(bpy.types.Operator):
             # return {'FINISHED'}
 
 
-        note_text_object = bpy.context.active_object.note_text_object
+
+        try:
+            note_text_object = bpy.context.active_object.note_text_object
+        except AttributeError:
+            pass
         note_text_scene = bpy.context.scene.note_text_scene
-        # note_text_blender = bpy.context.preferences.addons[__name__].preferences.note_text_blender
         note_text_blender_file = ""
         for i in bpy.data.scenes:
             if bool(i.note_text_blender_file) == True:
@@ -349,6 +352,7 @@ class Note_Actions(bpy.types.Operator):
 
         return {'FINISHED'}
        
+
     def item_object(self, context):
         act_obj = context.active_object
         idx = act_obj.notes_list_object_index
