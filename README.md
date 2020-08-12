@@ -56,7 +56,9 @@ location: Editor Type > Properties > Scene or Object
 
 ## <a name="little_parts">Little Parts (Tips)</a>
 
-If Noter did not find the text the access button will not be displayed
+If Noter didn't find the text the button won't be displayed.
+
+Noter Splash Screen button will not be displayed if the Splash Screen is not enabled.
 
 In order to read a specific note, you don't have to go to the Text Editor. You can access the note text in:
 * Topbar > Blender icon > Note(Blender Note) or Noter Splash Screen
