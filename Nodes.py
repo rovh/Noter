@@ -12,11 +12,11 @@ class NodeOperator(bpy.types.Operator):
     @classmethod
     def description(cls, context, properties):
         if properties.action == 'node':
-            return "Assign text to the node (or active node)"
+            return "Assign text to the active node"
         elif properties.action == 'node_get':
-            return "Get text from the node (or active node)"
+            return "Get text from the active node"
         elif properties.action == 'node_delete':
-            return "Delete text in the node (or active node)"
+            return "Delete text in the active node"
 
         elif properties.action == 'colour':
             return "Paint the nodes in the color of the active node"
@@ -26,7 +26,7 @@ class NodeOperator(bpy.types.Operator):
         elif properties.action == 'label':
             return "Write label text from the label text of the active node"
         elif properties.action == 'label_all':
-            return "Write label text in the node (or active node)"
+            return "Write label text in the selected node (nodes)"
 
     @classmethod
     def poll(cls, context):

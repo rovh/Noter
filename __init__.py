@@ -48,7 +48,7 @@ bl_info = {
 
 custom_scene_name = "..."
 
-class Note_Actions(bpy.types.Operator):
+class Noter_Actions(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "window_manager.export_note_text"
     bl_label = ""
@@ -83,20 +83,28 @@ class Note_Actions(bpy.types.Operator):
             return "Delete text in the active scene"
 
 
-        elif properties.action == 'blender':
+        elif properties.action == 'blender_file':
             return "Assign text to the .blend file"
-        elif properties.action == 'blender_get':
+        elif properties.action == 'blender_file_get':
             return "Get text from the .blend file"
-        elif properties.action == 'blender_delete':
+        elif properties.action == 'blender_file_delete':
             return "Delete text in the .blend file"
 
 
+        elif properties.action == 'blender':
+            return "Assign text to Blender (Noter)"
+        elif properties.action == 'blender_get':
+            return "Get text from Blender (Noter)"
+        elif properties.action == 'blender_delete':
+            return "Delete text in Blender (Noter)"
+
+
         elif properties.action == 'splash_screen':
-            return "Assign text to the Noter's splash screen"
+            return "Assign text to the Noter Splash Screen"
         elif properties.action == 'splash_screen_get':
-            return "Get text from the Noter's splash screen"
+            return "Get text from the Noter Splash Screen"
         elif properties.action == 'splash_screen_delete':
-            return "Delete text in the Noter's splash screen"
+            return "Delete text in the Noter Splash Screen"
  
     def execute(self, context):    
 
@@ -581,10 +589,10 @@ class TEXT_PT_noter(Panel):
             col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
             col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
 
-class Global_Bool(Operator):
+class Noter_Splash_Screen_Switch(Operator):
     """Tooltip"""
     bl_idname = "window_manager.global_bool"
-    bl_label = "111"
+    bl_label = ""
     bl_description = 'Display Noter splash screen on startup \n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     bl_options = {'UNDO'}
@@ -619,12 +627,16 @@ def draw_text(self, text):
     text_parts_list = text.split('\n')
     layout = self.layout
     box = layout.box()
+    row = box.row(align = 1)
+    row.scale_x = 2.7
+    row.alignment = 'CENTER'
     # column.separator(factor=.5)
-    col = box.column(align = 1)
+    col = row.column(align = 1)
     for i in text_parts_list:
-        row = col.row(align = 1)
+        row = col.row(align = 0)
         row.label(text = i)
         row.scale_y = 0
+
 
 class Note_Pop_Up_Operator(Operator):
     bl_idname = "window_manager.note_popup_operator"
@@ -634,11 +646,13 @@ class Note_Pop_Up_Operator(Operator):
 
     @classmethod
     def poll(cls, context):
-        find = False
-        for i in bpy.data.scenes:
-            if i.splash_screen == True:
-                find = True
-                break
+
+        find = bpy.data.scenes[custom_scene_name].splash_screen
+        # find = False
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         find = True
+        #         break
 
         return find
 
@@ -651,6 +665,7 @@ class Note_Pop_Up_Operator(Operator):
         # row.label(text='' , icon="MOUSE_LMB_DRAG")
         row.operator("window_manager.note_popup_operator_2",text='' , icon="MOUSE_LMB_DRAG").action = 'drag'
         row.alignment = 'RIGHT'
+
 
         row_text = layout.row(align = 1)
         # row_text.scale_y = 0.2
@@ -782,6 +797,8 @@ class Note_Pop_Up_Operator(Operator):
 
         row_text.separator(factor = 5)
 
+    
+
 
         # col_f = layout.column_flow(columns=3, align=False)
         # col_f = layout.grid_flow(row_major=1, columns=1, even_columns=False, even_rows=0, align=1)
@@ -799,11 +816,11 @@ class Note_Pop_Up_Operator(Operator):
 
 
         # text = bpy.context.window_manager.noter.note_text_blender_file
-        find = None
-        for i in bpy.data.scenes:
-            if bool(i.note_text_splash_screen) == True:
-                find = i.note_text_splash_screen
-                break
+        # find = None
+        # for i in bpy.data.scenes:
+        #     if bool(i.note_text_splash_screen) == True:
+        #         find = i.note_text_splash_screen
+        #         break
 
         # find = None
         # for i in bpy.data.scenes:
@@ -811,7 +828,8 @@ class Note_Pop_Up_Operator(Operator):
         #         find = i.note_text_splash_screen
         #         break
 
-        text = find
+        # text = find
+        text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
         if bool(text) == True:
             draw_text(self, text)
 
@@ -823,6 +841,19 @@ class Note_Pop_Up_Operator(Operator):
         # width = bpy.context.area.spaces.data.width
         height = bpy.context.window.height
         width = bpy.context.window.width
+
+
+        text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+        text_parts_list = text.split('\n')
+        length = 0
+        for row in text_parts_list:
+            row = len(row)
+            if row > length:
+                length = row
+        # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
+        # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
+        width_menu = length * 12
+        
 
         self.location_cursor = False
         if self.location_cursor == True:
@@ -841,7 +872,7 @@ class Note_Pop_Up_Operator(Operator):
             bpy.context.window.cursor_warp(location_x , location_y)
 
 
-            invoke = context.window_manager.invoke_props_dialog(self)
+            invoke = context.window_manager.invoke_props_dialog(self, width=width_menu)
             # return context.window_manager.invoke_popup(self, width=700)
             # return context.window_manager.invoke_popup(self)
             # return context.window_manager.invoke_props_popup(self, event)
@@ -1058,13 +1089,13 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 blender_classes = [
     TEXT_PT_noter,
     # Noter_Props,
-    Note_Actions,
+    Noter_Actions,
     Note_Pop_Up_Operator,
     Note_Pop_Up_Operator_2,
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
-    Global_Bool]
+    Noter_Splash_Screen_Switch]
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
@@ -1141,7 +1172,7 @@ def extra_draw_menu_3(self, context):
 
     find = bpy.data.scenes[custom_scene_name].note_text_blender_file
     find = bool(find)
-    
+
     # find = False
     # for i in bpy.data.scenes:
     #     if bool(i.note_text_blender_file) == True:
@@ -1181,7 +1212,7 @@ def register():
     bpy.app.handlers.load_post.append(load_handler)
 
 
-    bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text')
+    bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
