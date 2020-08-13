@@ -167,7 +167,6 @@ class Noter_Actions(bpy.types.Operator):
 
     #splash_screen
 
-
         # note_text_splash_screen = ""
         # for i in bpy.data.scenes:
         #     if i.splash_screen == True:
@@ -490,6 +489,7 @@ class Noter_Actions(bpy.types.Operator):
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
 
+
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
@@ -575,6 +575,7 @@ class TEXT_PT_noter(Panel):
 
 
         row = col.row(align = 1)
+
 
         find = False
         try:
