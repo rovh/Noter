@@ -576,7 +576,7 @@ class TEXT_PT_noter(Panel):
         row.scale_x = .5
 
         col.separator(factor = 1)
-        if bpy.context.scene.splash_screen == True:
+        if find == True:
             col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
             col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
             col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
@@ -595,7 +595,8 @@ class Global_Bool(Operator):
         if bpy.data.scenes.find(custom_scene_name) == -1:
             bpy.data.scenes.new(custom_scene_name)
 
-        if bpy.context.scene.splash_screen == True:
+
+        if bpy.data.scenes[custom_scene_name].splash_screen == True:
             bpy.data.scenes[custom_scene_name].splash_screen = False
         else:
             bpy.data.scenes[custom_scene_name].splash_screen = True
