@@ -2,6 +2,7 @@ import bpy
 import json
 import os
 import pathlib
+import time
 
 # from .__init__ import draw_text
 
@@ -96,7 +97,10 @@ class Note_Actions(bpy.types.Operator):
         elif properties.action == 'splash_screen_delete':
             return "Delete text in the Noter's splash screen"
  
-    def execute(self, context):       
+    def execute(self, context):    
+
+        # t1 = time.time()
+        t1 = time.perf_counter()
 
         action = self.action
         header_note = self.header_note
@@ -346,6 +350,10 @@ class Note_Actions(bpy.types.Operator):
         #         item = self.item_object(context)
         #         item.text = ""
 
+        # t2 = time.time()
+        t2 = time.perf_counter()
+
+        print(f"Programm Time:{t2 - t1}")
 
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
         print("Warning because of Noter")
@@ -599,7 +607,7 @@ class Note_Pop_Up_Operator(Operator):
         ic = random.choice(ic)
 
         def label_draw(length):
-            for i in range(0, length):
+            for _ in range(0, length):
                 column_text.label(icon = ic)
 
 
