@@ -648,6 +648,25 @@ def draw_text(self, text):
         row.label(text = i)
         row.scale_y = 0
 
+def calculate_width_menu(self):
+
+    if bpy.data.scenes.find(custom_scene_name) == -1:
+        bpy.data.scenes.new(custom_scene_name)
+
+    text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+    text_parts_list = text.split('\n')
+    length = 25
+    for row in text_parts_list:
+        row = len(row)
+        if row > length:
+            length = row
+    # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
+    # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
+    width_menu = length * 12
+
+
+    return width_menu
+
 
 class Note_Pop_Up_Operator(Operator):
     bl_idname = "window_manager.note_popup_operator"
@@ -663,6 +682,8 @@ class Note_Pop_Up_Operator(Operator):
             find = bpy.data.scenes[custom_scene_name].splash_screen
         except KeyError:
             pass
+
+            # find = False
         # find = False
         # for i in bpy.data.scenes:
         #     if i.splash_screen == True:
@@ -857,19 +878,7 @@ class Note_Pop_Up_Operator(Operator):
         height = bpy.context.window.height
         width = bpy.context.window.width
 
-        if bpy.data.scenes.find(custom_scene_name) == -1:
-            bpy.data.scenes.new(custom_scene_name)
-
-        text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
-        text_parts_list = text.split('\n')
-        length = 25
-        for row in text_parts_list:
-            row = len(row)
-            if row > length:
-                length = row
-        # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
-        # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
-        width_menu = length * 12
+        width_menu = calculate_width_menu(self)
         
 
         self.location_cursor = False
@@ -945,7 +954,6 @@ class Note_Pop_Up_Operator_2 (Operator):
                     break
             draw_text(self, note_text_blender_file)
 
-
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
         # settings = bpy.context.preferences.addons[__name__].preferences
@@ -954,6 +962,8 @@ class Note_Pop_Up_Operator_2 (Operator):
         # width = bpy.context.area.spaces.data.width
         height = bpy.context.window.height
         width = bpy.context.window.width
+
+        width_menu = calculate_width_menu(self)
 
         self.location_cursor = True if self.action == 'drag' else False
         location_cursor = self.location_cursor
@@ -974,7 +984,7 @@ class Note_Pop_Up_Operator_2 (Operator):
             # bpy.context.window.cursor_warp(x + move_x, y + move_y)
 
 
-            invoke = context.window_manager.invoke_props_dialog(self)
+            invoke = context.window_manager.invoke_props_dialog(self, width = width_menu)
             # invoke = context.window_manager.invoke_popup(self, width=250)
             # return context.window_manager.invoke_popup(self)
             # return context.window_manager.invoke_props_popup(self, event)
@@ -1124,7 +1134,10 @@ def load_handler(dummy):
 
     # if bpy.context.scene.splash_screen == True:
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
-    bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    try:
+        bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+    except RuntimeError:
+        pass
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
