@@ -1,8 +1,9 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
+# import time
 
 
-class NodeOperator(bpy.types.Operator):
+class NodeOperators(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_operator"
     bl_label = ""
@@ -11,22 +12,41 @@ class NodeOperator(bpy.types.Operator):
 
     @classmethod
     def description(cls, context, properties):
-        if properties.action == 'node':
-            return "Assign text to the active node"
-        elif properties.action == 'node_get':
-            return "Get text from the active node"
-        elif properties.action == 'node_delete':
-            return "Delete text in the active node"
 
-        elif properties.action == 'colour':
-            return "Paint the nodes in the color of the active node"
-        elif properties.action == 'colour_all':
-            return "Paint selected node (nodes)"
 
-        elif properties.action == 'label':
-            return "Write label text from the label text of the active node"
-        elif properties.action == 'label_all':
-            return "Write label text in the selected node (nodes)"
+        is_node = bool(  properties.action.count("*")  ) 
+
+        if is_node == True:
+            action = properties.action
+            action = action.split("*")
+            action = action[0]
+
+            if action == 'node':
+                return "Assign text to the current node"
+            elif action == 'node_get':
+                return "Get text from the current node"
+            elif action == 'node_delete':
+                return "Delete text in the current node"
+        else:
+
+            if properties.action == 'node':
+                return "Assign text to the active node"
+            elif properties.action == 'node_get':
+                return "Get text from the active node"
+            elif properties.action == 'node_delete':
+                return "Delete text in the active node"
+
+            elif properties.action == 'colour':
+                return "Paint the nodes in the color of the active node"
+            elif properties.action == 'colour_all':
+                return "Paint selected node (nodes)"
+
+            elif properties.action == 'label':
+                return "Write label text from the label text of the active node"
+            elif properties.action == 'label_all':
+                return "Write label text in the selected node (nodes)"
+
+        
 
     @classmethod
     def poll(cls, context):
@@ -190,10 +210,11 @@ class NodeOperator(bpy.types.Operator):
         return {'FINISHED'}
 
   
-class Node_Bool_Operator(bpy.types.Operator):
+class Note_Node_Bool_Operator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_bool_operator"
-    bl_label = "Simple Node Operator"
+    bl_label = ""
+    bl_description = "Mute or unmute current node"
 
     # my_bool: bpy.props.FloatProperty()
     # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
@@ -484,36 +505,49 @@ class MyCustomNode(Node, MyCustomTreeNode):
         for i in self.inputs:
             if i.is_linked == True:
                 count += 1
+        free_inputs = len(self.inputs) - count
 
-        if len(self.inputs) - count == 0:
+
+        if free_inputs == 0:
             self.inputs.new('CustomSocketType', "")
             # self.inputs.new('CustomSocketType_2', "")
-
-        elif len(self.inputs) - count > 1:
-
-            for i in self.inputs:
-                if i.is_linked == False:
-                    # if i.bl_idname == 'CustomSocketType_2':
-                    self.inputs.remove(i)
-                    break
-
-    def insert_link(self, link):
-        count = 0
-
-        for i in self.inputs:
-            if i.is_linked == True:
-                count += 1
-
-        if len(self.inputs) - count == 0:
-            self.inputs.new('CustomSocketType', "")
-        elif len(self.inputs) - count == 1:
-            pass
-        elif len(self.inputs) - count > 1:
+        elif free_inputs > 1:
 
             for i in self.inputs:
-                if i.is_linked == False:
+
+                if i.is_linked == False and free_inputs > 1:
                     self.inputs.remove(i)
+                    free_inputs -= 1
+                elif i.is_linked == True:
+                    pass
+                else:
                     break
+    
+
+    # def insert_link(self, link):
+    #     count = 0
+    #     for i in self.inputs:
+    #         if i.is_linked == True:
+    #             count += 1
+    #     free_inputs = len(self.inputs) - count
+
+
+
+    #     if free_inputs == 0:
+    #         self.inputs.new('CustomSocketType', "")
+    #         # self.inputs.new('CustomSocketType_2', "")
+
+    #     elif free_inputs > 1:
+
+    #         for i in self.inputs:
+
+    #             if i.is_linked == False and free_inputs > 1:
+    #                 self.inputs.remove(i)
+    #                 free_inputs -= 1
+    #             elif i.is_linked == True:
+    #                 pass
+    #             else:
+    #                 break
 
 
 
@@ -652,11 +686,11 @@ Nodes_blender_classes = (
     MyCustomTree,
     MyCustomSocket,
     MyCustomNode,
-    NodeOperator,
+    NodeOperators,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color_2,
     MyCustomSocket_2,
-    Node_Bool_Operator,
+    Note_Node_Bool_Operator,
     
 )
 
