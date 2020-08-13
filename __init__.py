@@ -648,12 +648,8 @@ def draw_text(self, text):
         row.label(text = i)
         row.scale_y = 0
 
-def calculate_width_menu(self):
+def calculate_width_menu(self, text):
 
-    if bpy.data.scenes.find(custom_scene_name) == -1:
-        bpy.data.scenes.new(custom_scene_name)
-
-    text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
     text_parts_list = text.split('\n')
     length = 25
     for row in text_parts_list:
@@ -878,7 +874,11 @@ class Note_Pop_Up_Operator(Operator):
         height = bpy.context.window.height
         width = bpy.context.window.width
 
-        width_menu = calculate_width_menu(self)
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
+        text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+        width_menu = calculate_width_menu(self, text)
         
 
         self.location_cursor = False
@@ -947,11 +947,19 @@ class Note_Pop_Up_Operator_2 (Operator):
 
         elif action == 'blender_file':
 
-            note_text_blender_file = ""
-            for i in bpy.data.scenes:
-                if bool(i.note_text_blender_file) == True:
-                    note_text_blender_file = i.note_text_blender_file
-                    break
+            if bpy.data.scenes.find(custom_scene_name) == -1:
+                bpy.data.scenes.new(custom_scene_name)
+
+            note_text_blender_file = bpy.data.scenes[custom_scene_name].note_text_blender_file
+
+
+            # note_text_blender_file = ""
+            # for i in bpy.data.scenes:
+            #     if bool(i.note_text_blender_file) == True:
+            #         note_text_blender_file = i.note_text_blender_file
+            #         break
+
+
             draw_text(self, note_text_blender_file)
 
     def invoke(self, context, event): 
@@ -963,13 +971,29 @@ class Note_Pop_Up_Operator_2 (Operator):
         height = bpy.context.window.height
         width = bpy.context.window.width
 
-        width_menu = calculate_width_menu(self)
+
+        if self.action == 'blender':
+            file_folder_path = pathlib.Path(__file__).parent.absolute()
+            file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+            with open(file_folder_path, encoding='utf-8') as f:
+                text = json.load(f)
+
+        elif self.action == 'blender_file':
+
+            if bpy.data.scenes.find(custom_scene_name) == -1:
+                bpy.data.scenes.new(custom_scene_name)
+
+            text = bpy.data.scenes[custom_scene_name].note_text_blender_file
+
+        width_menu = calculate_width_menu(self, text)
+
 
         self.location_cursor = True if self.action == 'drag' else False
         location_cursor = self.location_cursor
 
         if location_cursor == True:
-            return context.window_manager.invoke_props_dialog(self)
+            return context.window_manager.invoke_props_dialog(self, width = width_menu)
         else:
             x = event.mouse_x
             y = event.mouse_y 
@@ -1128,12 +1152,17 @@ blender_classes = Notes_list_blender_classes + blender_classes
 
 @persistent
 def load_handler(dummy):
+
+    # action = False
+    # try:
+    #     action = bpy.data.scenes[custom_scene_name].splash_screen
+    # except KeyError:
+    #     pass
     # print("Load Handler:", bpy.data.filepath)
     # if bpy.context.window_manager.noter.splash_screen == True: 
     # if bpy.context.space_data.splash_screen == True:
-
-    # if bpy.context.scene.splash_screen == True:
     # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
+    # if action == True:
     try:
         bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
     except RuntimeError:
