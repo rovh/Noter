@@ -158,10 +158,6 @@ class Noter_Actions(bpy.types.Operator):
         note_text_scene = bpy.context.scene.note_text_scene
         
     #blender_file
-        if bpy.data.scenes.find(custom_scene_name) == -1:
-            bpy.data.scenes.new(custom_scene_name)
-
-        note_text_blender_file = bpy.data.scenes[custom_scene_name].note_text_blender_file
 
         # note_text_blender_file = ""
         # for i in bpy.data.scenes:
@@ -170,11 +166,6 @@ class Noter_Actions(bpy.types.Operator):
         #         break
 
     #splash_screen
-
-        if bpy.data.scenes.find(custom_scene_name) == -1:
-            bpy.data.scenes.new(custom_scene_name)
-
-        note_text_splash_screen = bpy.data.scenes[custom_scene_name].note_text_splash_screen
 
 
         # note_text_splash_screen = ""
@@ -294,6 +285,11 @@ class Noter_Actions(bpy.types.Operator):
         elif action == "blender_file_get":
             bpy.data.texts[file_name].clear()
             if header_note == True:
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                note_text_blender_file = bpy.data.scenes[custom_scene_name].note_text_blender_file
+
                 bpy.data.texts[file_name].write(note_text_blender_file)
             else:
                 item = self.item_object(context)
@@ -372,6 +368,11 @@ class Noter_Actions(bpy.types.Operator):
         elif action == "splash_screen_get":
             bpy.data.texts[file_name].clear()
             if header_note == True:
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                note_text_splash_screen = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+                
                 bpy.data.texts[file_name].write(note_text_splash_screen)
             else:
                 item = self.item_object(context)
@@ -498,7 +499,7 @@ class TEXT_PT_noter(Panel):
     def draw(self, context):
         # noter = bpy.context.window_manager.noter
         scene = bpy.context.scene
-        preferences = bpy.context.preferences.addons[__name__].preferences
+        # preferences = bpy.context.preferences.addons[__name__].preferences
         
         
         layout = self.layout
@@ -575,8 +576,11 @@ class TEXT_PT_noter(Panel):
 
         row = col.row(align = 1)
 
-
-        find = bpy.data.scenes[custom_scene_name].splash_screen
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].splash_screen
+        except KeyError:
+            pass
         
         # find = False
         # for i in bpy.data.scenes:
@@ -653,7 +657,11 @@ class Note_Pop_Up_Operator(Operator):
     @classmethod
     def poll(cls, context):
 
-        find = bpy.data.scenes[custom_scene_name].splash_screen
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].splash_screen
+        except KeyError:
+            pass
         # find = False
         # for i in bpy.data.scenes:
         #     if i.splash_screen == True:
@@ -834,7 +842,7 @@ class Note_Pop_Up_Operator(Operator):
         #         find = i.note_text_splash_screen
         #         break
 
-        # text = find
+        # text = ""
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
         if bool(text) == True:
             draw_text(self, text)
@@ -848,10 +856,12 @@ class Note_Pop_Up_Operator(Operator):
         height = bpy.context.window.height
         width = bpy.context.window.width
 
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
 
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
         text_parts_list = text.split('\n')
-        length = 0
+        length = 25
         for row in text_parts_list:
             row = len(row)
             if row > length:
@@ -1154,8 +1164,11 @@ def extra_draw_menu_2(self, context):
 
 
 
-
-    find = bpy.data.scenes[custom_scene_name].splash_screen
+    find = False
+    try:
+        find = bpy.data.scenes[custom_scene_name].splash_screen
+    except KeyError:
+        pass
     # find = False
     # for i in bpy.data.scenes:
     #     if i.splash_screen == True:
@@ -1175,9 +1188,13 @@ def extra_draw_menu_2(self, context):
 
 def extra_draw_menu_3(self, context):
 
-
-    find = bpy.data.scenes[custom_scene_name].note_text_blender_file
-    find = bool(find)
+    find = False
+    try:
+        find = bpy.data.scenes[custom_scene_name].note_text_blender_file
+        find = bool(find)
+    except KeyError:
+        pass
+    
 
     # find = False
     # for i in bpy.data.scenes:
