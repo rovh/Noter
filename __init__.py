@@ -2,7 +2,7 @@ import bpy
 import json
 import os
 import pathlib
-import time
+# import time
 
 # from .__init__ import draw_text
 
@@ -46,6 +46,7 @@ bl_info = {
     "tracker_url": "https://github.com/rovh/Noter/issues",
 }
 
+custom_scene_name = "..."
 
 class Note_Actions(bpy.types.Operator):
     """Tooltip"""
@@ -99,7 +100,7 @@ class Note_Actions(bpy.types.Operator):
  
     def execute(self, context):    
 
-        t1 = time.perf_counter()
+        # t1 = time.perf_counter()
         # t1 = time.perf_counter()
 
         action = self.action
@@ -133,20 +134,46 @@ class Note_Actions(bpy.types.Operator):
             # return {'FINISHED'}
 
 
-
+    #object
         try:
             note_text_object = bpy.context.active_object.note_text_object
         except AttributeError:
             pass
+        
+    #scene
         note_text_scene = bpy.context.scene.note_text_scene
-        note_text_blender_file = ""
-        for i in bpy.data.scenes:
-            if bool(i.note_text_blender_file) == True:
-                note_text_blender_file = i.note_text_blender_file
-                break
-        note_text_splash_screen = bpy.context.scene.note_text_splash_screen
-        use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
+        
+    #blender_file
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
 
+        note_text_blender_file = bpy.data.scenes[custom_scene_name].note_text_blender_file
+
+        # note_text_blender_file = ""
+        # for i in bpy.data.scenes:
+        #     if bool(i.note_text_blender_file) == True:
+        #         note_text_blender_file = i.note_text_blender_file
+        #         break
+
+    #splash_screen
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
+        note_text_splash_screen = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+
+
+        # note_text_splash_screen = ""
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         note_text_splash_screen = i.note_text_splash_screen
+        #         break
+    
+    
+    
+    #
+        
+        use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
 
         if use_file_path == 'OPENED':
             try:
@@ -238,8 +265,14 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'blender_file':
             if header_note == True:
-                for i in bpy.data.scenes:
-                    i.note_text_blender_file = main_text
+
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                bpy.data.scenes[custom_scene_name].note_text_blender_file = main_text
+
+                # for i in bpy.data.scenes:
+                #     i.note_text_blender_file = main_text
             else:
                 item = self.item_object(context)
                 item.text = main_text
@@ -254,8 +287,13 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == "blender_file_delete":
             if header_note == True:
-                for i in bpy.data.scenes:
-                    i.note_text_blender_file = ""
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                bpy.data.scenes[custom_scene_name].note_text_blender_file = ""
+                
+                # for i in bpy.data.scenes:
+                #     i.note_text_blender_file = ""
             else:
                 item = self.item_object(context)
                 item.text = ""
@@ -305,8 +343,14 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == 'splash_screen':
             if header_note == True:
-                for i in bpy.data.scenes:
-                    i.note_text_splash_screen = main_text   
+
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                bpy.data.scenes[custom_scene_name].note_text_splash_screen = main_text
+
+                # for i in bpy.data.scenes:
+                #     i.note_text_splash_screen = main_text   
             else:
                 item = self.item_object(context)
                 item.text = main_text
@@ -321,11 +365,17 @@ class Note_Actions(bpy.types.Operator):
 
         elif action == "splash_screen_delete":
             if header_note == True:
-                for i in bpy.data.scenes:
-                    i.note_text_splash_screen = ""  
+                if bpy.data.scenes.find(custom_scene_name) == -1:
+                    bpy.data.scenes.new(custom_scene_name)
+
+                bpy.data.scenes[custom_scene_name].note_text_splash_screen = ''
+
+                # for i in bpy.data.scenes:
+                #     i.note_text_splash_screen = ""  
             else:
                 item = self.item_object(context)
                 item.text = ""
+
 
         # elif action == 'node':
         #     if header_note == True:
@@ -350,10 +400,10 @@ class Note_Actions(bpy.types.Operator):
         #         item = self.item_object(context)
         #         item.text = ""
 
-        t2 = time.perf_counter()
+        # t2 = time.perf_counter()
         # t2 = time.perf_counter()
 
-        print(f"\nProgramm Time:{t2 - t1}\n")
+        # print(f"\nProgramm Time:{t2 - t1}\n")
 
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
         print("Warning because of Noter")
@@ -505,12 +555,22 @@ class TEXT_PT_noter(Panel):
         # if bpy.context.space_data.splash_screen == True:
         col.separator(factor = 1)
         
+
+
+
+
         row = col.row(align = 1)
-        find = False
-        for i in bpy.data.scenes:
-            if i.splash_screen == True:
-                find = True
-                break
+
+
+        find = bpy.data.scenes[custom_scene_name].splash_screen
+        
+        # find = False
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         find = True
+        #         break
+
+
         row.operator("window_manager.global_bool", text = 'Splash Screen', icon = 'WINDOW', depress= find)
         row.alignment = 'RIGHT'
         row.scale_x = .5
@@ -531,13 +591,24 @@ class Global_Bool(Operator):
 
     
     def execute(self, context):
-        
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
         if bpy.context.scene.splash_screen == True:
-            for i in bpy.data.scenes:
-                i.splash_screen = False
+            bpy.data.scenes[custom_scene_name].splash_screen = False
         else:
-            for i in bpy.data.scenes:
-                i.splash_screen = True
+            bpy.data.scenes[custom_scene_name].splash_screen = True
+
+            
+                
+        
+        # if bpy.context.scene.splash_screen == True:
+        #     for i in bpy.data.scenes:
+        #         i.splash_screen = False
+        # else:
+        #     for i in bpy.data.scenes:
+        #         i.splash_screen = True
 
         return {'FINISHED'}
 
@@ -1034,18 +1105,23 @@ def extra_draw_menu(self, context):
 def extra_draw_menu_2(self, context):
     layout = self.layout
 
+
+
     file_folder_path = pathlib.Path(__file__).parent.absolute()
     file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
 
     with open(file_folder_path, encoding='utf-8') as f:
         note_text_blender_json = json.load(f)
     note_text_blender_json = bool(note_text_blender_json)
-    
-    find = False
-    for i in bpy.data.scenes:
-        if i.splash_screen == True:
-            find = True
-            break
+
+
+
+    find = bpy.data.scenes[custom_scene_name].splash_screen
+    # find = False
+    # for i in bpy.data.scenes:
+    #     if i.splash_screen == True:
+    #         find = True
+    #         break
 
     if note_text_blender_json == True:
 
