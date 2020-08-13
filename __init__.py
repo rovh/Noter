@@ -99,8 +99,8 @@ class Note_Actions(bpy.types.Operator):
  
     def execute(self, context):    
 
-        # t1 = time.time()
-        t1 = time.perf_counter()
+        t1 = time.clock()
+        # t1 = time.perf_counter()
 
         action = self.action
         header_note = self.header_note
@@ -350,8 +350,8 @@ class Note_Actions(bpy.types.Operator):
         #         item = self.item_object(context)
         #         item.text = ""
 
-        # t2 = time.time()
-        t2 = time.perf_counter()
+        t2 = time.clock()
+        # t2 = time.perf_counter()
 
         print(f"Programm Time:{t2 - t1}")
 
