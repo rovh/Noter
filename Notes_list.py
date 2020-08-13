@@ -79,7 +79,7 @@ class Notes_List_actions(Operator):
 class Notes_List_actions_add(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_object.list_action_add"
-    bl_label = "Add"
+    bl_label = ""
     bl_description = "Add item"
     bl_options = {'REGISTER'}
     # bl_options = {'BLOCKING'}
@@ -93,6 +93,10 @@ class Notes_List_actions_add(Operator):
     # def invoke(self, context, event):
     #     self.unit_input = bpy.context.window_manager.setprecisemesh.length
     #     return context.window_manager.invoke_props_dialog(self)
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Add"
 
     def execute(self, context):
 
@@ -249,7 +253,7 @@ class Notes_List_actions_scene(Operator):
 class Notes_List_actions_add_scene(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_scene.list_action_add"
-    bl_label = "Add"
+    bl_label = ""
     bl_description = "Add item"
     bl_options = {'REGISTER'}
     # bl_options = {'BLOCKING'}
@@ -263,6 +267,11 @@ class Notes_List_actions_add_scene(Operator):
     # def invoke(self, context, event):
     #     self.unit_input = bpy.context.window_manager.setprecisemesh.length
     #     return context.window_manager.invoke_props_dialog(self)
+
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Add"
 
     def execute(self, context):
 
@@ -355,7 +364,7 @@ class NOTES_LIST_UL_items_scene(UIList):
         box = column_main.box()
         column = box.column(align = 1)
         row_header = column.row(align = 1)
-        row_header.scale_y = .7
+        row_header.scale_y = .8
 
 
         if bpy.context.scene.notes_list_scene[index].bool == True:
@@ -476,7 +485,7 @@ class NOTES_LIST_UL_items(UIList):
         box = column_main.box()
         column = box.column(align = 1)
         row_header = column.row(align = 1)
-        row_header.scale_y = .7
+        row_header.scale_y = .8
 
 
         if bpy.context.object.notes_list_object[index].bool == True:
@@ -632,14 +641,14 @@ class Notes_List_PT(Panel):
 
 class Notes_List_Collection(PropertyGroup):
 
-    unit: FloatProperty(
-        name="Angle",
-        description="Angle",
-        min=-360.0, max=360.0,
-        default=0.0,
-        step = 100.0,
-        unit="ROTATION",
-        precision = 6,)
+    # unit: FloatProperty(
+    #     name="Angle",
+    #     description="Angle",
+    #     min=-360.0, max=360.0,
+    #     default=0.0,
+    #     step = 100.0,
+    #     unit="ROTATION",
+    #     precision = 6,)
     text: StringProperty()
     bool: BoolProperty()
 

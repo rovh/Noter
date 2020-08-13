@@ -61,6 +61,7 @@ class Noter_Actions(bpy.types.Operator):
 
     @classmethod
     def description(cls, context, properties):
+
         if properties.action == 'object':
             return "Assign text to the active object"
         elif properties.action == 'object_get':
@@ -68,10 +69,10 @@ class Noter_Actions(bpy.types.Operator):
         elif properties.action == 'object_delete':
             return "Delete text in the active object"
 
-        elif properties.action == 'object*' or properties.action == 'scene*':
-            return "Import text to the active object"
-        elif properties.action == 'object_get*' or properties.action == 'scene_get*':
-            return "Export text from the active object"
+        elif properties.action == 'object*':
+            return "Import text to the active object list"
+        elif properties.action == 'object_get*':
+            return "Export text from the active object list"
         
 
 
@@ -81,6 +82,11 @@ class Noter_Actions(bpy.types.Operator):
             return "Get text from the active scene"
         elif properties.action == 'scene_delete':
             return "Delete text in the active scene"
+
+        elif properties.action == 'scene*':
+            return "Import text to the scene list"
+        elif properties.action == 'scene_get*':
+            return "Export text from the scene list"
 
 
         elif properties.action == 'blender_file':

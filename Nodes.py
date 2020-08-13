@@ -209,7 +209,6 @@ class NodeOperators(bpy.types.Operator):
         # node_link = node_tree.links.new(socket_in, socket_out)
         return {'FINISHED'}
 
-  
 class Note_Node_Bool_Operator(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_bool_operator"
@@ -250,7 +249,7 @@ class MyCustomTree(NodeTree):
     # Description string
     bl_description = 'Notes Nodes'
     # Optional identifier string. If not explicitly defined, the python class name is used.
-    bl_idname = 'CustomTreeType'
+    bl_idname = 'Noter_CustomTreeType'
     # Label for nice name display
     bl_label = "Notes Tree"
     # Icon identifier
@@ -264,7 +263,7 @@ class MyCustomSocket(NodeSocket):
     # Description string
     '''Custom node socket type'''
     # Optional identifier string. If not explicitly defined, the python class name is used.
-    bl_idname = 'CustomSocketType'
+    bl_idname = 'Noter_CustomSocketType'
     # Label for nice name display
     bl_label = "Custom Node Socket"
 
@@ -294,7 +293,7 @@ class MyCustomSocket(NodeSocket):
         # if len(node.inputs)
         # for i in range(0, len(node.inputs) ):
             # if i == 0: 
-            # self.inputs.new('CustomSocketType', "")
+            # self.inputs.new('Noter_CustomSocketType', "")
 
         # text = node.text
         # if text.count("\n") == 0:
@@ -346,7 +345,7 @@ class MyCustomSocket_2(NodeSocket):
 class MyCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
-        return ntree.bl_idname == 'CustomTreeType'
+        return ntree.bl_idname == 'Noter_CustomTreeType'
 
 # Derived from the Node base type.
 class MyCustomNode(Node, MyCustomTreeNode):
@@ -354,7 +353,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Description string
     '''A custom node'''
     # Optional identifier string. If not explicitly defined, the python class name is used.
-    bl_idname = 'CustomNodeType'
+    bl_idname = 'Noter_CustomNodeType'
     # Label for nice name display
     bl_label = "Custom Node"
     # Icon identifier
@@ -387,7 +386,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
     def init(self, context):
         
-        self.inputs.new('CustomSocketType', "")
+        self.inputs.new('Noter_CustomSocketType', "")
         # self.inputs.new('CustomSocketType_2', "")
         # self.inputs[0].display_shape = 'DIAMOND'
         
@@ -396,7 +395,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
         # self.inputs.new('NodeSocketColor', "")
 
         # self.outputs.new('NodeSocketColor', "")
-        self.outputs.new('CustomSocketType', "")
+        self.outputs.new('Noter_CustomSocketType', "")
         # self.outputs.new('CustomSocketType_2', "")
         # self.outputs.new('NodeSocketColor', "are")
         # self.outputs.new('NodeSocketFloat', "you")
@@ -441,7 +440,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
         
 
-        # # self.inputs.new('CustomSocketType', "")
+        # # self.inputs.new('Noter_CustomSocketType', "")
 
         text = self.text
         if text.count("\n") == 0:
@@ -497,7 +496,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
         # col.operator("window_manager.export_note_text", text = 'Node', icon = 'IMPORT').action = "node"
         # col.operator("window_manager.export_note_text", text = '', icon = 'EXPORT').action = "node_get"
         # col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
-        pass
+        # pass
 
     def update(self):
 
@@ -509,7 +508,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
 
         if free_inputs == 0:
-            self.inputs.new('CustomSocketType', "")
+            self.inputs.new('Noter_CustomSocketType', "")
             # self.inputs.new('CustomSocketType_2', "")
         elif free_inputs > 1:
 
@@ -534,7 +533,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
 
     #     if free_inputs == 0:
-    #         self.inputs.new('CustomSocketType', "")
+    #         self.inputs.new('Noter_CustomSocketType', "")
     #         # self.inputs.new('CustomSocketType_2', "")
 
     #     elif free_inputs > 1:
@@ -578,7 +577,7 @@ from nodeitems_utils import NodeCategory, NodeItem
 class MyNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
-        return context.space_data.tree_type == 'CustomTreeType'
+        return context.space_data.tree_type == 'Noter_CustomTreeType'
 
 class NODE_PT_active_node_generic(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
@@ -657,26 +656,26 @@ class NODE_PT_active_node_color_2 (bpy.types.Panel):
 # all categories in a list
 node_categories = [
     # identifier, label, items list
-    # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("CustomNodeType") ),
+    # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
 
-    # NodeItem("CustomNodeType"),
+    # NodeItem("Noter_CustomNodeType"),
 
     MyNodeCategory('SOMENODES', "Note", items=[
         # our basic node
-    NodeItem("CustomNodeType", label = 'Note Node'),
+    NodeItem("Noter_CustomNodeType", label = 'Note Node'),
     ]),
 
-    # MyNodeCategory("CustomNodeType"),
+    # MyNodeCategory("Noter_CustomNodeType"),
 
     MyNodeCategory('OTHERNODES', "Other Notes", items=[
         # the node item can have additional settings,
         # which are applied to new nodes
         # NB: settings values are stored as string expressions,
         # for this reason they should be converted to strings using repr()
-        NodeItem("CustomNodeType", label="Without extra buttons", settings={
+        NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
             "draw_extra": repr("+"),
         }),
-        NodeItem("CustomNodeType", label="Without extra buttons +", settings={
+        NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
             "draw_extra": repr(""),
         }),
     ]),
