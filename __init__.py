@@ -1117,6 +1117,7 @@ def extra_draw_menu_2(self, context):
 
 
 
+
     find = bpy.data.scenes[custom_scene_name].splash_screen
     # find = False
     # for i in bpy.data.scenes:
@@ -1137,11 +1138,15 @@ def extra_draw_menu_2(self, context):
 
 def extra_draw_menu_3(self, context):
 
-    find = False
-    for i in bpy.data.scenes:
-        if bool(i.note_text_blender_file) == True:
-            find = True
-            break
+
+    find = bpy.data.scenes[custom_scene_name].note_text_blender_file
+    find = bool(find)
+    
+    # find = False
+    # for i in bpy.data.scenes:
+    #     if bool(i.note_text_blender_file) == True:
+    #         find = True
+    #         break
 
     if find == True:
 
