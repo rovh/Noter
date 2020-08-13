@@ -99,7 +99,7 @@ class Note_Actions(bpy.types.Operator):
  
     def execute(self, context):    
 
-        t1 = time.clock()
+        t1 = time.perf_counter()
         # t1 = time.perf_counter()
 
         action = self.action
@@ -350,10 +350,10 @@ class Note_Actions(bpy.types.Operator):
         #         item = self.item_object(context)
         #         item.text = ""
 
-        t2 = time.clock()
+        t2 = time.perf_counter()
         # t2 = time.perf_counter()
 
-        print(f"Programm Time:{t2 - t1}")
+        print(f"\nProgramm Time:{t2 - t1}\n")
 
         bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
         print("Warning because of Noter")
@@ -1130,7 +1130,6 @@ def register():
 
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
 
-    
 def unregister():
 
     bpy.types.NODE_MT_node.remove(extra_draw_menu)
