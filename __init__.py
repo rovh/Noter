@@ -121,6 +121,7 @@ class Noter_Actions(bpy.types.Operator):
         action = self.action
         header_note = self.header_note
 
+        
 
         if action.count("*") != 0:
             action = self.action.replace("*", "")
@@ -128,13 +129,16 @@ class Noter_Actions(bpy.types.Operator):
         else:
             header_note = True
 
+        action_type = action.split("_")
+        action_type = action_type[0]
+
         if header_note == True:
             pass
         else:
-            if len(bpy.context.active_object.notes_list_object) == 0:
+            if len(bpy.context.active_object.notes_list_object) == 0 and action_type == 'object':
                 bpy.context.active_object.notes_list_object.add()
 
-            elif len(bpy.context.scene.notes_list_scene) == 0:
+            elif len(bpy.context.scene.notes_list_scene) == 0 and action_type == 'scene':
                 bpy.context.scene.notes_list_scene.add()
 
         if (action == 'object' or\
