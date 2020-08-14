@@ -134,6 +134,9 @@ class Noter_Actions(bpy.types.Operator):
             if len(bpy.context.active_object.notes_list_object) == 0:
                 bpy.context.active_object.notes_list_object.add()
 
+            elif len(bpy.context.scene.notes_list_scene) == 0:
+                bpy.context.scene.notes_list_scene.add()
+
         if (action == 'object' or\
             action == 'object_get' or\
             action == 'object_delete') and\
@@ -145,7 +148,7 @@ class Noter_Actions(bpy.types.Operator):
                 return {'FINISHED'}
 
 
-        if len(bpy.data.texts.values()) == 0:
+        if len(bpy.data.texts.values()) == 0 and header_note == True:
             bpy.ops.text.new()
             try:
                 bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
