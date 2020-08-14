@@ -117,6 +117,7 @@ class Noter_Actions(bpy.types.Operator):
         # t1 = time.perf_counter()
         # t1 = time.perf_counter()
 
+
         action = self.action
         header_note = self.header_note
 
@@ -127,6 +128,11 @@ class Noter_Actions(bpy.types.Operator):
         else:
             header_note = True
 
+        if header_note == True:
+            pass
+        else:
+            if len(bpy.context.active_object.notes_list_object) == 0:
+                bpy.context.active_object.notes_list_object.add()
 
         if (action == 'object' or\
             action == 'object_get' or\
@@ -138,15 +144,20 @@ class Noter_Actions(bpy.types.Operator):
                 self.report({war}, text)
                 return {'FINISHED'}
 
-            
 
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
-            bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
+            try:
+                bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
+            except AttributeError:
+                pass
+
             text = f'A new text file " {bpy.context.scene.file_name} " was created'
             war = "INFO"
             self.report({war}, text)
             # return {'FINISHED'}
+
+
 
     #object
         try:
@@ -409,10 +420,13 @@ class Noter_Actions(bpy.types.Operator):
         act_obj = context.active_object
         idx = act_obj.notes_list_object_index
 
+
+
         try:
             item = act_obj.notes_list_object[idx]
         except IndexError:
             pass
+
         return item
 
     def item_scene(self, context):
