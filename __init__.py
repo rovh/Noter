@@ -147,7 +147,6 @@ class Noter_Actions(bpy.types.Operator):
             self.report({war}, text)
             # return {'FINISHED'}
 
-
     #object
         try:
             note_text_object = bpy.context.active_object.note_text_object
@@ -173,8 +172,6 @@ class Noter_Actions(bpy.types.Operator):
         #         note_text_splash_screen = i.note_text_splash_screen
         #         break
     
-    
-    
     #
         
         use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
@@ -199,7 +196,7 @@ class Noter_Actions(bpy.types.Operator):
                         self.report({war}, text)
 
                     elif action.count('get') == 0 and action.count('delete') == 0:
-                        text = "Wrong File"
+                        text = "Opened Wrong File"
                         war = "WARNING"
                         self.report({war}, text)
                         # file_name = bpy.context.space_data.text.name
@@ -391,29 +388,6 @@ class Noter_Actions(bpy.types.Operator):
                 item.text = ""
 
 
-        # elif action == 'node':
-        #     if header_note == True:
-        #         bpy.context.active_object.note_text_object = main_text
-        #     else:
-        #         print(11111111111111111111111111111111)
-        #         item = self.item_object(context)
-        #         item.text = main_text
-
-        # elif action == "node_get":
-        #     bpy.data.texts[file_name].clear()
-        #     if header_note == True:
-        #         bpy.data.texts[file_name].write(note_text_object)
-        #     else:
-        #         item = self.item_object(context)
-        #         bpy.data.texts[file_name].write(item.text)
-                
-        # elif action == "node_delete":
-        #     if header_note == True:
-        #         bpy.context.active_object.note_text_object = ""
-        #     else:
-        #         item = self.item_object(context)
-        #         item.text = ""
-
         # t2 = time.perf_counter()
         # t2 = time.perf_counter()
 
@@ -506,14 +480,6 @@ class TEXT_PT_noter(Panel):
         column = layout.column(align = 1)
         column.scale_y = 1.3
 
-        # row = column.row(align = 1)
-        # row_sub = row.row(align = 1)
-        # row_sub.prop(preferences, "use_file_path", text = '')
-        # row_sub.scale_x = .4
-        # row_sub.alignment = 'RIGHT'
-        # if preferences.use_file_path == 'NAME':
-            # column.separator(factor = .2)
-            # column.prop(scene, "file_name", text = '')
         column.prop(scene, "file_name", text = '')
         
 
@@ -523,7 +489,6 @@ class TEXT_PT_noter(Panel):
         # box.label(text = "Header Note", icon = 'TOPBAR')
 
 
-            
         box = column.box()
         col = box.column(align = 1)
         col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
@@ -551,31 +516,11 @@ class TEXT_PT_noter(Panel):
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
 
 
-
-
-        # box = column.box()
-        # col = box.column(align = 1)
-        # col.operator("node.noter_operator", text = 'Node', icon = 'NODE').action = "node"
-        # col.operator("node.noter_operator", text = '', icon = 'FILE_TICK').action = "node_get"
-        # col.operator("node.noter_operator", text = '', icon = 'TRASH').action = "node_delete"
-
-
         box = column.box()
         col = box.column(align = 1)
-    
-        # settings = bpy.context.preferences.addons[__name__].preferences
-        # col.prop (bpy.context.space_data, 'splash_screen', text = 'Show Splash Screen')
-        # col.prop (settings, 'splash_screen', text = 'Show Splash Screen')
-        # col.prop (bpy.context.scene, 'splash_screen', text = 'Show Splash Screen')
-        # if bpy.context.space_data.splash_screen == True:
         col.separator(factor = 1)
-        
-
-
-
-
         row = col.row(align = 1)
-
+        
 
         find = False
         try:
