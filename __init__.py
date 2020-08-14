@@ -549,7 +549,7 @@ class Noter_Splash_Screen_Switch(Operator):
     """Tooltip"""
     bl_idname = "window_manager.global_bool"
     bl_label = ""
-    bl_description = 'Display Noter splash screen on startup \n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    bl_description = 'Display Noter splash screen on startup \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     bl_options = {'UNDO'}
 
