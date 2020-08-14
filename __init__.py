@@ -120,6 +120,7 @@ class Noter_Actions(bpy.types.Operator):
         action = self.action
         header_note = self.header_note
 
+
         if action.count("*") != 0:
             action = self.action.replace("*", "")
             header_note = False
@@ -142,7 +143,7 @@ class Noter_Actions(bpy.types.Operator):
         if len(bpy.data.texts.values()) == 0:
             bpy.ops.text.new()
             bpy.data.texts[bpy.context.space_data.text.name].name = bpy.context.scene.file_name
-            text = "A new text file was created"
+            text = f'A new text file " {bpy.context.scene.file_name} " was created'
             war = "INFO"
             self.report({war}, text)
             # return {'FINISHED'}
@@ -171,11 +172,9 @@ class Noter_Actions(bpy.types.Operator):
         #     if i.splash_screen == True:
         #         note_text_splash_screen = i.note_text_splash_screen
         #         break
-    
     #
         
         use_file_path = bpy.context.preferences.addons[__name__].preferences.use_file_path
-
         if use_file_path == 'OPENED':
             try:
                 # for i in bpy.context.workspace:
@@ -184,19 +183,26 @@ class Noter_Actions(bpy.types.Operator):
                 file_name = bpy.data.screens['Scripting'].areas.data.text.name
             except AttributeError:
                 pass
-
         else:
+
             file_name = bpy.context.scene.file_name
             try:
                 if bpy.context.space_data.text.name != file_name:
                     if action.count('get'):
-                        bpy.context.space_data.text = bpy.data.texts[file_name]
-                        text = "File was changed"
-                        war = "INFO"
-                        self.report({war}, text)
+                        if bpy.data.texts.find(file_name) != -1:
+                            bpy.context.space_data.text = bpy.data.texts[file_name]
+                            text = f'File was changed to " {file_name} " '
+                            war = "INFO"
+                            self.report({war}, text)
+                        else:
+                            bpy.ops.text.new()
+                            bpy.data.texts[bpy.context.space_data.text.name].name = file_name
+                            text = f'A new text file " {file_name} " was created'
+                            war = "INFO"
+                            self.report({war}, text)
 
                     elif action.count('get') == 0 and action.count('delete') == 0:
-                        text = "Opened Wrong File"
+                        text = 'The name of the open file does not match the name of the files used by "Noter"'
                         war = "WARNING"
                         self.report({war}, text)
                         # file_name = bpy.context.space_data.text.name
