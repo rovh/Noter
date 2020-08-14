@@ -874,7 +874,7 @@ class Note_Pop_Up_Operator_2 (Operator):
         layout = self.layout
 
         if action == 'drag':
-            layout.label(text = 'You can drag this menu', icon = 'INFO')
+            layout.label(text = 'You can drag this menu by clicking on its upper part', icon = 'INFO')
         else:
             row = layout.row()
             # row.label(text='' , icon="MOUSE_LMB_DRAG")
@@ -931,7 +931,10 @@ class Note_Pop_Up_Operator_2 (Operator):
 
             text = bpy.data.scenes[custom_scene_name].note_text_blender_file
 
-        width_menu = calculate_width_menu(self, text)
+        try:
+            width_menu = calculate_width_menu(self, text)
+        except UnboundLocalError:
+            width_menu = 300
 
 
         self.location_cursor = True if self.action == 'drag' else False
