@@ -31,10 +31,18 @@ location : Text Editor > Sidebar > Noter Tab
 
 At the top is the string for the file name. The default value is "Text".
 
+<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/preview" target="_self">
+<img src="https://drive.google.com/uc?id=1O75lKkJTEh75S7mN_vYhetghH0JN6D_k" width=50% height=50% alt = "Angle" style="border-radius: 30px">
+</a>
+
 ---
 
 ## <a name="splash_screen">Splash Screen</a>
 The splash screen must be activated first. Then you need to save the file(.blend) and the next time you open the file(.blend) a splash screen will appear in a certain place (the position of the splash screen can be configured in the add-on preferences)
+
+<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/preview" target="_self">
+<img src="https://drive.google.com/uc?id=1fswSj_7y-ph_SHo7O936x75fYLq9boB7" width=50% height=50% alt = "Angle" style="border-radius: 30px">
+</a>
 
 ---
 
@@ -44,6 +52,10 @@ location: Editor Type > Notes Tree
 
 and Editor Type > Notes Tree > Sidebar > Noter
 
+<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/view?usp=sharing" target="_self">
+<img src="https://drive.google.com/uc?id=1qpzrk_6Fuv3cNP7KKeB7vjVXeMIO77O3" width=50% height=50% alt = "Angle" style="border-radius: 30px">
+</a>
+
 ---
 
 ## <a name="notes_list">Notes List</a>
@@ -51,6 +63,10 @@ and Editor Type > Notes Tree > Sidebar > Noter
 There are two lists in total: for the object and for the scene.
 
 location: Editor Type > Properties > Scene or Object
+
+<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/preview" target="_self">
+<img src="https://drive.google.com/uc?id=19xcVv-NO4e-P34BdNdX4q8pQLaEaCqf2" width=50% height=50% alt = "Angle" style="border-radius: 30px">
+</a>
 
 ---
 
