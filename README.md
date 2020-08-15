@@ -1,3 +1,5 @@
+<img src="https://drive.google.com/uc?id=1L6vw73U_L5SX9BbGr17lIMHe2sjl9mya" width=40% height=40% alt = "Angle" style="border-radius: 30px">
+
 # <a name="noter">Noter</a>
 Noter is an add-on created to increase productivity in Blender by organizing the workflow.
 
