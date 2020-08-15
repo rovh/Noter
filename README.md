@@ -31,7 +31,7 @@ location : Text Editor > Sidebar > Noter Tab
 
 At the top is the string for the file name. The default value is "Text".
 
-<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/preview" target="_self">
+<a href="https://drive.google.com/file/d/1iLbnHZaA4FgbqWaHYwNxOZAYpditLvU8/preview" target="_self">
 <img src="https://drive.google.com/uc?id=1O75lKkJTEh75S7mN_vYhetghH0JN6D_k" width=50% height=50% alt = "Angle" style="border-radius: 30px">
 </a>
 
@@ -52,7 +52,7 @@ location: Editor Type > Notes Tree
 
 and Editor Type > Notes Tree > Sidebar > Noter
 
-<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/view?usp=sharing" target="_self">
+<a href="https://drive.google.com/file/d/1H3OKPr7niHAGkgj6TClW4gxgmCj1uLig/view?usp=sharing" target="_self">
 <img src="https://drive.google.com/uc?id=1qpzrk_6Fuv3cNP7KKeB7vjVXeMIO77O3" width=50% height=50% alt = "Angle" style="border-radius: 30px">
 </a>
 
@@ -64,7 +64,7 @@ There are two lists in total: for the object and for the scene.
 
 location: Editor Type > Properties > Scene or Object
 
-<a href="https://drive.google.com/file/d/1QwMsLH8qhrqiApOA7hRhGlOWFxWSVg4i/preview" target="_self">
+<a href="https://drive.google.com/file/d/1Et7CKsmfrPyk9lKljM1PT0U9GhmONf9J/preview" target="_self">
 <img src="https://drive.google.com/uc?id=19xcVv-NO4e-P34BdNdX4q8pQLaEaCqf2" width=50% height=50% alt = "Angle" style="border-radius: 30px">
 </a>
 
