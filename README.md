@@ -52,7 +52,7 @@ location: Editor Type > Notes Tree
 
 and Editor Type > Notes Tree > Sidebar > Noter
 
-<a href="https://drive.google.com/file/d/1H3OKPr7niHAGkgj6TClW4gxgmCj1uLig/view?usp=sharing" target="_self">
+<a href="https://drive.google.com/file/d/1H3OKPr7niHAGkgj6TClW4gxgmCj1uLig/preview" target="_self">
 <img src="https://drive.google.com/uc?id=1qpzrk_6Fuv3cNP7KKeB7vjVXeMIO77O3" width=50% height=50% alt = "Angle" style="border-radius: 30px">
 </a>
 
