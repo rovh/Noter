@@ -81,6 +81,8 @@ In order to read a specific note, you don't have to go to the Text Editor. You c
 
 * Topbar > File > Note
 
+---
+
 
 
 
