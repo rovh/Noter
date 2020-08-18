@@ -1192,7 +1192,7 @@ def load_handler(dummy):
     # bpy.context.scene.frame_current = 1
 
 
-def extra_draw_menu(self, context):
+def my_extra_draw_menu(self, context):
     layout = self.layout
 
     layout.separator()
@@ -1200,7 +1200,7 @@ def extra_draw_menu(self, context):
     layout.operator("node.noter_operator", text="Set Color").action = 'colour'
     layout.operator("node.noter_operator", text="Set Label name").action = 'label'
 
-def extra_draw_menu_2(self, context, mode = "normal_location"):
+def my_extra_draw_menu_2(self, context, mode = "normal_location"):
     preferences = bpy.context.preferences.addons[__name__].preferences
     if preferences.add_elements_to_menus == True:
 
@@ -1251,7 +1251,7 @@ def extra_draw_menu_2(self, context, mode = "normal_location"):
 
             layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
 
-def extra_draw_menu_3(self, context, mode = "normal_location"):
+def my_extra_draw_menu_3(self, context, mode = "normal_location"):
     preferences = bpy.context.preferences.addons[__name__].preferences
     if preferences.add_elements_to_menus == True:
 
@@ -1298,8 +1298,8 @@ class TOPBAR_MT_notes(bpy.types.Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_AREA'
-        extra_draw_menu_3(self, context, "custom_menu_location")
-        extra_draw_menu_2(self, context, "custom_menu_location")
+        my_extra_draw_menu_3(self, context, "custom_menu_location")
+        my_extra_draw_menu_2(self, context, "custom_menu_location")
 
 def add_to_the_topbar(self, context):
     preferences = bpy.context.preferences.addons[__name__].preferences
@@ -1326,6 +1326,7 @@ blender_classes = [
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
+# print(blender_classes)
 
 def register():
 
@@ -1370,45 +1371,45 @@ def register():
 
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
 
-
-    bpy.types.NODE_MT_node.append(extra_draw_menu)
-    try:
-        bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
-    except AttributeError:
-        bpy.types.TOPBAR_MT_window.append(extra_draw_menu_2)
-
-    bpy.types.TOPBAR_MT_file.append(extra_draw_menu_3)
-
-    bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
-
-
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
         soft_min = 0.0, soft_max = 1.0)
 
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
 
+
+    # bpy.types.NODE_MT_node.append(extra_draw_menu)
+    # try:
+    
+    bpy.types.TOPBAR_MT_app.append(my_extra_draw_menu_2)
+    # except AttributeError:
+        # bpy.types.TOPBAR_MT_window.append(extra_draw_menu_2)
+
+    bpy.types.TOPBAR_MT_file.append(my_extra_draw_menu_3)
+
+    bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
+
 def unregister():
 
 
-    bpy.types.NODE_MT_node.remove(extra_draw_menu)
+    bpy.types.NODE_MT_node.remove(my_extra_draw_menu)
     try:
-        bpy.types.TOPBAR_MT_app.remove(extra_draw_menu_2)
+        bpy.types.TOPBAR_MT_app.remove(my_extra_draw_menu_2)
     except AttributeError:
-        bpy.types.TOPBAR_MT_window.remove(extra_draw_menu_2)
+        bpy.types.TOPBAR_MT_window.remove(my_extra_draw_menu_2)
 
-    bpy.types.TOPBAR_MT_file.remove(extra_draw_menu_3)
+    bpy.types.TOPBAR_MT_file.remove(my_extra_draw_menu_3)
 
     bpy.types.TOPBAR_MT_editor_menus.remove(add_to_the_topbar)
 
 
 
-    nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
     from bpy.utils import unregister_class
     for cls in reversed(Nodes_blender_classes):
         unregister_class(cls)
 
+    nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
     # if my_handler in bpy.app.handlers.frame_change_post:
     #     bpy.app.handlers.frame_change_post.remove(my_handler)
