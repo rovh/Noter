@@ -1088,6 +1088,8 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
+        layout.separator(factor = .5)
+
         column = layout.column(align = True)
         
         row = column.row(align = True)
@@ -1095,6 +1097,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         row.scale_y = 1.2
 
         box = column.box()
+
 
         if self.preference_type == "SPLASH_SCREEN":
 
@@ -1148,6 +1151,10 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.scale_x = 1.5
 
             box.separator(factor = .1)
+
+
+
+        layout.separator(factor = 2)
         
 
 @persistent
@@ -1193,12 +1200,24 @@ def extra_draw_menu(self, context):
     layout.operator("node.noter_operator", text="Set Color").action = 'colour'
     layout.operator("node.noter_operator", text="Set Label name").action = 'label'
 
-def extra_draw_menu_2(self, context, mode = 1):
+def extra_draw_menu_2(self, context, mode = "normal_location"):
     preferences = bpy.context.preferences.addons[__name__].preferences
     if preferences.add_elements_to_menus == True:
 
-        layout = self.layout
+        if type(self) == bpy.types.TOPBAR_MT_window:
+            text = "Note (File)"
+            icon = 'FILE'
 
+        elif mode == "normal_location":
+            text = "Note"
+            icon = 'FILE'
+
+        elif mode == "custom_menu_location":
+            text = "Blender (Noter)"
+            icon = 'BLENDER'
+        
+
+        layout = self.layout
 
 
         file_folder_path = pathlib.Path(__file__).parent.absolute()
@@ -1223,13 +1242,6 @@ def extra_draw_menu_2(self, context, mode = 1):
 
         if note_text_blender_json == True:
 
-            if mode == 1:
-                text = "Note"
-                icon = 'FILE'
-            elif mode == 2:
-                text = "Blender (Noter)"
-                icon = 'BLENDER'
-
             layout.separator()
 
             layout.operator("window_manager.note_popup_operator_2", text=text, icon = icon).action = 'blender'
@@ -1239,15 +1251,16 @@ def extra_draw_menu_2(self, context, mode = 1):
 
             layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
 
-def extra_draw_menu_3(self, context, mode = 1):
+def extra_draw_menu_3(self, context, mode = "normal_location"):
     preferences = bpy.context.preferences.addons[__name__].preferences
     if preferences.add_elements_to_menus == True:
 
-        if mode == 1:
+        if mode == "normal_location":
             text = "Note"
             icon = 'FILE'
             separator_factor = 2
-        elif mode == 2:
+            
+        elif mode == "custom_menu_location":
             text = "File"
             icon = 'FILE_FOLDER'
             separator_factor = 1
@@ -1285,8 +1298,8 @@ class TOPBAR_MT_notes(bpy.types.Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_AREA'
-        extra_draw_menu_3(self, context, 2)
-        extra_draw_menu_2(self, context, 2)
+        extra_draw_menu_3(self, context, "custom_menu_location")
+        extra_draw_menu_2(self, context, "custom_menu_location")
 
 def add_to_the_topbar(self, context):
     preferences = bpy.context.preferences.addons[__name__].preferences
