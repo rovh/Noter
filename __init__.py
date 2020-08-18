@@ -2,6 +2,7 @@ import bpy
 import json
 import os
 import pathlib
+import nodeitems_utils
 # import time
 
 # from .__init__ import draw_text
@@ -1369,7 +1370,7 @@ def register():
     for cls in Nodes_blender_classes:
         register_class(cls)
 
-    nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
+    nodeitems_utils.register_node_categories('NOTER_CUSTOM_NODES', node_categories)
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
@@ -1404,12 +1405,12 @@ def unregister():
 
 
 
+    nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
 
     from bpy.utils import unregister_class
     for cls in reversed(Nodes_blender_classes):
         unregister_class(cls)
 
-    nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
     # if my_handler in bpy.app.handlers.frame_change_post:
     #     bpy.app.handlers.frame_change_post.remove(my_handler)
