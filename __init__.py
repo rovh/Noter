@@ -1274,9 +1274,17 @@ def register():
 
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
 
+
+
     bpy.types.NODE_MT_node.append(extra_draw_menu)
-    bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
+    try:
+        bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
+    except AttributeError:
+        bpy.types.TOPBAR_MT_window.append(extra_draw_menu_2)
+
     bpy.types.TOPBAR_MT_file.append(extra_draw_menu_3)
+
+
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
@@ -1286,9 +1294,16 @@ def register():
 
 def unregister():
 
+
     bpy.types.NODE_MT_node.remove(extra_draw_menu)
-    bpy.types.TOPBAR_MT_app.remove(extra_draw_menu_2)
+    try:
+        bpy.types.TOPBAR_MT_app.remove(extra_draw_menu_2)
+    except AttributeError:
+        bpy.types.TOPBAR_MT_window.remove(extra_draw_menu_2)
+
     bpy.types.TOPBAR_MT_file.remove(extra_draw_menu_3)
+
+
 
     nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
 
