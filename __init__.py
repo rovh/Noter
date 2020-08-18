@@ -1060,6 +1060,26 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             ('NAME', "Name", "")),
         default = 'NAME')
 
+    preference_type: bpy.props.EnumProperty(
+        items=(
+            ('SPLASH_SCREEN', "Splash Screen", ""),
+            ('INTERFACE', "Interface", "")),
+        default = 'SPLASH_SCREEN')
+
+    add_custom_menu_to_header_bar_menu: bpy.props.BoolProperty(
+        name="bool",
+        description="",
+        default=False,
+        )
+    
+    add_elements_to_menus: bpy.props.BoolProperty(
+        name="bool",
+        description="",
+        default=True,
+        )
+
+
+
     # use_opened_file_path: BoolProperty(
             # name="bool",
             # description="",
@@ -1068,62 +1088,67 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-
-        box = layout.box()
-
-        box.label(text = 'Splash Screen Position')
-
-
-        row_main = box.row(align = 0)
-
-        col_1 = row_main.column(align = 1)
-        col_1.separator(factor = 4)
-
-        row = col_1.row(align = 1)
-
-        row.label(icon = 'BACK')
-        row.label(icon = 'TOPBAR')
-        row.label(icon = 'FORWARD')
-        row.alignment = 'CENTER'
-
-        col_1.separator(factor = 2.7)
-
-        col_1.prop(self, 'splash_screen_location_x', text = 'X')
-
-
-
-        row_main.separator(factor = 3)
-
-
-
-        col_2 = row_main.column(align = 1)
-        row = col_2.row(align = 1)
-        row.alignment = 'CENTER'
-
-        col_sub = row.column(align = 1)
-        col_sub.label(icon = 'SORT_DESC')
-        col_sub.label(icon = 'TOPBAR')
-        col_sub.label(icon = 'SORT_ASC')
+        column = layout.column(align = True)
         
-        col_2.prop(self, 'splash_screen_location_y', text = 'Y')
+        row = column.row(align = True)
+        row.prop(self, 'preference_type', expand = True)
+        row.scale_y = 1.2
+
+        box = column.box()
+
+        if self.preference_type == "SPLASH_SCREEN":
+
+            box.label(text = 'Splash Screen Position')
+
+
+            row_main = box.row(align = 0)
+
+            col_1 = row_main.column(align = 1)
+            col_1.separator(factor = 4)
+
+            row = col_1.row(align = 1)
+
+            row.label(icon = 'BACK')
+            row.label(icon = 'TOPBAR')
+            row.label(icon = 'FORWARD')
+            row.alignment = 'CENTER'
+
+            col_1.separator(factor = 2.7)
+
+            col_1.prop(self, 'splash_screen_location_x', text = 'X')
+
+
+
+            row_main.separator(factor = 3)
+
+
+
+            col_2 = row_main.column(align = 1)
+            row = col_2.row(align = 1)
+            row.alignment = 'CENTER'
+
+            col_sub = row.column(align = 1)
+            col_sub.label(icon = 'SORT_DESC')
+            col_sub.label(icon = 'TOPBAR')
+            col_sub.label(icon = 'SORT_ASC')
+            
+            col_2.prop(self, 'splash_screen_location_y', text = 'Y')
+
+            box.separator(factor = .1)
+
+        elif self.preference_type == "INTERFACE":
+            box.label(text = 'Interface')
+
+            row = box.row(align = False)
+            row = row.row(align = True)
+
+            row.prop(self, 'add_custom_menu_to_header_bar_menu', text = 'Add a new custom header menu to the topbar', toggle=True)
+            row.prop(self, 'add_elements_to_menus', text = 'Add buttons to the existing topbar menus', toggle=True)
+            row.alignment = 'LEFT'
+            row.scale_x = 1.5
+
+            box.separator(factor = .1)
         
-
-
-
-
-
-blender_classes = [
-    TEXT_PT_noter,
-    # Noter_Props,
-    Noter_Actions,
-    Note_Pop_Up_Operator,
-    Note_Pop_Up_Operator_2,
-    OBJECT_PT_note,
-    SCENE_PT_note,
-    Noter_Preferences,
-    Noter_Splash_Screen_Switch]
-
-blender_classes = Notes_list_blender_classes + blender_classes
 
 @persistent
 def load_handler(dummy):
@@ -1168,67 +1193,125 @@ def extra_draw_menu(self, context):
     layout.operator("node.noter_operator", text="Set Color").action = 'colour'
     layout.operator("node.noter_operator", text="Set Label name").action = 'label'
 
-def extra_draw_menu_2(self, context):
-    layout = self.layout
-
-
-
-    file_folder_path = pathlib.Path(__file__).parent.absolute()
-    file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
-
-    with open(file_folder_path, encoding='utf-8') as f:
-        note_text_blender_json = json.load(f)
-    note_text_blender_json = bool(note_text_blender_json)
-
-
-
-    find = False
-    try:
-        find = bpy.data.scenes[custom_scene_name].splash_screen
-    except KeyError:
-        pass
-    # find = False
-    # for i in bpy.data.scenes:
-    #     if i.splash_screen == True:
-    #         find = True
-    #         break
-
-    if note_text_blender_json == True:
-
-        layout.separator()
-
-        layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender'
-
-    if find == True:
-        layout.separator()
-
-        layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
-
-def extra_draw_menu_3(self, context):
-
-    find = False
-    try:
-        find = bpy.data.scenes[custom_scene_name].note_text_blender_file
-        find = bool(find)
-    except KeyError:
-        pass
-    
-
-    # find = False
-    # for i in bpy.data.scenes:
-    #     if bool(i.note_text_blender_file) == True:
-    #         find = True
-    #         break
-
-    if find == True:
+def extra_draw_menu_2(self, context, mode = 1):
+    preferences = bpy.context.preferences.addons[__name__].preferences
+    if preferences.add_elements_to_menus == True:
 
         layout = self.layout
 
-        layout.separator(factor = 2)
 
-        layout.operator("window_manager.note_popup_operator_2", text="Note", icon = 'FILE').action = 'blender_file'
 
-        # layout.separator()        
+        file_folder_path = pathlib.Path(__file__).parent.absolute()
+        file_folder_path = os.path.join(file_folder_path, 'note_text_blender.json')
+
+        with open(file_folder_path, encoding='utf-8') as f:
+            note_text_blender_json = json.load(f)
+        note_text_blender_json = bool(note_text_blender_json)
+
+
+
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].splash_screen
+        except KeyError:
+            pass
+        # find = False
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         find = True
+        #         break
+
+        if note_text_blender_json == True:
+
+            if mode == 1:
+                text = "Note"
+                icon = 'FILE'
+            elif mode == 2:
+                text = "Blender (Noter)"
+                icon = 'BLENDER'
+
+            layout.separator()
+
+            layout.operator("window_manager.note_popup_operator_2", text=text, icon = icon).action = 'blender'
+
+        if find == True:
+            layout.separator()
+
+            layout.operator("window_manager.note_popup_operator", text="Noter Splash Screen", icon = 'WINDOW')
+
+def extra_draw_menu_3(self, context, mode = 1):
+    preferences = bpy.context.preferences.addons[__name__].preferences
+    if preferences.add_elements_to_menus == True:
+
+        if mode == 1:
+            text = "Note"
+            icon = 'FILE'
+            separator_factor = 2
+        elif mode == 2:
+            text = "File"
+            icon = 'FILE_FOLDER'
+            separator_factor = 1
+
+
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].note_text_blender_file
+            find = bool(find)
+        except KeyError:
+            pass
+        
+
+        # find = False
+        # for i in bpy.data.scenes:
+        #     if bool(i.note_text_blender_file) == True:
+        #         find = True
+        #         break
+
+        if find == True:
+
+            layout = self.layout
+
+            layout.separator(factor = separator_factor)
+
+
+            layout.operator("window_manager.note_popup_operator_2", text=text, icon = icon).action = 'blender_file'
+
+            # layout.separator()        
+
+class TOPBAR_MT_notes(bpy.types.Menu):
+    bl_label = "Notes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_AREA'
+        extra_draw_menu_3(self, context, 2)
+        extra_draw_menu_2(self, context, 2)
+
+def add_to_the_topbar(self, context):
+    preferences = bpy.context.preferences.addons[__name__].preferences
+
+    if preferences.add_custom_menu_to_header_bar_menu == True:
+        layout = self.layout
+        layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
+
+
+
+blender_classes = [
+    TEXT_PT_noter,
+    # Noter_Props,
+    Noter_Actions,
+    Note_Pop_Up_Operator,
+    Note_Pop_Up_Operator_2,
+    OBJECT_PT_note,
+    SCENE_PT_note,
+    Noter_Preferences,
+    Noter_Splash_Screen_Switch,
+    TOPBAR_MT_notes,
+
+    ]
+
+blender_classes = Notes_list_blender_classes + blender_classes
 
 
 def register():
@@ -1275,7 +1358,6 @@ def register():
     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
 
 
-
     bpy.types.NODE_MT_node.append(extra_draw_menu)
     try:
         bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
@@ -1284,6 +1366,7 @@ def register():
 
     bpy.types.TOPBAR_MT_file.append(extra_draw_menu_3)
 
+    bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
 
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
@@ -1302,6 +1385,8 @@ def unregister():
         bpy.types.TOPBAR_MT_window.remove(extra_draw_menu_2)
 
     bpy.types.TOPBAR_MT_file.remove(extra_draw_menu_3)
+
+    bpy.types.TOPBAR_MT_editor_menus.remove(add_to_the_topbar)
 
 
 
