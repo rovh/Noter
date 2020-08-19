@@ -8,21 +8,22 @@ import nodeitems_utils
 # from .__init__ import draw_text
 
 from bpy.types import (
-        Panel,
-        PropertyGroup,
-        Operator,
-        UIList,
-        )
+    Panel,
+    PropertyGroup,
+    Operator,
+    UIList,
+    )
 
 from bpy.props import (
-        FloatProperty,
-        BoolProperty,
-        PointerProperty,
-        EnumProperty,
-        StringProperty,
-        IntProperty,
-        CollectionProperty,
-        )
+    FloatProperty,
+    BoolProperty,
+    PointerProperty,
+    EnumProperty,
+    StringProperty,
+    IntProperty,
+    CollectionProperty,
+    )
+
 
 from bpy.app.handlers import persistent
 
@@ -39,7 +40,7 @@ bl_info = {
     "author" : "Rovh",
     "description" : "Noter is an add-on created to increase productivity in Blender by organizing the workflow.",
     "blender" : (2, 83, 0),
-    "version" : (1, 0, 2),
+    "version" : (1, 1, 0),
     "location" : "Text Editor > Sidebar > Noter Tab",
     "warning" : "",
     "category" : "System",
