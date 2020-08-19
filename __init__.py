@@ -1179,20 +1179,6 @@ def load_handler(dummy):
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
 
-# @persistent
-# def my_handler(scene):
-    # print("Frame Change", scene.frame_current)
-
-    # if bpy.context.window_manager.noter.splash_screen == True:
-    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT', location_cursor = False)
-    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
-
-    # bpy.app.handlers.frame_change_post.remove(my_handler)
-    # bpy.app.handlers.load_post.remove(load_handler)
-    # bpy.ops.screen.animation_play()
-    # bpy.context.scene.frame_current = 1
-
-
 def my_extra_draw_menu(self, context):
     layout = self.layout
 
