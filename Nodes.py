@@ -656,7 +656,6 @@ class NODE_PT_active_node_color_2 (bpy.types.Panel):
         row.prop(node, "color", text="")
         row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
-
 class NODE_SPACE_PT_AnnotationDataPanel_2(bpy.types.Panel):
     bl_label = "Annotations"
     bl_region_type = 'UI'
@@ -772,6 +771,16 @@ node_categories = [
         }),
     ]),
 
+    MyNodeCategory('ERNODES', "Other Notes" , items=[
+        # the node item can have additional settings,
+        # which are applied to new nodes
+        # NB: settings values are stored as string expressions,
+        # for this reason they should be converted to strings using repr()
+        NodeItem("NodeReroute", label="Without extra buttons"),
+
+        NodeItem("NodeFrame", label="Without extra buttons +"),
+    
+    ] ),
 
 
 ]

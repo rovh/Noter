@@ -1296,6 +1296,26 @@ def add_to_the_topbar(self, context):
         layout = self.layout
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
+class NODE_MT_add_menu(bpy.types.Menu):
+    bl_label = "Notes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_AREA'
+        
+        layout.label(text = "1123123")
+
+        layout.operator("node.add_node", text = 'Object', icon = 'OBJECT_DATAMODE')
+
+        # bpy.ops.node.add_node(type="NodeFrame", use_transform=True)
+
+
+def add_to_add_menu(self, context):
+    if context.space_data.tree_type == 'Noter_CustomTreeType':
+        layout = self.layout
+        layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
+        layout.menu("NODE_MT_add_menu", text = "", icon = "FILE")
 
 
 blender_classes = [
@@ -1309,6 +1329,7 @@ blender_classes = [
     Noter_Preferences,
     Noter_Splash_Screen_Switch,
     TOPBAR_MT_notes,
+    NODE_MT_add_menu,
 
     ]
 
@@ -1376,6 +1397,9 @@ def register():
 
     bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
 
+    bpy.types.NODE_MT_add.append(add_to_add_menu)
+
+
 def unregister():
 
 
@@ -1389,6 +1413,7 @@ def unregister():
 
     bpy.types.TOPBAR_MT_editor_menus.remove(add_to_the_topbar)
 
+    bpy.types.NODE_MT_add.remove(add_to_add_menu)
 
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
