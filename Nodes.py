@@ -584,6 +584,10 @@ class NODE_PT_active_node_generic(bpy.types.Panel):
     bl_region_type = 'UI'
     bl_category = "Noter"
     bl_label = "Noter"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'Noter_CustomTreeType'
     
     def draw(self, context):
         layout = self.layout
@@ -653,6 +657,94 @@ class NODE_PT_active_node_color_2 (bpy.types.Panel):
         row.menu("NODE_MT_node_color_context_menu", text="", icon='DOWNARROW_HLT')
 
 
+class NODE_SPACE_PT_AnnotationDataPanel_2(bpy.types.Panel):
+    bl_label = "Annotations"
+    bl_region_type = 'UI'
+    bl_space_type = 'NODE_EDITOR'
+    bl_category = "Noter"
+    # bl_parent_id = 'NODE_PT_active_node_generic'
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        # Show this panel as long as someone that might own this exists
+        # AND the owner isn't an object (e.g. GP Object)
+        if context.space_data.tree_type == 'Noter_CustomTreeType':
+            if context.annotation_data_owner is None:
+                return False
+            elif type(context.annotation_data_owner) is bpy.types.Object:
+                return False
+            else:
+                return True
+
+    def draw_header(self, context):
+        if context.space_data.type not in {'VIEW_3D', 'TOPBAR'}:
+            self.layout.prop(context.space_data, "show_annotation", text="")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_decorate = False
+
+        # Grease Pencil owner.
+        gpd_owner = context.annotation_data_owner
+        gpd = context.annotation_data
+
+        # Owner selector.
+        if context.space_data.type == 'CLIP_EDITOR':
+            layout.row().prop(context.space_data, "annotation_source", expand=True)
+
+        layout.template_ID(gpd_owner, "grease_pencil", new="gpencil.annotation_add", unlink="gpencil.data_unlink")
+
+        # List of layers/notes.
+        if gpd and gpd.layers:
+            self.draw_layers(context, layout, gpd)
+
+    def draw_layers(self, context, layout, gpd):
+        row = layout.row()
+
+        col = row.column()
+        if len(gpd.layers) >= 2:
+            layer_rows = 5
+        else:
+            layer_rows = 3
+        col.template_list("GPENCIL_UL_annotation_layer", "", gpd, "layers", gpd.layers, "active_index",
+                          rows=layer_rows, sort_reverse=True, sort_lock=True)
+
+        col = row.column()
+
+        sub = col.column(align=True)
+        sub.operator("gpencil.layer_annotation_add", icon='ADD', text="")
+        sub.operator("gpencil.layer_annotation_remove", icon='REMOVE', text="")
+
+        gpl = context.active_annotation_layer
+        if gpl:
+            if len(gpd.layers) > 1:
+                col.separator()
+
+                sub = col.column(align=True)
+                sub.operator("gpencil.layer_annotation_move", icon='TRIA_UP', text="").type = 'UP'
+                sub.operator("gpencil.layer_annotation_move", icon='TRIA_DOWN', text="").type = 'DOWN'
+
+        tool_settings = context.tool_settings
+        if gpd and gpl:
+            layout.prop(gpl, "thickness")
+        else:
+            layout.prop(tool_settings, "annotation_thickness", text="Thickness")
+
+        if gpl:
+            # Full-Row - Frame Locking (and Delete Frame)
+            row = layout.row(align=True)
+            row.active = not gpl.lock
+
+            if gpl.active_frame:
+                lock_status = iface_("Locked") if gpl.lock_frame else iface_("Unlocked")
+                lock_label = iface_("Frame: %d (%s)") % (gpl.active_frame.frame_number, lock_status)
+            else:
+                lock_label = iface_("Lock Frame")
+            row.prop(gpl, "lock_frame", text=lock_label, icon='UNLOCKED')
+            row.operator("gpencil.annotation_active_frame_delete", text="", icon='X')
+
+
 # all categories in a list
 node_categories = [
     # identifier, label, items list
@@ -688,6 +780,7 @@ Nodes_blender_classes = (
     NodeOperators,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color_2,
+    NODE_SPACE_PT_AnnotationDataPanel_2,
     MyCustomSocket_2,
     Note_Node_Bool_Operator,
     
