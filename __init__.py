@@ -1313,7 +1313,6 @@ blender_classes = [
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
-# print(blender_classes)
 
 def register():
 
