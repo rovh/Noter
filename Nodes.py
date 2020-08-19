@@ -771,17 +771,6 @@ node_categories = [
         }),
     ]),
 
-    MyNodeCategory('ERNODES', "Other Notes" , items=[
-        # the node item can have additional settings,
-        # which are applied to new nodes
-        # NB: settings values are stored as string expressions,
-        # for this reason they should be converted to strings using repr()
-        NodeItem("NodeReroute", label="Without extra buttons"),
-
-        NodeItem("NodeFrame", label="Without extra buttons +"),
-    
-    ] ),
-
 
 ]
 

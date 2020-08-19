@@ -1296,26 +1296,49 @@ def add_to_the_topbar(self, context):
         layout = self.layout
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
+
 class NODE_MT_add_menu(bpy.types.Menu):
     bl_label = "Notes"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_context = 'INVOKE_AREA'
+        # layout.operator_context = 'INVOKE_AREA'
         
-        layout.label(text = "1123123")
+        props = layout.operator("node.add_node", text = "Reroute", icon = 'RADIOBUT_ON')
+        props.use_transform = True
+        props.type = "NodeReroute"
+        
+        props = layout.operator("node.add_node", text = "Frame", icon = 'MATPLANE')
+        props.use_transform = True
+        props.type = "NodeFrame"
 
-        layout.operator("node.add_node", text = 'Object', icon = 'OBJECT_DATAMODE')
+class NODE_MT_add_menu_2(bpy.types.Menu):
+    bl_label = "Notes"
 
-        # bpy.ops.node.add_node(type="NodeFrame", use_transform=True)
-
+    def draw(self, context):
+        layout = self.layout
+        
+        props = layout.operator("node.noter_operator", text = "Reroute", icon = 'FILE')
+        props.type = "Noter_CustomTreeType"
+        props.settings={"draw_extra": repr("+")}
+        # props.draw_extra = "+"A
+        
+        props = layout.operator("node.noter_operator", text = "Frame", icon = 'MATPLANE')
+        props.type = "Noter_CustomTreeType"
+        # props.draw_extra = ""A
 
 def add_to_add_menu(self, context):
     if context.space_data.tree_type == 'Noter_CustomTreeType':
         layout = self.layout
-        layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
-        layout.menu("NODE_MT_add_menu", text = "", icon = "FILE")
+
+        props = layout.operator("node.add_node", text = "Note")
+        props.type = "Noter_CustomNodeType"
+        # props.draw_extra = "++"
+
+        layout.menu("NODE_MT_add_menu_2", text = "Other Notes")
+
+        layout.menu("NODE_MT_add_menu", text = "Layout")
 
 
 blender_classes = [
@@ -1330,6 +1353,7 @@ blender_classes = [
     Noter_Splash_Screen_Switch,
     TOPBAR_MT_notes,
     NODE_MT_add_menu,
+    NODE_MT_add_menu_2,
 
     ]
 
