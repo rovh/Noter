@@ -484,34 +484,14 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Additional buttons displayed on the node.
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
-        # layout.label(text="Text")
-        # row_header = layout.row()
 
-        # ic = 'CHECKMARK' if self.mute else 'BLANK1'
+        sima = context.space_data
 
-        # row = row_header.row()
-        # row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
-        # row.alignment = 'LEFT'
-        # if self.mute == True:
-        #     row.scale_y = 2
-        #     row.scale_x = 2
-        # else:
-        #     row.scale_y = 1
-        #     row.scale_x = 1
+        tex = bpy.data.textures['.hidden']
+        col = layout.box().column()
+        col.template_preview(tex, show_buttons=True,)
 
-        # row = row_header.row()
-        # row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
-        # row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
-        # row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
-        # row.alignment = 'RIGHT'
-        # row.scale_y = 1.3
-        # row.scale_x = 1.3
-
-        
-
-        
-
-        # # self.inputs.new('Noter_CustomSocketType', "")
+        col.template_ID(sima, "image", new="image.new", open="image.open")
 
         text = self.text
         if text.count("\n") == 0:
@@ -559,15 +539,6 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 row.scale_y = 1.6
                 row.scale_x = 1.6
 
-        # col = layout.column(align = 1)
-        # col.operator("node.noter_operator", text = '', icon = "IMPORT").action = 'node'
-        # col.operator("node.noter_operator", text = '', icon = "EXPORT").action = 'node_get'
-        # col.operator("node.noter_operator", text = '', icon = "TRASH").action = 'node_delete'
-
-        # col.operator("window_manager.export_note_text", text = 'Node', icon = 'IMPORT').action = "node"
-        # col.operator("window_manager.export_note_text", text = '', icon = 'EXPORT').action = "node_get"
-        # col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "node_delete"
-        # pass
 
     def update(self):
 
