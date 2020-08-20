@@ -1356,7 +1356,8 @@ def register():
     for cls in Nodes_blender_classes:
         register_class(cls)
 
-    nodeitems_utils.register_node_categories('NOTER_CUSTOM_NODES', node_categories)
+    bpy.types.NODE_MT_add.prepend(add_to_add_menu)
+
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
@@ -1364,6 +1365,7 @@ def register():
 
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
 
+    nodeitems_utils.register_node_categories('NOTER_CUSTOM_NODES', node_categories)
 
     # bpy.types.NODE_MT_node.append(extra_draw_menu)
     # try:
@@ -1376,7 +1378,7 @@ def register():
 
     bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
 
-    bpy.types.NODE_MT_add.append(add_to_add_menu)
+    
 
 
 def unregister():

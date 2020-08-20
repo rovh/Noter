@@ -828,15 +828,19 @@ def add_to_add_menu(self, context):
 
         if bool(context.space_data.edit_tree) ==  True:
 
+            factor = .5
+
             layout.menu("NODE_MT_add_menu_notes", text = "Note", icon = "FILE")
 
-            layout.separator(factor = .3)
+            layout.separator(factor = factor)
 
             layout.menu("NODE_MT_add_menu_othernotes", text = "Other Notes", icon = 'DOCUMENTS')
 
-            layout.separator(factor = .3)
+            layout.separator(factor = factor)
 
             layout.menu("NODE_MT_add_menu_layout", text = "Layout", icon = 'SEQ_STRIP_META')
+
+            layout.separator(factor = 1)
 
         else:
             row = layout.row()
@@ -870,10 +874,28 @@ node_categories = [
     #     NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
     #         "draw_extra": repr("+"),
     #     }),
+
     #     NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
     #         "draw_extra": repr(""),
     #     }),
     # ]),
+
+    MyNodeCategory('OTHERNODES', "", items=[
+        
+        NodeItem("Noter_CustomNodeType", label="Note Nodes"
+        ),
+        
+        NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
+            "draw_extra": repr("+"),
+        }),
+
+        NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
+            "draw_extra": repr(""),
+        }),
+    
+
+    ]
+    ),
 
 
 ]
