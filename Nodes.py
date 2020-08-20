@@ -744,37 +744,112 @@ class NODE_SPACE_PT_AnnotationDataPanel_2(bpy.types.Panel):
             row.operator("gpencil.annotation_active_frame_delete", text="", icon='X')
 
 
+
+def insertNode(layout, type, text, settings = {}, icon = "NONE"):
+    operator = layout.operator("node.add_node", text = text, icon = icon)
+    operator.type = type
+    operator.use_transform = True
+    for name, value in settings.items():
+        item = operator.settings.add()
+        item.name = name
+        item.value = value
+    return operator
+
+class NODE_MT_add_menu_notes(bpy.types.Menu):
+    bl_label = "Note"
+
+    def draw(self, context):
+        layout = self.layout
+        
+        props = layout.operator("node.add_node", text = "Note Node", icon = 'FILE')
+        props.use_transform = True
+        props.type = "Noter_CustomNodeType"
+
+class NODE_MT_add_menu_layout(bpy.types.Menu):
+    bl_label = "Layout"
+
+    def draw(self, context):
+        layout = self.layout
+
+        # layout.operator_context = 'INVOKE_AREA'
+        
+        props = layout.operator("node.add_node", text = "Reroute", icon = 'RADIOBUT_ON')
+        props.use_transform = True
+        props.type = "NodeReroute"
+        
+        props = layout.operator("node.add_node", text = "Frame", icon = 'MATPLANE')
+        props.use_transform = True
+        props.type = "NodeFrame"
+
+class NODE_MT_add_menu_othernotes(bpy.types.Menu):
+    bl_label = "Other Notes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons", {"draw_extra" : repr("+")}, 'OUTLINER_DATA_POINTCLOUD')
+        
+        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("")}, 'LAYER_USED')
+
+        
+
+def add_to_add_menu(self, context):
+    if context.space_data.tree_type == 'Noter_CustomTreeType':
+        layout = self.layout
+
+
+        if bool(context.space_data.edit_tree) ==  True:
+
+            layout.menu("NODE_MT_add_menu_notes", text = "Note")
+
+            layout.separator(factor = .2)
+
+            layout.menu("NODE_MT_add_menu_othernotes", text = "Other Notes")
+
+            layout.separator(factor = .2)
+
+            layout.menu("NODE_MT_add_menu_layout", text = "Layout")
+
+        else:
+            layout.label(text = "You need to choose or create tree")
+
+
+
+
+
 # all categories in a list
 node_categories = [
+
     # identifier, label, items list
-    # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
+    #  #MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
 
-    # NodeItem("Noter_CustomNodeType"),
+    # # NodeItem("Noter_CustomNodeType"),
 
-    MyNodeCategory('SOMENODES', "Note", items=[
-        # our basic node
-    NodeItem("Noter_CustomNodeType", label = 'Note Node'),
-    ]),
+    # MyNodeCategory('SOMENODES', "Note", items=[
+    #     # our basic node
+    # NodeItem("Noter_CustomNodeType", label = 'Note Node'),
+    # ]),
 
-    # MyNodeCategory("Noter_CustomNodeType"),
+    # # MyNodeCategory("Noter_CustomNodeType"),
 
-    MyNodeCategory('OTHERNODES', "Other Notes", items=[
-        # the node item can have additional settings,
-        # which are applied to new nodes
-        # NB: settings values are stored as string expressions,
-        # for this reason they should be converted to strings using repr()
-        NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
-            "draw_extra": repr("+"),
-        }),
-        NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
-            "draw_extra": repr(""),
-        }),
-    ]),
+    # MyNodeCategory('OTHERNODES', "Other Notes", items=[
+    #     # the node item can have additional settings,
+    #     # which are applied to new nodes
+    #     # NB: settings values are stored as string expressions,
+    #     # for this reason they should be converted to strings using repr()
+    #     NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
+    #         "draw_extra": repr("+"),
+    #     }),
+    #     NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
+    #         "draw_extra": repr(""),
+    #     }),
+    # ]),
 
 
 ]
 
 Nodes_blender_classes = (
+    # MyNodeCategory,
     MyCustomTree,
     MyCustomSocket,
     MyCustomNode,
@@ -784,6 +859,11 @@ Nodes_blender_classes = (
     NODE_SPACE_PT_AnnotationDataPanel_2,
     MyCustomSocket_2,
     Note_Node_Bool_Operator,
+
+
+    NODE_MT_add_menu_layout,
+    NODE_MT_add_menu_othernotes,
+    NODE_MT_add_menu_notes,
     
 )
 
