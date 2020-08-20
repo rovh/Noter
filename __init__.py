@@ -1273,7 +1273,6 @@ def my_extra_draw_menu_3(self, context, mode = "normal_location"):
 
             layout.separator(factor = separator_factor)
 
-
             layout.operator("window_manager.note_popup_operator_2", text=text, icon = icon).action = 'blender_file'
 
             # layout.separator()        

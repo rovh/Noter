@@ -1,5 +1,7 @@
 import bpy
 from bpy.types import NodeTree, Node, NodeSocket
+# import itertools
+from bpy.app.translations import pgettext_iface as iface_
 # import time
 
 
@@ -266,6 +268,52 @@ class Add_Nodes_Tree(bpy.types.Operator):
         context.space_data.node_tree = bpy.data.node_groups.new("", 'Noter_CustomTreeType')
 
         return {'FINISHED'}
+
+
+# def iterSingleNodeItems():
+    # for node in iterAnimationNodeClasses():
+    #     if not node.onlySearchTags:
+    #         yield SingleNodeInsertionItem(node.bl_idname, node.bl_label)
+    #     for customSearch in node.getSearchTags():
+    #         if isinstance(customSearch, tuple):
+    #             yield SingleNodeInsertionItem(node.bl_idname, customSearch[0], customSearch[1])
+    #         else:
+    #             yield SingleNodeInsertionItem(node.bl_idname, customSearch)
+    # for network in getSubprogramNetworks():
+    #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
+    #         {"subprogramIdentifier" : repr(network.identifier)})
+# itemsByIdentifier = {}
+# class NodeSearch(bpy.types.Operator):
+    # bl_idname = "an.node_search"
+    # bl_label = "Node Search"
+    # bl_options = {"REGISTER"}
+    # bl_property = "item"
+
+    # def getSearchItems(self, context):
+    #     itemsByIdentifier.clear()
+    #     items = []
+    #     for item in itertools.chain(iterSingleNodeItems()):
+    #         itemsByIdentifier[item.identifier] = item
+    #         items.append((item.identifier, item.searchTag, ""))
+    #     return items
+
+    # item: bpy.props.EnumProperty(items = getSearchItems)
+
+    # # @classmethod
+    # # def poll(cls, context):
+    # #     try: return context.space_data.node_tree.bl_idname == "an_AnimationNodeTree"
+    # #     except: return False
+
+    # def invoke(self, context, event):
+    #     context.window_manager.invoke_search_popup(self)
+    #     return {"CANCELLED"}
+
+    # def execute(self, context):
+    #     itemsByIdentifier[self.item].insert()
+    #     return {"FINISHED"}
+
+
+
 
 # Derived from the NodeTree base type, similar to Menu, Operator, Panel, etc.
 class MyCustomTree(NodeTree):
@@ -789,7 +837,7 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         
-        props = layout.operator("node.add_node", text = "Note Node", icon = 'NONE')
+        props = layout.operator("node.add_node", text = "Note Node", icon = 'FILE')
         props.use_transform = True
         props.type = "Noter_CustomNodeType"
 
@@ -819,8 +867,6 @@ class NODE_MT_add_menu_othernotes(bpy.types.Menu):
         
         insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("")}, 'LAYER_USED')
 
-        
-
 def add_to_add_menu(self, context):
     if context.space_data.tree_type == 'Noter_CustomTreeType':
         layout = self.layout
@@ -829,6 +875,10 @@ def add_to_add_menu(self, context):
         if bool(context.space_data.edit_tree) ==  True:
 
             factor = .5
+
+            # layout.operator('node.add_search', text = "Search...", icon = 'VIEWZOOM').use_transform = True
+
+            layout.separator(factor = 1)
 
             layout.menu("NODE_MT_add_menu_notes", text = "Note", icon = "FILE")
 
@@ -847,7 +897,7 @@ def add_to_add_menu(self, context):
             row.scale_y = 2
             row.operator('node.noter_add_nodes_tree', text = "Create New Node Tree", icon = 'ADD')
 
-
+            layout.separator(factor = 1)
 
 
 
@@ -896,7 +946,6 @@ node_categories = [
 
     ]
     ),
-
 
 ]
 
