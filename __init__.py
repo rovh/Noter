@@ -48,7 +48,7 @@ bl_info = {
     "tracker_url": "https://github.com/rovh/Noter/issues",
 }
 
-custom_scene_name = "..."
+custom_scene_name = ".Noter"
 
 class Noter_Actions(bpy.types.Operator):
     """Tooltip"""
