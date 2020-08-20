@@ -492,7 +492,6 @@ class Noter_Actions(bpy.types.Operator):
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
 
-
 class TEXT_PT_noter(Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'

@@ -243,6 +243,29 @@ class Note_Node_Bool_Operator(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class Add_Nodes_Tree(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "node.noter_add_nodes_tree"
+    bl_label = ""
+    bl_description = "Mute or unmute current node"
+
+    # my_bool: bpy.props.FloatProperty()
+    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
+    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
+    # my_bool: bpy.props.StringProperty()
+    name: bpy.props.StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return space.type == 'NODE_EDITOR'
+
+    def execute(self, context):
+
+
+        context.space_data.node_tree = bpy.data.node_groups.new("", 'Noter_CustomTreeType')
+
+        return {'FINISHED'}
 
 # Derived from the NodeTree base type, similar to Menu, Operator, Panel, etc.
 class MyCustomTree(NodeTree):
@@ -591,7 +614,12 @@ class NODE_PT_active_node_generic(bpy.types.Panel):
     
     def draw(self, context):
         layout = self.layout
-        # layout.prop(self, "text", text = '')
+
+        row = layout.row()
+        row.prop(context.scene, "file_name", text = '')
+        row.scale_y = 1.3
+
+
         box = layout.box()
         column = box.column(align = 1)
         column.scale_y = 1.3
@@ -761,7 +789,7 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         
-        props = layout.operator("node.add_node", text = "Note Node", icon = 'FILE')
+        props = layout.operator("node.add_node", text = "Note Node", icon = 'NONE')
         props.use_transform = True
         props.type = "Noter_CustomNodeType"
 
@@ -773,7 +801,7 @@ class NODE_MT_add_menu_layout(bpy.types.Menu):
 
         # layout.operator_context = 'INVOKE_AREA'
         
-        props = layout.operator("node.add_node", text = "Reroute", icon = 'RADIOBUT_ON')
+        props = layout.operator("node.add_node", text = "Reroute", icon = 'REC')
         props.use_transform = True
         props.type = "NodeReroute"
         
@@ -800,18 +828,20 @@ def add_to_add_menu(self, context):
 
         if bool(context.space_data.edit_tree) ==  True:
 
-            layout.menu("NODE_MT_add_menu_notes", text = "Note")
+            layout.menu("NODE_MT_add_menu_notes", text = "Note", icon = "FILE")
 
-            layout.separator(factor = .2)
+            layout.separator(factor = .3)
 
-            layout.menu("NODE_MT_add_menu_othernotes", text = "Other Notes")
+            layout.menu("NODE_MT_add_menu_othernotes", text = "Other Notes", icon = 'DOCUMENTS')
 
-            layout.separator(factor = .2)
+            layout.separator(factor = .3)
 
-            layout.menu("NODE_MT_add_menu_layout", text = "Layout")
+            layout.menu("NODE_MT_add_menu_layout", text = "Layout", icon = 'SEQ_STRIP_META')
 
         else:
-            layout.label(text = "You need to choose or create tree")
+            row = layout.row()
+            row.scale_y = 2
+            row.operator('node.noter_add_nodes_tree', text = "Create New Node Tree", icon = 'ADD')
 
 
 
@@ -821,11 +851,11 @@ def add_to_add_menu(self, context):
 node_categories = [
 
     # identifier, label, items list
-    #  #MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
+    # # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
 
     # # NodeItem("Noter_CustomNodeType"),
 
-    # MyNodeCategory('SOMENODES', "Note", items=[
+    # MyNodeCategory('SOMENODES', "", items=[
     #     # our basic node
     # NodeItem("Noter_CustomNodeType", label = 'Note Node'),
     # ]),
@@ -859,6 +889,7 @@ Nodes_blender_classes = (
     NODE_SPACE_PT_AnnotationDataPanel_2,
     MyCustomSocket_2,
     Note_Node_Bool_Operator,
+    Add_Nodes_Tree,
 
 
     NODE_MT_add_menu_layout,
