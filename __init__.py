@@ -1272,7 +1272,7 @@ def register():
     for cls in Nodes_blender_classes:
         register_class(cls)
 
-    nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
+    nodeitems_utils.register_node_categories('NOTER_CUSTOM_NODES', node_categories)
 
     bpy.types.NODE_MT_node.append(extra_draw_menu)
     bpy.types.TOPBAR_MT_app.append(extra_draw_menu_2)
@@ -1290,7 +1290,7 @@ def unregister():
     bpy.types.TOPBAR_MT_app.remove(extra_draw_menu_2)
     bpy.types.TOPBAR_MT_file.remove(extra_draw_menu_3)
 
-    nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
+    nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
 
     from bpy.utils import unregister_class
     for cls in reversed(Nodes_blender_classes):
