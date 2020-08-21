@@ -485,13 +485,24 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        sima = context.space_data
+        try:
 
-        tex = bpy.data.textures['.hidden']
-        col = layout.box().column()
-        col.template_preview(tex, show_buttons=True,)
+            image = bpy.types.Image(file_format='PNG')
+            image.file_format = 'PNG'
+            image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
+            
+            sima = context.space_data
 
-        col.template_ID(sima, "image", new="image.new", open="image.open")
+            tex = bpy.data.textures['.hidden']
+            col = layout.box().column()
+            col.template_preview(tex, show_buttons=True,)
+
+            col.template_ID(sima, "image", new="image.new", open="image.open")
+
+        except KeyError:
+            pass
+        except TypeError:
+            pass
 
         text = self.text
         if text.count("\n") == 0:
@@ -603,6 +614,162 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
   
+class MyCustomNode_2(bpy.types.TextureNode, MyCustomTreeNode):
+    # === Basics ===
+    # Description string
+    '''A custom node'''
+    # Optional identifier string. If not explicitly defined, the python class name is used.
+    bl_idname = 'Noter_CustomNodeType_2'
+    # Label for nice name display
+    bl_label = "Custom Node"
+    # Icon identifier
+    # bl_icon = 'SOUND'
+    bl_width_default = 200
+
+
+    # === Custom Properties ===
+    # These work just like custom properties in ID data blocks
+    # Extensive information can be found under
+    # http://wiki.blender.org/index.php/Doc:2.6/Manual/Extensions/Python/Properties
+    text: bpy.props.StringProperty()
+    my_bool: bpy.props.BoolProperty()
+    draw_extra: bpy.props.StringProperty(default = "++")
+
+    # === Optional Functions ===
+    # Initialization function, called when a new node is created.
+    # This is the most common place to create the sockets for a node, as shown below.
+    # NOTE: this is not the same as the standard __init__ function in Python, which is
+    #       a purely internal Python method and unknown to the node system!
+
+    def draw_label(self):
+        # def draw_color(self, context, node):
+        # return (1.0, 0.4, 0.216, 1)
+        # return (1, 1, 0.035, .9)
+        # return (0.8, 0.8, 0.03, 1.000000)
+        return " "
+        # return "Press F2"
+        # return self.my_bool
+
+    def init(self, context):
+        
+        self.inputs.new('Noter_CustomSocketType', "")
+        # self.inputs.new('CustomSocketType_2', "")
+        # self.inputs[0].display_shape = 'DIAMOND'
+        
+        # self.inputs.new('NodeSocketFloat', "World")
+        # self.inputs.new('NodeSocketVector', "!")
+        # self.inputs.new('NodeSocketColor', "")
+
+        # self.outputs.new('NodeSocketColor', "")
+        self.outputs.new('Noter_CustomSocketType', "")
+        # self.outputs.new('CustomSocketType_2', "")
+        # self.outputs.new('NodeSocketColor', "are")
+        # self.outputs.new('NodeSocketFloat', "you")
+
+    # Copy function to initialize a copied node from an existing one.
+    def copy(self, node):
+        pass
+        # print("Copying from node ", node)
+
+    # Free function to clean up on removal.
+    def free(self):
+        # print("Removing node ", self, ", Goodbye!")
+        pass
+
+    # Additional buttons displayed on the node.
+    # def draw_buttons_ext(self, context, layout):
+    def draw_buttons(self, context, layout):
+
+        try:
+
+            image = bpy.types.Image(file_format='PNG')
+            image.file_format = 'PNG'
+            image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
+            
+            sima = context.space_data
+
+            tex = bpy.data.textures['.hidden']
+            col = layout.box().column()
+            col.template_preview(tex, show_buttons=True,)
+
+            col.template_ID(sima, "image", new="image.new", open="image.open")
+
+        except KeyError:
+            pass
+        except TypeError:
+            pass
+
+        text = self.text
+        if text.count("\n") == 0:
+            layout.separator(factor = 1)
+            box = layout.box()
+            box.prop(self, "text", text = '')
+        else:
+            text_parts_list = text.split('\n')
+            layout.separator(factor = .5)
+            box = layout.box()
+            box = box.box()
+            col = box.column(align = 1)
+            for i in text_parts_list:
+                row = col.row(align = 1)
+                row.label(text = i)
+                row.scale_y = 0
+
+        draw_extra_count = self.draw_extra.count("+")
+
+        if draw_extra_count >= 1:
+
+            layout.separator(factor = 2)
+
+            row_header = layout.row()
+
+            ic = 'CHECKMARK' if self.mute else 'BLANK1'
+
+            row = row_header.row()
+            row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
+            row.alignment = 'LEFT'
+            if self.mute == True:
+                row.scale_y = 2.5
+                row.scale_x = 2.5
+            else:
+                row.scale_y = 1
+                row.scale_x = 1
+
+            if draw_extra_count >= 2:
+
+                row = row_header.row()
+                row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
+                row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
+                row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
+                row.alignment = 'RIGHT'
+                row.scale_y = 1.6
+                row.scale_x = 1.6
+
+
+    def update(self):
+
+        count = 0
+        for i in self.inputs:
+            if i.is_linked == True:
+                count += 1
+        free_inputs = len(self.inputs) - count
+
+
+        if free_inputs == 0:
+            self.inputs.new('Noter_CustomSocketType', "")
+            # self.inputs.new('CustomSocketType_2', "")
+        elif free_inputs > 1:
+
+            for i in self.inputs:
+
+                if i.is_linked == False and free_inputs > 1:
+                    self.inputs.remove(i)
+                    free_inputs -= 1
+                elif i.is_linked == True:
+                    pass
+                else:
+                    break
+    
 
 ### Node Categories ###
 # Node categories are a python system for automatically
@@ -812,6 +979,15 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.use_transform = True
         props.type = "Noter_CustomNodeType"
 
+
+        props = layout.operator("node.add_node", text = "Note Node", icon = 'NONE')
+        props.use_transform = True
+        props.type = "Noter_CustomNodeType_2"
+
+        # bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
+
+
+
 class NODE_MT_add_menu_layout(bpy.types.Menu):
     bl_label = "Layout"
 
@@ -827,6 +1003,10 @@ class NODE_MT_add_menu_layout(bpy.types.Menu):
         props = layout.operator("node.add_node", text = "Frame", icon = 'MATPLANE')
         props.use_transform = True
         props.type = "NodeFrame"
+
+        props = layout.operator("node.add_node", text = "Frame")
+        props.use_transform = True
+        props.type = "ShaderNodeAttribute"
 
 class NODE_MT_add_menu_othernotes(bpy.types.Menu):
     bl_label = "Other Notes"
@@ -925,6 +1105,7 @@ Nodes_blender_classes = (
     MyCustomTree,
     MyCustomSocket,
     MyCustomNode,
+    MyCustomNode_2,
     NodeOperators,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color_2,
