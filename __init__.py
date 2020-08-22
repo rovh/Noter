@@ -1379,12 +1379,11 @@ def register():
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
 
 
-    # bpy.types.NODE_MT_node.append(extra_draw_menu)
-    # try:
-    
-    bpy.types.TOPBAR_MT_app.append(my_extra_draw_menu_2)
-    # except AttributeError:
-        # bpy.types.TOPBAR_MT_window.append(extra_draw_menu_2)
+    bpy.types.NODE_MT_node.append(extra_draw_menu)
+    try:
+        bpy.types.TOPBAR_MT_app.append(my_extra_draw_menu_2)
+    except AttributeError:
+        bpy.types.TOPBAR_MT_window.append(extra_draw_menu_2)
 
     bpy.types.TOPBAR_MT_file.append(my_extra_draw_menu_3)
 
