@@ -44,9 +44,9 @@ class NodeOperators(bpy.types.Operator):
                 return "Paint selected node (nodes)"
 
             elif properties.action == 'label':
-                return "Write label text from the label text of the active node"
+                return "Write label text from the label text of the active node or active frame"
             elif properties.action == 'label_all':
-                return "Write label text in the selected node (nodes)"
+                return "Write label text in the selected node (nodes) or selected frame (frames)"
 
         
 
@@ -614,7 +614,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
   
-class MyCustomNode_2(bpy.types.TextureNode, MyCustomTreeNode):
+class MyCustomNode_2(Node, MyCustomTreeNode):
     # === Basics ===
     # Description string
     '''A custom node'''
@@ -680,24 +680,45 @@ class MyCustomNode_2(bpy.types.TextureNode, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        try:
+        # try:
 
-            image = bpy.types.Image(file_format='PNG')
-            image.file_format = 'PNG'
-            image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
-            
-            sima = context.space_data
+        # image = bpy.types.Image(file_format='PNG')
+        # image.file_format = 'PNG'
+        # image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
+        
+        # sima = context.space_data
 
-            tex = bpy.data.textures['.hidden']
-            col = layout.box().column()
-            col.template_preview(tex, show_buttons=True,)
+        # tex = bpy.data.textures['.hidden']
+        tex = bpy.data.textures['Texture']
+        # col = layout.box().column()
 
-            col.template_ID(sima, "image", new="image.new", open="image.open")
+        # tex = context.texture
 
-        except KeyError:
-            pass
-        except TypeError:
-            pass
+
+        layout.template_preview(tex, show_buttons=True)
+
+        # layout.template_ID(tex, "image", new="image.new", open="image.open")
+
+        # layout.template_image(tex, "image", tex.image_user, compact=True)
+
+        # layout.template_ID_preview(tex, "image", new="image.new", open="image.open", hide_buttons = False)
+
+        # layout.template_ID_tabs(tex, "image", new="", menu="", filter='ALL')
+
+        # layout.template_icon( 37*12 , scale=2)
+
+        # layout.template_layers(tex, 'image', used_layers_data, used_layers_property, active_layer)
+
+        # layout.template_image_layers(tex.image, tex.image_user)
+
+        # layout.template_icon(icon_value=custom_icons[z[:-4]].icon_id,scale=10)
+
+
+
+        # except KeyError:
+        #     pass
+        # except TypeError:
+        #     pass
 
         text = self.text
         if text.count("\n") == 0:
@@ -980,7 +1001,7 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.type = "Noter_CustomNodeType"
 
 
-        props = layout.operator("node.add_node", text = "Note Node", icon = 'NONE')
+        props = layout.operator("node.add_node", text = "de", icon = 'NONE')
         props.use_transform = True
         props.type = "Noter_CustomNodeType_2"
 
@@ -1093,6 +1114,12 @@ node_categories = [
         NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
             "draw_extra": repr(""),
         }),
+
+        NodeItem("NodeReroute", label="Reroute"
+        ),
+
+        NodeItem("NodeFrame", label="Frame"
+        ),
     
 
     ]
