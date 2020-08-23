@@ -635,7 +635,8 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     my_bool: bpy.props.BoolProperty()
     draw_extra: bpy.props.StringProperty(default = "++")
     # image: bpy.data.images['Camera.001'].image
-    image: bpy.props.CollectionProperty(type= bpy.types.Image)
+    # image: bpy.props.CollectionProperty(type= bpy.types.Image)
+    image: bpy.props.PointerProperty(type= bpy.types.Image)
 
     # === Optional Functions ===
     # Initialization function, called when a new node is created.
@@ -655,6 +656,11 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     def init(self, context):
 
         self.show_preview = True
+        self.show_texture = True
+
+        self.image = bpy.data.images['Camera.001']
+        # self.image = bpy.data.textures['Texture'].image
+
         
         self.inputs.new('Noter_CustomSocketType', "")
         # self.inputs.new('CustomSocketType_2', "")
@@ -694,7 +700,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
         # tex = bpy.data.textures['.hidden']
         # tex = bpy.data.textures['Texture']
-        tex =  bpy.data.images['Camera.001']
+        # tex =  bpy.data.images['Camera.001']
         # col = layout.box().column()
 
         # tex = context.texture
@@ -706,6 +712,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # layout.template_ID(tex, "image", new="image.new", open="image.open")
 
         # layout.template_image(tex, "image", tex.image_user, compact=False, multiview=True)
+        # layout.template_image(self, "image")
 
         # layout.template_ID_preview(tex, "image", new="image.new", open="image.open", hide_buttons = False)
 
