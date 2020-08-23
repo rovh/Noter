@@ -485,24 +485,24 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        try:
+        # try:
 
-            image = bpy.types.Image(file_format='PNG')
-            image.file_format = 'PNG'
-            image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
+        #     image = bpy.types.Image(file_format='PNG')
+        #     image.file_format = 'PNG'
+        #     image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
             
-            sima = context.space_data
+        #     sima = context.space_data
 
-            tex = bpy.data.textures['.hidden']
-            col = layout.box().column()
-            col.template_preview(tex, show_buttons=True,)
+        #     tex = bpy.data.textures['.hidden']
+        #     col = layout.box().column()
+        #     col.template_preview(tex, show_buttons=True,)
 
-            col.template_ID(sima, "image", new="image.new", open="image.open")
+        #     col.template_ID(sima, "image", new="image.new", open="image.open")
 
-        except KeyError:
-            pass
-        except TypeError:
-            pass
+        # except KeyError:
+        #     pass
+        # except TypeError:
+        #     pass
 
         text = self.text
         if text.count("\n") == 0:
@@ -634,6 +634,8 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     text: bpy.props.StringProperty()
     my_bool: bpy.props.BoolProperty()
     draw_extra: bpy.props.StringProperty(default = "++")
+    # image: bpy.data.images['Camera.001'].image
+    image: bpy.props.CollectionProperty(type= bpy.types.Image)
 
     # === Optional Functions ===
     # Initialization function, called when a new node is created.
@@ -651,6 +653,8 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # return self.my_bool
 
     def init(self, context):
+
+        self.show_preview = True
         
         self.inputs.new('Noter_CustomSocketType', "")
         # self.inputs.new('CustomSocketType_2', "")
@@ -689,17 +693,19 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # sima = context.space_data
 
         # tex = bpy.data.textures['.hidden']
-        tex = bpy.data.textures['Texture']
+        # tex = bpy.data.textures['Texture']
+        tex =  bpy.data.images['Camera.001']
         # col = layout.box().column()
 
         # tex = context.texture
 
+        # layout.template_ID(tex, 'name', new="", open="", unlink="", filter='ALL', live_icon=False, text="", text_ctxt="", translate=True)
 
-        layout.template_preview(tex, show_buttons=True)
+        # layout.template_preview(tex, show_buttons=False)
 
         # layout.template_ID(tex, "image", new="image.new", open="image.open")
 
-        # layout.template_image(tex, "image", tex.image_user, compact=True)
+        # layout.template_image(tex, "image", tex.image_user, compact=False, multiview=True)
 
         # layout.template_ID_preview(tex, "image", new="image.new", open="image.open", hide_buttons = False)
 
