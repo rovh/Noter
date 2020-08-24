@@ -1347,6 +1347,9 @@ def register():
     bpy.types.Scene.notes_list_scene = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Scene.notes_list_scene_index = IntProperty()
 
+    bpy.types.Scene.notes_list_splash_screen = CollectionProperty(type=Notes_List_Collection)
+    bpy.types.Scene.notes_list_splash_screen_index = IntProperty()
+
     from bpy.utils import register_class
     for cls in Nodes_blender_classes:
         register_class(cls)
