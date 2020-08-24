@@ -655,10 +655,11 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
     def init(self, context):
 
-        self.show_preview = True
-        self.show_texture = True
+        # self.show_preview = True
+        # self.show_texture = True
 
-        self.image = bpy.data.images['Camera.001']
+        # self.image = bpy.data.images['Camera.001']
+        # self.image = bpy.data.images['Camera.001.png']
         # self.image = bpy.data.textures['Texture'].image
 
         
@@ -705,16 +706,18 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
         # tex = context.texture
 
-        # layout.template_ID(tex, 'name', new="", open="", unlink="", filter='ALL', live_icon=False, text="", text_ctxt="", translate=True)
+        # layout.template_ID(self, 'name', new="", open="", unlink="", filter='ALL', live_icon=False, text="", text_ctxt="", translate=True)
 
         # layout.template_preview(tex, show_buttons=False)
+        # layout.template_preview(self, show_buttons=True)
 
         # layout.template_ID(tex, "image", new="image.new", open="image.open")
+        # layout.template_ID(self, "image", new="image.new", open="image.open")
 
         # layout.template_image(tex, "image", tex.image_user, compact=False, multiview=True)
         # layout.template_image(self, "image")
 
-        # layout.template_ID_preview(tex, "image", new="image.new", open="image.open", hide_buttons = False)
+        # layout.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
 
         # layout.template_ID_tabs(tex, "image", new="", menu="", filter='ALL')
 
@@ -1014,13 +1017,11 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.type = "Noter_CustomNodeType"
 
 
-        props = layout.operator("node.add_node", text = "de", icon = 'NONE')
-        props.use_transform = True
-        props.type = "Noter_CustomNodeType_2"
+        # props = layout.operator("node.add_node", text = "de", icon = 'NONE')
+        # props.use_transform = True
+        # props.type = "CompositorNodeImageA"
 
         # bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
-
-
 
 class NODE_MT_add_menu_layout(bpy.types.Menu):
     bl_label = "Layout"
@@ -1038,9 +1039,9 @@ class NODE_MT_add_menu_layout(bpy.types.Menu):
         props.use_transform = True
         props.type = "NodeFrame"
 
-        props = layout.operator("node.add_node", text = "Frame")
-        props.use_transform = True
-        props.type = "ShaderNodeAttribute"
+        # props = layout.operator("node.add_node", text = "Frame")
+        # props.use_transform = True
+        # props.type = "ShaderNodeAttribute"
 
 class NODE_MT_add_menu_othernotes(bpy.types.Menu):
     bl_label = "Other Notes"

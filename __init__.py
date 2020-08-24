@@ -623,6 +623,11 @@ def draw_text(self, text):
 
 def calculate_width_menu(self, text):
 
+    # from matplotlib.afm import AFM
+    # afm = AFM(open(afm_filename, "rb"))
+    # AFM.string_width_height('What the heck?')
+
+
     text_parts_list = text.split('\n')
     length = 25
     for row in text_parts_list:
@@ -801,15 +806,6 @@ class Note_Pop_Up_Operator(Operator):
         label_draw(3)
 
         row_text.separator(factor = 5)
-
-    
-
-
-        # col_f = layout.column_flow(columns=3, align=False)
-        # col_f = layout.grid_flow(row_major=1, columns=1, even_columns=False, even_rows=0, align=1)
-        # for i in range(0, 10):
-            # col_f.label(icon = 'SHADING_SOLID')
-        # col_f.label(icon = 'SHADING_SOLID')
 
 
 
@@ -1375,9 +1371,6 @@ def register():
     bpy.types.TOPBAR_MT_file.append(my_extra_draw_menu_3)
 
     bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
-
-    
-
 
 def unregister():
 
