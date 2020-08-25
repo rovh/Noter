@@ -595,7 +595,7 @@ class TEXT_PT_noter(Panel):
             col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
             col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
             
-            # col.separator(factor = 1)
+            col.separator(factor = .5)
 
             row = col.row(align = True)
             row.operator("window_manager.splash_screen_notes_list", text = '', icon = 'PRESET', depress= find_2)
@@ -992,31 +992,29 @@ class Note_Pop_Up_Operator (Operator):
             row = layout.row()
             row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
 
-            col = row.column(align=True)
-            col.scale_x = 1.1
-            col.scale_y = 1.2
+        #     col = row.column(align=True)
+        #     col.scale_x = 1.1
+        #     col.scale_y = 1.2
 
-            col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
-            col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
+        #     col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
+        #     col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
             
-            col.separator(factor = 0.4)
+        #     col.separator(factor = 0.4)
 
-            col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
-            col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+        #     col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
+        #     col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
 
-            # col.separator(factor = 0.4)
+        #     # col.separator(factor = 0.4)
 
-            # col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
+        #     # col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
 
-            # col.separator(factor = 0.4)
+        #     # col.separator(factor = 0.4)
 
-            # col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
+        #     # col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
 
-            col.separator(factor = 0.4)
+        #     col.separator(factor = 0.4)
 
-            col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
-
-
+        #     col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
@@ -1530,7 +1528,6 @@ def add_to_the_topbar(self, context):
     #     layout.operator("window_manager.text_lines_create", text = 'Line Text')
     #     layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
 
-
 def add_to__TEXT_MT_format(self, context):
 
     scene = bpy.context.scene
@@ -1617,6 +1614,9 @@ blender_classes = [
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
+# for i in blender_classes:
+#     print(i)
+
 
 def register():
 
@@ -1636,10 +1636,8 @@ def register():
 
     # bpy.types.WindowManager.splash_screen = BoolProperty()
 
-    bpy.types.Scene.splash_screen = BoolProperty()
     bpy.types.Scene.splash_screen_notes_list = BoolProperty()
-    bpy.app.handlers.load_post.append(load_handler)
-
+    bpy.types.Scene.splash_screen = BoolProperty()
 
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
     bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 50, description = "Name of the file from which the text will be taken or where the text will be displayed")
@@ -1659,6 +1657,13 @@ def register():
 
     bpy.types.Scene.notes_list_blender_file = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Scene.notes_list_blender_file_index = IntProperty()
+
+
+
+    bpy.app.handlers.load_post.append(load_handler)
+
+
+
 
     from bpy.utils import register_class
     for cls in Nodes_blender_classes:

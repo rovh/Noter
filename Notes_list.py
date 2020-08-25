@@ -25,6 +25,8 @@ from bpy.props import (
 
 custom_scene_name = ".Noter"
 
+from . import __name__ as addon_name
+
 # print(custom_scene_name)
 # def draw_text(text_parts_list):
 #     # col = column
@@ -521,7 +523,7 @@ class NOTES_LIST_UL_items_blender_file(UIList):
         
         # draw_text(self)
 
-        
+
         try:
             scene = bpy.data.scenes[custom_scene_name]
         except KeyError:
@@ -591,7 +593,7 @@ class Notes_List_PT_blender_file(Panel):
 
     @classmethod
     def poll(cls, context):
-        preferences = bpy.context.preferences.addons[__name__].preferences
+        preferences = bpy.context.preferences.addons[addon_name].preferences
         
         check =  preferences.add_elements_to_properties_menus
 
@@ -713,7 +715,12 @@ class Notes_List_PT_scene(Panel):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.scene != None\
+        preferences = bpy.context.preferences.addons[addon_name].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
+
             # and bpy.context.scene.mode in {'EDIT'}
 
     def draw_header(self, context):
@@ -885,7 +892,11 @@ class Notes_List_PT(Panel):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object != None\
+        preferences = bpy.context.preferences.addons[addon_name].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
             # and bpy.context.active_object.mode in {'EDIT'}
 
 
