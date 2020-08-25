@@ -19,6 +19,11 @@ from bpy.props import (
         CollectionProperty,
         )
 
+# from .__init__ import custom_scene_name
+
+custom_scene_name = ".Noter"
+
+# print(custom_scene_name)
 # def draw_text(text_parts_list):
 #     # col = column
 #     for i in text_parts_list:
@@ -345,9 +350,9 @@ class Notes_actions_bool_scene(Operator):
 
 
 
-class Notes_List_actions_splash_screen(Operator):
+class Notes_List_actions_blender_file(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "notes_list_splash_screen.list_action"
+    bl_idname = "notes_list_blender_file.list_action"
     bl_label = ""
     bl_description = "Move items up and down or remove"
     bl_options = {'REGISTER'}
@@ -371,34 +376,37 @@ class Notes_List_actions_splash_screen(Operator):
 
     def invoke(self, context, event):
 
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
         scene = context.scene
-        idx = scene.notes_list_splash_screen_index
+        idx = scene.notes_list_blender_file_index
 
         try:
-            item = scene.notes_list_splash_screen[idx]
+            item = scene.notes_list_blender_file[idx]
         except IndexError:
             pass
         else:
-            if self.action == 'DOWN' and idx < len(scene.notes_list_splash_screen) - 1:
-                scene.notes_list_splash_screen.move(idx, idx+1)
-                scene.notes_list_splash_screen_index += 1
+            if self.action == 'DOWN' and idx < len(scene.notes_list_blender_file) - 1:
+                scene.notes_list_blender_file.move(idx, idx+1)
+                scene.notes_list_blender_file_index += 1
 
             elif self.action == 'UP' and idx >= 1:
-                scene.notes_list_splash_screen.move(idx, idx-1)
-                scene.notes_list_splash_screen_index -= 1
+                scene.notes_list_blender_file.move(idx, idx-1)
+                scene.notes_list_blender_file_index -= 1
                 
             elif self.action == 'REMOVE':
                 if idx == 0:
-                    scene.notes_list_splash_screen_index = 0
+                    scene.notes_list_blender_file_index = 0
                 else:
-                    scene.notes_list_splash_screen_index -= 1
+                    scene.notes_list_blender_file_index -= 1
                 
-                scene.notes_list_splash_screen.remove(idx)
+                scene.notes_list_blender_file.remove(idx)
 
         return {"FINISHED"}
-class Notes_List_actions_add_splash_screen(Operator):
+class Notes_List_actions_add_blender_file(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "notes_list_splash_screen.list_action_add"
+    bl_idname = "notes_list_blender_file.list_action_add"
     bl_label = ""
     bl_description = "Add item"
     bl_options = {'REGISTER'}
@@ -422,42 +430,51 @@ class Notes_List_actions_add_splash_screen(Operator):
     def execute(self, context):
 
         scene = context.scene
-        idx = scene.notes_list_splash_screen_index
+        idx = scene.notes_list_blender_file_index
 
         try:
-            item = scene.notes_list_splash_screen[idx]
+            item = scene.notes_list_blender_file[idx]
         except IndexError:
             pass
 
-        item = scene.notes_list_splash_screen.add()
+        item = scene.notes_list_blender_file.add()
 
-        scene.notes_list_splash_screen_index = len(scene.notes_list_splash_screen) - 1
+        scene.notes_list_blender_file_index = len(scene.notes_list_blender_file) - 1
 
         return {"FINISHED"}
-class Notes_List_clearList_splash_screen(Operator):
+
+    def invoke(self, context, event):
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
+        return self.execute
+
+        # return {"FINISHED"}
+class Notes_List_clearList_blender_file(Operator):
     """Clear all items of the list"""
-    bl_idname = "notes_list_splash_screen.clear_list"
+    bl_idname = "notes_list_blender_file.clear_list"
     bl_label = "Clear List"
     bl_description = "Clear all items of the list"
     bl_options = {'INTERNAL'}
 
     @classmethod
     def poll(cls, context):
-        return bool(context.scene.notes_list_splash_screen)
+        return bool(context.scene.notes_list_blender_file)
 
     def invoke(self, context, event):
         return context.window_manager.invoke_confirm(self, event)
 
     def execute(self, context):
-        if bool(context.scene.notes_list_splash_screen):
-            context.scene.notes_list_splash_screen.clear()
+        if bool(context.scene.notes_list_blender_file):
+            context.scene.notes_list_blender_file.clear()
             self.report({'INFO'}, "All items removed")
         else:
             self.report({'INFO'}, "Nothing to remove")
         return{'FINISHED'}
-class Notes_actions_bool_splash_screen(Operator):
+class Notes_actions_bool_blender_file(Operator):
     """Move items up and down, add and remove"""
-    bl_idname = "notes_list_splash_screen.list_action_bool"
+    bl_idname = "notes_list_blender_file.list_action_bool"
     bl_label = ""
     bl_description = "Checkmark"
     bl_options = {'REGISTER'}
@@ -466,25 +483,25 @@ class Notes_actions_bool_splash_screen(Operator):
 
     def execute(self, context):
 
-        # bpy.context.scene.notes_list_splash_screen_index = self.my_index
+        # bpy.context.scene.notes_list_blender_file_index = self.my_index
 
         scene = context.scene
-        # idx = scene.notes_list_splash_screen_index
+        # idx = scene.notes_list_blender_file_index
         idx = self.my_index
 
         try:
-            item = scene.notes_list_splash_screen[idx]
+            item = scene.notes_list_blender_file[idx]
         except IndexError:
             pass
 
         
-        if scene.notes_list_splash_screen[idx].bool == True:
-            scene.notes_list_splash_screen[idx].bool = False
-            if len(scene.notes_list_splash_screen) > 1:
-                scene.notes_list_splash_screen.move(idx, 0)
+        if scene.notes_list_blender_file[idx].bool == True:
+            scene.notes_list_blender_file[idx].bool = False
+            if len(scene.notes_list_blender_file) > 1:
+                scene.notes_list_blender_file.move(idx, 0)
         else:
-            scene.notes_list_splash_screen[idx].bool = True
-            scene.notes_list_splash_screen.move(idx, len(scene.notes_list_splash_screen) - 1)
+            scene.notes_list_blender_file[idx].bool = True
+            scene.notes_list_blender_file.move(idx, len(scene.notes_list_blender_file) - 1)
 
 
         return {"FINISHED"}
@@ -492,17 +509,17 @@ class Notes_actions_bool_splash_screen(Operator):
 
 
 
-class NOTES_LIST_UL_items_splash_screen(UIList):
+class NOTES_LIST_UL_items_blender_file(UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         
         # draw_text(self)
 
         scene = context.scene
-        idx = scene.notes_list_splash_screen_index
+        idx = scene.notes_list_blender_file_index
 
         try:
-            item = scene.notes_list_splash_screen[index]
+            item = scene.notes_list_blender_file[index]
         except IndexError:
             pass
 
@@ -514,17 +531,17 @@ class NOTES_LIST_UL_items_splash_screen(UIList):
         row_header.scale_y = .8
 
 
-        if bpy.context.scene.notes_list_splash_screen[index].bool == True:
+        if bpy.context.scene.notes_list_blender_file[index].bool == True:
             row_info = row_header.row(align = 1)
-            row_info.operator("notes_list_splash_screen.list_action_bool", text = "", icon = "CHECKBOX_DEHLT", emboss = 0).my_index = index
+            row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "CHECKBOX_DEHLT", emboss = 0).my_index = index
             row_info.alignment = 'RIGHT'
 
             # row_info = row_header.row(align = 1)
-            # row_info.operator("notes_list_splash_screen.list_action_bool", text = "", icon = "SHADING_SOLID", emboss = 0).my_index = index
+            # row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "SHADING_SOLID", emboss = 0).my_index = index
             # row_info.alignment = 'CENTER'
         else:
             row_info = row_header.row(align = 1)
-            row_info.operator("notes_list_splash_screen.list_action_bool", text = "", icon = "BOOKMARKS", emboss = 0).my_index = index
+            row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "BOOKMARKS", emboss = 0).my_index = index
             row_info.alignment = 'LEFT'
 
         if item.text.count("\n") > 0:
@@ -547,10 +564,10 @@ class NOTES_LIST_UL_items_splash_screen(UIList):
             column.prop(item, "text", emboss=1, text = "")
         
         column_main.separator(factor=1.1)
-class Notes_List_PT_splash_screen(Panel):
+class Notes_List_PT_blender_file(Panel):
     """Adds a custom panel to the TEXT_EDITOR"""
 
-    bl_idname = 'SPLASHSCREEN_PT_presets'
+    bl_idname = 'BLENDERFILE_PT_presets'
     bl_label = " "
     bl_options = {'DEFAULT_CLOSED'}
     bl_space_type = 'PROPERTIES'
@@ -566,7 +583,7 @@ class Notes_List_PT_splash_screen(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List (Spalsh Screen)', icon = 'FILE')
+        layout.label(text = 'Notes List', icon = 'FILE')
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
@@ -578,21 +595,21 @@ class Notes_List_PT_splash_screen(Panel):
 
         rows = 3
         row = layout.row()
-        row.template_list("NOTES_LIST_UL_items_splash_screen", "", scene, "notes_list_splash_screen", scene, "notes_list_splash_screen_index", rows=rows)
+        row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
 
         col = row.column(align=True)
         col.scale_x = 1.1
         col.scale_y = 1.2
 
-        col.operator("notes_list_splash_screen.list_action_add", icon='ADD', text="")
+        col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
         # col.operator("window_manager.export_note_text", icon='ADD', text="").type = "object*"
         # col.operator("window_manager.export_note_text", icon='REMOVE', text="").type = "scene_delete*"
-        col.operator("notes_list_splash_screen.list_action", icon='REMOVE', text="").action = 'REMOVE'
+        col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
         
         col.separator(factor = 0.4)
 
-        col.operator("notes_list_splash_screen.list_action", icon='TRIA_UP', text="").action = 'UP'
-        col.operator("notes_list_splash_screen.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+        col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
+        col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
 
         col.separator(factor = 0.4)
 
@@ -604,7 +621,7 @@ class Notes_List_PT_splash_screen(Panel):
 
         col.separator(factor = 0.4)
 
-        col.operator("notes_list_splash_screen.clear_list", icon="TRASH", text = "")
+        col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
         # row = layout.row()
         # col = row.column(align=True)
         # row = col.row(align=True)
@@ -938,12 +955,12 @@ Notes_list_blender_classes = [
     NOTES_LIST_UL_items_scene,
     Notes_List_PT_scene,
 
-    Notes_List_actions_splash_screen,
-    Notes_List_actions_add_splash_screen,
-    Notes_List_clearList_splash_screen,
-    Notes_actions_bool_splash_screen,
-    NOTES_LIST_UL_items_splash_screen,
-    Notes_List_PT_splash_screen,
+    Notes_List_actions_blender_file,
+    Notes_List_actions_add_blender_file,
+    Notes_List_clearList_blender_file,
+    Notes_actions_bool_blender_file,
+    NOTES_LIST_UL_items_blender_file,
+    Notes_List_PT_blender_file,
 ]
 
 if __name__ == "__main__":
