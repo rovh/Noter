@@ -627,6 +627,7 @@ class Noter_Text_Lines_Create(Operator):
     
     def execute(self, context):
         file_name = bpy.context.scene.file_name
+        line_width_characters = bpy.context.scene.line_width_characters
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
@@ -639,14 +640,14 @@ class Noter_Text_Lines_Create(Operator):
 
 
 
-        line_width_characters = 40
+        line_width_characters = line_width_characters
         new_main_text = ""
         new_main_text_split = ""
 
         main_text = main_text.replace("\n", " ")
         main_text_split_list = main_text.split(" ")
 
-        for split in main_text_split_list:
+        for index, split in enumerate(main_text_split_list):
             if len(new_main_text_split) == 0:
                 new_main_text_split = new_main_text_split + split
             else:
