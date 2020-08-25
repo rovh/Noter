@@ -291,30 +291,30 @@ class Noter_Actions(bpy.types.Operator):
 
 
         elif action == 'blender_file':
+            if bpy.data.scenes.find(custom_scene_name) == -1:
+                bpy.data.scenes.new(custom_scene_name)
+
             if header_note == True:
-
-                if bpy.data.scenes.find(custom_scene_name) == -1:
-                    bpy.data.scenes.new(custom_scene_name)
-
                 bpy.data.scenes[custom_scene_name].note_text_blender_file = main_text
 
                 # for i in bpy.data.scenes:
                 #     i.note_text_blender_file = main_text
             else:
-                item = self.item_object(context)
+                item = self.item_blender_file(context)
                 item.text = main_text
 
         elif action == "blender_file_get":
             bpy.data.texts[file_name].clear()
-            if header_note == True:
-                if bpy.data.scenes.find(custom_scene_name) == -1:
-                    bpy.data.scenes.new(custom_scene_name)
 
+            if bpy.data.scenes.find(custom_scene_name) == -1:
+                bpy.data.scenes.new(custom_scene_name)
+
+            if header_note == True:
                 note_text_blender_file = bpy.data.scenes[custom_scene_name].note_text_blender_file
 
                 bpy.data.texts[file_name].write(note_text_blender_file)
             else:
-                item = self.item_object(context)
+                item = self.item_blender_file(context)
                 bpy.data.texts[file_name].write(item.text)
 
         elif action == "blender_file_delete":
@@ -444,6 +444,17 @@ class Noter_Actions(bpy.types.Operator):
 
         try:
             item = scene.notes_list_scene[idx]
+        except IndexError:
+            pass
+
+        return item
+
+    def item_blender_file(self, context):
+        scene = bpy.data.scenes[custom_scene_name]
+        idx = scene.notes_list_blender_file_index
+
+        try:
+            item = scene.notes_list_blender_file[idx]
         except IndexError:
             pass
 

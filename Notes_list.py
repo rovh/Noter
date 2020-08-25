@@ -609,11 +609,11 @@ class Notes_List_PT_blender_file(Panel):
 
         col.separator(factor = 0.4)
 
-        col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'scene*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
 
         col.separator(factor = 0.4)
 
-        col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'scene_get*'
+        col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
 
         col.separator(factor = 0.4)
 
