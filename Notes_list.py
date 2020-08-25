@@ -1,5 +1,7 @@
 import bpy
 
+# import __init__
+
 # from .__init__ import draw_text
 
 from bpy.types import (
@@ -458,7 +460,11 @@ class Notes_List_clearList_blender_file(Operator):
 
     @classmethod
     def poll(cls, context):
-        scene = bpy.data.scenes[custom_scene_name]
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+
         return bool(scene.notes_list_blender_file)
 
     def invoke(self, context, event):
@@ -515,7 +521,14 @@ class NOTES_LIST_UL_items_blender_file(UIList):
         
         # draw_text(self)
 
-        scene = bpy.data.scenes[custom_scene_name]
+        
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+
+
+        # scene = bpy.context.scene
         idx = scene.notes_list_blender_file_index
 
         try:
@@ -578,7 +591,11 @@ class Notes_List_PT_blender_file(Panel):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.scene != None\
+        preferences = bpy.context.preferences.addons[__name__].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
             # and bpy.context.scene.mode in {'EDIT'}
 
     def draw_header(self, context):
@@ -587,9 +604,15 @@ class Notes_List_PT_blender_file(Panel):
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
+
             
         layout = self.layout
-        scene = bpy.data.scenes[custom_scene_name]
+
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+            
 
         rows = 3
         row = layout.row()

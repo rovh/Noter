@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import nodeitems_utils
+from copy import copy
 # import time
 
 # from .__init__ import draw_text
@@ -12,6 +13,7 @@ from bpy.types import (
     PropertyGroup,
     Operator,
     UIList,
+    Header,
     )
 
 from bpy.props import (
@@ -566,6 +568,14 @@ class TEXT_PT_noter(Panel):
             find = bpy.data.scenes[custom_scene_name].splash_screen
         except KeyError:
             pass
+
+        find_2 = False
+        try:
+            find_2 = bpy.data.scenes[custom_scene_name].splash_screen_notes_list
+        except KeyError:
+            pass
+
+        
         
         # find = False
         # for i in bpy.data.scenes:
@@ -579,10 +589,21 @@ class TEXT_PT_noter(Panel):
         row.scale_x = .5
 
         col.separator(factor = 1)
+
         if find == True:
             col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
             col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
             col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
+            
+            # col.separator(factor = 1)
+
+            row = col.row(align = True)
+            row.operator("window_manager.splash_screen_notes_list", text = '', icon = 'PRESET', depress= find_2)
+            row.alignment = 'RIGHT'
+            row.scale_x = 1.2
+            row.scale_y = .9
+
+            col.separator(factor = 1)
 
 class Noter_Splash_Screen_Switch(Operator):
     """Tooltip"""
@@ -624,6 +645,7 @@ class Noter_Text_Lines_Create(Operator):
     # bl_options = {'REGISTER', 'UNDO'}
     # bl_options = {'UNDO'}
 
+
     
     def execute(self, context):
         file_name = bpy.context.scene.file_name
@@ -648,48 +670,41 @@ class Noter_Text_Lines_Create(Operator):
         main_text_split_list = main_text.split(" ")
 
         for index, split in enumerate(main_text_split_list):
+          
+
             if len(new_main_text_split) == 0:
                 new_main_text_split = new_main_text_split + split
             else:
                 new_main_text_split = new_main_text_split + " " + split
 
-            if len(new_main_text_split) > line_width_characters:
+
+
+            try:
+                split_future = main_text_split_list[index + 1]
+
+                if len(new_main_text_split) == 0:
+                    new_main_text_split_future = new_main_text_split + split_future
+                else:
+                    new_main_text_split_future = new_main_text_split + " " + split_future
+
+            except IndexError:
+                pass
+
+
+
+            if len(new_main_text_split) <= line_width_characters and \
+                len(new_main_text_split_future) >= line_width_characters:
+                
                 new_main_text += new_main_text_split + "\n"
                 new_main_text_split = ""
+                new_main_text_split_future = ""
+
+
 
         new_main_text +=  new_main_text_split
 
-
         bpy.data.texts[file_name].from_string(new_main_text)
             
-
-        # line_width_characters = 40
-        # text = "\n"
-        # line = 1
-        # index = 1
-        # new_main_text = ""
-        # new_main_text_part = ""
-
-
-
-        # for character in main_text:
-
-        #     if character == " " and index > line_width_characters:
-
-        #         bpy.data.texts[file_name].cursor_set(line, character=index, select=False)
-
-        #         line += 1
-
-        #         index = 1
-
-        #         bpy.data.texts[file_name].write(text)
-
-        #     index += 1
-         
-
-        #     print (index, 'index','|', character, 'character')
-        
-        # print ()
 
 
 
@@ -714,6 +729,32 @@ class Noter_Text_Lines_Create(Operator):
 
             
         return {'FINISHED'}
+
+class Noter_Splash_Screen_Notes_List(Operator):
+    """Tooltip"""
+    bl_idname = "window_manager.splash_screen_notes_list"
+    bl_label = "Create Text Lines"
+    bl_description = 'Line text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    # bl_options = {'REGISTER', 'UNDO'}
+    # bl_options = {'UNDO'}
+
+
+    
+    def execute(self, context):
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+        
+
+        if bpy.data.scenes[custom_scene_name].splash_screen_notes_list == True:
+            bpy.data.scenes[custom_scene_name].splash_screen_notes_list = False
+        else:
+            bpy.data.scenes[custom_scene_name].splash_screen_notes_list = True
+        
+
+        
+        return {'FINISHED'}
+
 
 
 
@@ -753,7 +794,7 @@ def calculate_width_menu(self, text):
     return width_menu
 
 
-class Note_Pop_Up_Operator(Operator):
+class Note_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
 
@@ -788,10 +829,6 @@ class Note_Pop_Up_Operator(Operator):
         row.alignment = 'RIGHT'
 
 
-        row_text = layout.row(align = 1)
-        # row_text.scale_y = 0.2
-        row_text.scale_x = 0.6
-
         ic = ['MATCUBE',
             'ANTIALIASED',
             'COLLAPSEMENU',
@@ -813,137 +850,173 @@ class Note_Pop_Up_Operator(Operator):
         ]
 
         ic = random.choice(ic)
+                
+        def draw_word(self, context):
 
-        def label_draw(length):
-            for _ in range(0, length):
-                column_text.label(icon = ic)
+            def label_draw(length):
+                for _ in range(0, length):
+                    column_text.label(icon = ic)
 
+            layout = self.layout
 
-        row_text.separator(factor = 2)
+            row_text = layout.row(align = 1)
+            # row_text.scale_y = 0.2
+            row_text.scale_x = 0.6
 
-
-        column_text = row_text.column(align = 1)
-        column_text.separator(factor = 1.7)
-        column_text.scale_y = .6
-        label_draw(4)
-
-
-        column_text = row_text.column(align = 1)
-        column_text.scale_x = .8
-        column_text.separator(factor = 1.8)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        column_text.scale_x = .8
-        column_text.separator(factor = 3)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        column_text.scale_x = .8
-        column_text.separator(factor = 5)
-        label_draw(1)
+            row_text.separator(factor = 2)
 
 
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = .6
-        column_text.separator(factor = 1.7)
-        label_draw(4)
+            column_text = row_text.column(align = 1)
+            column_text.separator(factor = 1.7)
+            column_text.scale_y = .6
+            label_draw(4)
 
 
+            column_text = row_text.column(align = 1)
+            column_text.scale_x = .8
+            column_text.separator(factor = 1.8)
+            label_draw(1)
 
-        row_text.separator(factor = 7)
+            column_text = row_text.column(align = 1)
+            column_text.scale_x = .8
+            column_text.separator(factor = 3)
+            label_draw(1)
+
+            column_text = row_text.column(align = 1)
+            column_text.scale_x = .8
+            column_text.separator(factor = 5)
+            label_draw(1)
 
 
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = .5
-        column_text.scale_x = .8
-        column_text.separator(factor = 5)
-        label_draw(3)
-
-        column_text = row_text.column(align = 1)
-        label_draw(1)
-        column_text.separator(factor = 3.5)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        label_draw(1)
-        column_text.separator(factor = 3.5)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = .5
-        column_text.separator(factor = 5)
-        label_draw(3)
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = .6
+            column_text.separator(factor = 1.7)
+            label_draw(4)
 
 
 
-        row_text.separator(factor = 5)
+            row_text.separator(factor = 7)
+
+
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = .5
+            column_text.scale_x = .8
+            column_text.separator(factor = 5)
+            label_draw(3)
+
+            column_text = row_text.column(align = 1)
+            label_draw(1)
+            column_text.separator(factor = 3.5)
+            label_draw(1)
+
+            column_text = row_text.column(align = 1)
+            label_draw(1)
+            column_text.separator(factor = 3.5)
+            label_draw(1)
+
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = .5
+            column_text.separator(factor = 5)
+            label_draw(3)
 
 
 
-        column_text = row_text.column(align = 1)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        column_text.separator(factor = .9)
-        column_text.scale_y = .7
-        label_draw(4)
-
-        column_text = row_text.column(align = 1)
-        label_draw(1)
-
-        column_text = row_text.column(align = 1)
-        label_draw(1)
+            row_text.separator(factor = 5)
 
 
 
-        row_text.separator(factor = 6)
+            column_text = row_text.column(align = 1)
+            label_draw(1)
 
+            column_text = row_text.column(align = 1)
+            label_draw(1)
 
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = .51
-        column_text.separator(factor = 2 )
-        label_draw(5)
+            column_text = row_text.column(align = 1)
+            column_text.separator(factor = .9)
+            column_text.scale_y = .7
+            label_draw(4)
 
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = 1
-        label_draw(3)
+            column_text = row_text.column(align = 1)
+            label_draw(1)
 
-        column_text = row_text.column(align = 1)
-        column_text.scale_y = 1
-        label_draw(3)
-
-        row_text.separator(factor = 5)
-
-
-
-        # materials = [mat for mat in bpy.data.materials]
-        # tex = bpy.data.textures['.hidden']
-        # tex = img.jpg
-        # layout.template_preview(tex)
+            column_text = row_text.column(align = 1)
+            label_draw(1)
 
 
 
-        # text = bpy.context.window_manager.noter.note_text_blender_file
-        # find = None
-        # for i in bpy.data.scenes:
-        #     if bool(i.note_text_splash_screen) == True:
-        #         find = i.note_text_splash_screen
-        #         break
+            row_text.separator(factor = 6)
 
-        # find = None
-        # for i in bpy.data.scenes:
-        #     if i.splash_screen == True:
-        #         find = i.note_text_splash_screen
-        #         break
 
-        # text = ""
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = .51
+            column_text.separator(factor = 2 )
+            label_draw(5)
+
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = 1
+            label_draw(3)
+
+            column_text = row_text.column(align = 1)
+            column_text.scale_y = 1
+            label_draw(3)
+
+            row_text.separator(factor = 5)
+
+        draw_word(self, context)
+
+
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
         if bool(text) == True:
+            layout.separator()
             draw_text(self, text)
+
+
+
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].splash_screen_notes_list
+        except KeyError:
+            pass
+
+        if find == True:
+            layout.separator()
+            layout.separator()
+            layout.label(text = "Notes List:", icon = "PRESET")
+
+            try:
+                scene = bpy.data.scenes[custom_scene_name]
+            except KeyError:
+                scene = bpy.context.scene
+                
+            rows = 3
+            row = layout.row()
+            row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
+
+            col = row.column(align=True)
+            col.scale_x = 1.1
+            col.scale_y = 1.2
+
+            col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
+            col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
+            
+            col.separator(factor = 0.4)
+
+            col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
+            col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+
+            # col.separator(factor = 0.4)
+
+            # col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
+
+            # col.separator(factor = 0.4)
+
+            # col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
+
+            col.separator(factor = 0.4)
+
+            col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
+
+
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
@@ -1104,7 +1177,7 @@ class Note_Pop_Up_Operator_2 (Operator):
         # return {'FINISHED'}
 
 
-class OBJECT_PT_note(Panel):
+class OBJECT_PT_note (Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "object"
@@ -1116,7 +1189,7 @@ class OBJECT_PT_note(Panel):
         if bool(text) == True:
             draw_text(self, text)
 
-class SCENE_PT_note(Panel):
+class SCENE_PT_note (Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
@@ -1128,7 +1201,7 @@ class SCENE_PT_note(Panel):
         if bool(text) == True:
             draw_text(self, text)
 
-class TEXT_PT_list_text(Panel):
+class TEXT_PT_list_text (Panel):
     bl_space_type = 'TEXT_EDITOR'
     bl_region_type = 'UI'
     bl_category = "Text"
@@ -1139,10 +1212,16 @@ class TEXT_PT_list_text(Panel):
         scene = context.scene
         
         layout = self.layout
+        
+        row = layout.row()
+        row.operator('window_manager.text_lines_create', text = 'List Text')
+        row.scale_y = 1.5
+        
+        row = layout.row()
+        row.prop(scene, "line_width_characters", text = '')
+        row.scale_x = .4
+        row.alignment = 'CENTER'
 
-        layout.operator('window_manager.text_lines_create', text = 'List Text')
-
-        layout.prop(scene, "line_width_characters", text = '')
 
 # class Noter_Props (bpy.types.PropertyGroup):
     # """
@@ -1200,6 +1279,17 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         default=True,
         )
 
+    # add_custom_menu_to_properties_menus: bpy.props.BoolProperty(
+        # name="bool",
+        # description="",
+        # default=True,
+        # )
+
+    add_elements_to_properties_menus: bpy.props.BoolProperty(
+        name="bool",
+        description="",
+        default=True,
+        )
 
 
     # use_opened_file_path: BoolProperty(
@@ -1272,7 +1362,21 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.alignment = 'LEFT'
             row.scale_x = 1.5
 
+
+
             box.separator(factor = .1)
+
+
+
+            row = box.row(align = False)
+            row = row.row(align = True)
+
+            # row.prop(self, 'add_custom_menu_to_properties_menus', text = 'Add a new custom header menu to the topbar', toggle=True)
+            row.prop(self, 'add_elements_to_properties_menus', text = 'Add buttons to the existing topbar menus', toggle=True)
+            row.alignment = 'LEFT'
+            row.scale_x = 1.3
+
+
 
 
 
@@ -1415,6 +1519,78 @@ def add_to_the_topbar(self, context):
         layout = self.layout
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
+# class TEXT_MT_format_add_menu(bpy.types.Menu):
+    # bl_label = "Line Text"
+
+    # def draw(self, context):
+    #     scene = bpy.context.scene
+
+    #     layout = self.layout
+
+    #     layout.operator("window_manager.text_lines_create", text = 'Line Text')
+    #     layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
+
+
+def add_to__TEXT_MT_format(self, context):
+
+    scene = bpy.context.scene
+    
+
+    layout = self.layout
+
+    layout.separator(factor = 1)
+
+    # layout.menu("TEXT_MT_format_add_menu")
+
+    layout.operator("window_manager.text_lines_create", text = 'Line Text')
+    layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
+
+class PROPERTIES_PT_navigation_bar_add(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'NAVIGATION_BAR'
+    bl_label = "Navigation Bar"
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text = "123123")
+
+        view = context.space_data
+
+        # layout.scale_x = 1.4
+        # layout.scale_y = 1.4
+        # layout.prop_tabs_enum(view, "context", icon_only=True)
+        # layout.
+
+class PROPERTIES_HT_header_add_menu(Panel):
+
+    # bl_space_type = 'PROPERTIES'
+    # bl_region_type = 'NAVIGATION_BAR'
+    # bl_label = "Navigation Bar"
+    # bl_options = {'HIDE_HEADER'}
+
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "my"
+    bl_label = "Navigation Bar"
+
+
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(icon = "PRESET")
+
+        view = context.space_data
+
+        layout.scale_x = 1.4
+        layout.scale_y = 1.4
+        layout.label(icon = "PRESET")
+        # layout.prop_tabs_enum(view, "context", icon_only=True)
+
+
+# def add_to__PROPERTIES_HT_header(self, context):
+#     layout = self.layout
+    # layout.
 
 
 blender_classes = [
@@ -1430,6 +1606,10 @@ blender_classes = [
     Noter_Splash_Screen_Switch,
     TOPBAR_MT_notes,
     TEXT_PT_list_text,
+    # TEXT_MT_format_add_menu,
+    Noter_Splash_Screen_Notes_List,
+    # PROPERTIES_HT_header_add_menu,
+    # PROPERTIES_PT_navigation_bar_add,
 
     
 
@@ -1457,11 +1637,12 @@ def register():
     # bpy.types.WindowManager.splash_screen = BoolProperty()
 
     bpy.types.Scene.splash_screen = BoolProperty()
+    bpy.types.Scene.splash_screen_notes_list = BoolProperty()
     bpy.app.handlers.load_post.append(load_handler)
 
 
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
-    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 60, description = "Name of the file from which the text will be taken or where the text will be displayed")
+    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 50, description = "Name of the file from which the text will be taken or where the text will be displayed")
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
@@ -1484,6 +1665,7 @@ def register():
         register_class(cls)
 
     bpy.types.NODE_MT_add.prepend(add_to_add_menu)
+    bpy.types.TEXT_MT_format.append(add_to__TEXT_MT_format)
 
 
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
@@ -1519,6 +1701,8 @@ def unregister():
 
     bpy.types.NODE_MT_add.remove(add_to_add_menu)
 
+    bpy.types.TEXT_MT_format.remove(add_to__TEXT_MT_format)
+
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
 
@@ -1543,6 +1727,7 @@ def unregister():
     del bpy.types.Scene.line_width_characters
 
     del bpy.types.Scene.splash_screen
+    del bpy.types.Scene.splash_screen_notes_list
 
 
     del bpy.types.Object.note_text_object
