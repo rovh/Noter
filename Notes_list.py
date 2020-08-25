@@ -379,7 +379,7 @@ class Notes_List_actions_blender_file(Operator):
         if bpy.data.scenes.find(custom_scene_name) == -1:
             bpy.data.scenes.new(custom_scene_name)
 
-        scene = context.scene
+        scene = bpy.data.scenes[custom_scene_name]
         idx = scene.notes_list_blender_file_index
 
         try:
@@ -429,7 +429,7 @@ class Notes_List_actions_add_blender_file(Operator):
 
     def execute(self, context):
 
-        scene = context.scene
+        scene = bpy.data.scenes[custom_scene_name]
         idx = scene.notes_list_blender_file_index
 
         try:
@@ -448,9 +448,7 @@ class Notes_List_actions_add_blender_file(Operator):
         if bpy.data.scenes.find(custom_scene_name) == -1:
             bpy.data.scenes.new(custom_scene_name)
 
-        return self.execute
-
-        # return {"FINISHED"}
+        return self.execute(context)
 class Notes_List_clearList_blender_file(Operator):
     """Clear all items of the list"""
     bl_idname = "notes_list_blender_file.clear_list"
@@ -460,14 +458,16 @@ class Notes_List_clearList_blender_file(Operator):
 
     @classmethod
     def poll(cls, context):
-        return bool(context.scene.notes_list_blender_file)
+        scene = bpy.data.scenes[custom_scene_name]
+        return bool(scene.notes_list_blender_file)
 
     def invoke(self, context, event):
         return context.window_manager.invoke_confirm(self, event)
 
     def execute(self, context):
-        if bool(context.scene.notes_list_blender_file):
-            context.scene.notes_list_blender_file.clear()
+        scene = bpy.data.scenes[custom_scene_name]
+        if bool(scene.notes_list_blender_file):
+            scene.notes_list_blender_file.clear()
             self.report({'INFO'}, "All items removed")
         else:
             self.report({'INFO'}, "Nothing to remove")
@@ -485,7 +485,7 @@ class Notes_actions_bool_blender_file(Operator):
 
         # bpy.context.scene.notes_list_blender_file_index = self.my_index
 
-        scene = context.scene
+        scene = bpy.data.scenes[custom_scene_name]
         # idx = scene.notes_list_blender_file_index
         idx = self.my_index
 
@@ -515,7 +515,7 @@ class NOTES_LIST_UL_items_blender_file(UIList):
         
         # draw_text(self)
 
-        scene = context.scene
+        scene = bpy.data.scenes[custom_scene_name]
         idx = scene.notes_list_blender_file_index
 
         try:
@@ -531,7 +531,7 @@ class NOTES_LIST_UL_items_blender_file(UIList):
         row_header.scale_y = .8
 
 
-        if bpy.context.scene.notes_list_blender_file[index].bool == True:
+        if scene.notes_list_blender_file[index].bool == True:
             row_info = row_header.row(align = 1)
             row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "CHECKBOX_DEHLT", emboss = 0).my_index = index
             row_info.alignment = 'RIGHT'
@@ -583,15 +583,13 @@ class Notes_List_PT_blender_file(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List', icon = 'FILE')
+        layout.label(text = 'Notes List  |  File (.blend) ', icon = 'FILE')
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
-        # if bpy.context.scene != None:
-            # if bpy.context.scene.mode in {'EDIT'}:
             
         layout = self.layout
-        scene = bpy.context.scene
+        scene = bpy.data.scenes[custom_scene_name]
 
         rows = 3
         row = layout.row()
@@ -602,8 +600,6 @@ class Notes_List_PT_blender_file(Panel):
         col.scale_y = 1.2
 
         col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
-        # col.operator("window_manager.export_note_text", icon='ADD', text="").type = "object*"
-        # col.operator("window_manager.export_note_text", icon='REMOVE', text="").type = "scene_delete*"
         col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
         
         col.separator(factor = 0.4)
@@ -622,10 +618,6 @@ class Notes_List_PT_blender_file(Panel):
         col.separator(factor = 0.4)
 
         col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
-        # row = layout.row()
-        # col = row.column(align=True)
-        # row = col.row(align=True)
-        # row.operator("presets_angle.remove_duplicates", icon="GHOST_ENABLED")
 
 
 class NOTES_LIST_UL_items_scene(UIList):
