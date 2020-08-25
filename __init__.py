@@ -616,6 +616,105 @@ class Noter_Splash_Screen_Switch(Operator):
 
         return {'FINISHED'}
 
+class Noter_Text_Lines_Create(Operator):
+    """Tooltip"""
+    bl_idname = "window_manager.text_lines_create"
+    bl_label = "Create Text Lines"
+    bl_description = 'Line text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    # bl_options = {'REGISTER', 'UNDO'}
+    # bl_options = {'UNDO'}
+
+    
+    def execute(self, context):
+        file_name = bpy.context.scene.file_name
+        try:
+            main_text = bpy.data.texts[file_name].as_string()
+        except KeyError:
+
+            text = "File was not found"
+            war = "ERROR"
+            self.report({war}, text)
+            return {'FINISHED'}
+
+
+
+
+        line_width_characters = 40
+        new_main_text = ""
+        new_main_text_split = ""
+
+        main_text = main_text.replace("\n", " ")
+        main_text_split_list = main_text.split(" ")
+
+        for split in main_text_split_list:
+            if len(new_main_text_split) == 0:
+                new_main_text_split = new_main_text_split + split
+            else:
+                new_main_text_split = new_main_text_split + " " + split
+
+            if len(new_main_text_split) > line_width_characters:
+                new_main_text += new_main_text_split + "\n"
+                new_main_text_split = ""
+
+        new_main_text +=  new_main_text_split
+
+
+        bpy.data.texts[file_name].from_string(new_main_text)
+            
+
+        # line_width_characters = 40
+        # text = "\n"
+        # line = 1
+        # index = 1
+        # new_main_text = ""
+        # new_main_text_part = ""
+
+
+
+        # for character in main_text:
+
+        #     if character == " " and index > line_width_characters:
+
+        #         bpy.data.texts[file_name].cursor_set(line, character=index, select=False)
+
+        #         line += 1
+
+        #         index = 1
+
+        #         bpy.data.texts[file_name].write(text)
+
+        #     index += 1
+         
+
+        #     print (index, 'index','|', character, 'character')
+        
+        # print ()
+
+
+
+
+        # text = '123123123123'
+        # line_start = 2
+        # char_start = 0
+
+        # line_end = 30
+        # char_end = 100
+
+        # t = bpy.data.texts['Text'].cursor_set(line, character=10, select=False)
+        
+        # t = bpy.data.texts['Text'].select_set(line_start, char_start, line_end, char_end)
+        
+        # t = bpy.data.texts['Text'].write(text)
+
+        # t = bpy.data.texts['Text'].as_string()
+
+        # t = bpy.data.texts['Text'].from_string(text)
+
+
+            
+        return {'FINISHED'}
+
+
 
 
 def draw_text(self, text):
@@ -1028,7 +1127,21 @@ class SCENE_PT_note(Panel):
         if bool(text) == True:
             draw_text(self, text)
 
+class TEXT_PT_list_text(Panel):
+    bl_space_type = 'TEXT_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Text"
+    bl_label = "Line Text"
+    # bl_options = {'HIDE_HEADER'}
 
+    def draw(self, context):
+        scene = context.scene
+        
+        layout = self.layout
+
+        layout.operator('window_manager.text_lines_create', text = 'List Text')
+
+        layout.prop(scene, "line_width_characters", text = '')
 
 # class Noter_Props (bpy.types.PropertyGroup):
     # """
@@ -1302,17 +1415,20 @@ def add_to_the_topbar(self, context):
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
 
+
 blender_classes = [
     TEXT_PT_noter,
     # Noter_Props,
     Noter_Actions,
     Note_Pop_Up_Operator,
     Note_Pop_Up_Operator_2,
+    Noter_Text_Lines_Create,
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
     Noter_Splash_Screen_Switch,
     TOPBAR_MT_notes,
+    TEXT_PT_list_text,
 
     
 
@@ -1344,6 +1460,7 @@ def register():
 
 
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
+    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 60, description = "Name of the file from which the text will be taken or where the text will be displayed")
 
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
@@ -1422,6 +1539,7 @@ def unregister():
     del bpy.types.Scene.label_node_text
 
     del bpy.types.Scene.file_name
+    del bpy.types.Scene.line_width_characters
 
     del bpy.types.Scene.splash_screen
 
