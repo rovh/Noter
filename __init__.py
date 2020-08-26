@@ -766,8 +766,17 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
     row = box.row(align = 1)
     row.scale_x = 2.7
     row.alignment = 'CENTER'
-    # column.separator(factor=.5)
     col = row.column(align = 1)
+
+
+
+    if enable_list_mode == True:
+        if text.count("\n") > 0:
+            multiple_strokes = True
+        else:
+            multiple_strokes = False
+
+
     for i in text_parts_list:
         row = col.row(align = 1)
         row.scale_y = 0
@@ -776,6 +785,8 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
             index   = item_index
             my_bool = item.bool   
             text = i   
+
+
 
 
             try:
@@ -788,8 +799,9 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
                 add_button = True
 
             previous_index = index
-                
-                
+
+
+           
             
             if my_bool == False and add_button == True:
                 add_ic = "BOOKMARKS"
@@ -797,13 +809,24 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
                 row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
                 row_info.alignment = 'LEFT'
             
-            elif add_button == False:
+
+            elif (add_button == False) or \
+                    (my_bool == True and add_button == True):
+
                 row_info = row.row(align = True)
                 row_info.label(icon = "BLANK1")
                 row_info.alignment = 'LEFT'
+                
+                row_info.scale_x = .35
 
-            
-            row.label(text = text)
+
+
+            if multiple_strokes == True:
+                row.label(text = text)
+            else:
+                row.prop(item, "text", emboss=1, text = "")
+
+
 
             if my_bool == True and add_button == True:
                 add_ic = "CHECKBOX_DEHLT"
@@ -813,15 +836,6 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
 
             row_info.scale_x = .35
 
-
-
-            
-
-            # row.operator("notes_list_blender_file.list_action_bool", icon = "BOOKMARKS", emboss = 0).my_index = index
-            # row.label(text = i, icon = add_ic)
-
-            # if bool(i) == False:
-            #     add_ic = "NONE"
 
 
         else:
