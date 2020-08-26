@@ -282,7 +282,7 @@ class Add_Nodes_Tree(bpy.types.Operator):
     # for network in getSubprogramNetworks():
     #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
     #         {"subprogramIdentifier" : repr(network.identifier)})
-# itemsByIdentifier = {}
+itemsByIdentifier = {}
 
 class Noter_NodeSearch(bpy.types.Operator):
     bl_idname = "node.noter_node_search"
@@ -320,15 +320,25 @@ class Noter_NodeSearch(bpy.types.Operator):
             
     )
 
+    
+
+    @classmethod
+    def poll(cls, context):
+        try: return context.space_data.node_tree.bl_idname == "Noter_CustomTreeType"
+        except: return False
+
     def execute(self, context):
-        # itemsByIdentifier[self.item].insert()
-        self.report({'INFO'}, "Selected:" + self.my_search)
+        self.my_searchA
+        # self.report({'INFO'}, "Selected:" + self.my_search)
         return {"FINISHED"}
 
     def invoke(self, context, event):
         context.window_manager.invoke_search_popup(self)
+        # return {"CANCELLED"}
         return {'RUNNING_MODAL'}
         # return context.window_manager.invoke_search_popup(self)
+
+    
 
 
 
@@ -674,11 +684,20 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     def init(self, context):
 
         # self.show_preview = True
+        # self.image = bpy.data.textures['Texture'].preview
         # self.show_texture = True
 
         # self.image = bpy.data.images['Camera.001']
         # self.image = bpy.data.images['Camera.001.png']
+        # self.image = bpy.data.images['Camera.002.png'].pixels
+        # self.image = bpy.data.images['Untitled']
         # self.image = bpy.data.textures['Texture'].image
+
+        # self.image = bpy.data.textures['Texture'].preview
+        
+        # print(123123)
+        # print(self.image)
+        # print()
 
         
         self.inputs.new('Noter_CustomSocketType', "")
@@ -708,6 +727,15 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # Additional buttons displayed on the node.
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
+        
+        # self.show_preview = True
+        # self.show_texture = True
+
+        # self.image = bpy.data.images['Camera.001']
+        # self.image = bpy.data.images['Camera.001.png']
+        # self.image = bpy.data.textures['Texture']
+        
+
 
         # try:
 
@@ -802,6 +830,17 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
 
     def update(self):
+
+        # self.show_preview = True
+        # self.show_texture = True
+
+        # # self.image = bpy.data.images['Camera.001']
+        # # self.image = bpy.data.images['Camera.001.png']
+        # self.image = bpy.data.textures['Texture']
+
+        # print(self.image)
+        # print(123123)
+
 
         count = 0
         for i in self.inputs:
@@ -1035,9 +1074,13 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.type = "Noter_CustomNodeType"
 
 
-        # props = layout.operator("node.add_node", text = "de", icon = 'NONE')
-        # props.use_transform = True
-        # props.type = "CompositorNodeImageA"
+        props = layout.operator("node.add_node", text = "de", icon = 'NONE')
+        props.use_transform = True
+        props.type = "CompositorNodeImage"
+
+        props = layout.operator("node.add_node", text = "123", icon = 'NONE')
+        props.use_transform = True
+        props.type = "Noter_CustomNodeType_2"
 
         # bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
 
@@ -1079,10 +1122,10 @@ def add_to_add_menu(self, context):
         if bool(context.space_data.edit_tree) ==  True:
 
 
-            layout.operator("node.noter_node_search", text = "Search", icon = 'VIEWZOOM')
+            # layout.operator("node.noter_node_search", text = "Search", icon = 'VIEWZOOM')
 
             # row = layout.row()
-            # row.operator('node.add_search', text = "Search...", icon = 'VIEWZOOM')
+            # layout.operator('node.add_search', text = "Search...", icon = 'VIEWZOOM')
             # row.operator_context = 'INVOKE_DEFAULT'
 
             factor = .5
@@ -1090,6 +1133,7 @@ def add_to_add_menu(self, context):
 
             layout.separator(factor = 1)
 
+            # layout.operator('node.add_search', text = "Note", icon = 'FILE')
             layout.menu("NODE_MT_add_menu_notes", text = "Note", icon = "FILE")
 
             layout.separator(factor = factor)
@@ -1183,7 +1227,7 @@ Nodes_blender_classes = (
     NODE_MT_add_menu_layout,
     NODE_MT_add_menu_othernotes,
     NODE_MT_add_menu_notes,
-    Noter_NodeSearch,
+    # Noter_NodeSearch,
     
 )
 

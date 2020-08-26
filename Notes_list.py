@@ -369,7 +369,7 @@ class Notes_List_actions_blender_file(Operator):
             # ('ADD', "Add", "") 
             ))
 
-    by_index = bpy.props.IntProperty(options = {"SKIP_SAVE"}, default = -1 )
+    by_index: bpy.props.IntProperty(options = {"SKIP_SAVE"}, default = -1 )
 
     @classmethod
     def description(cls, context, properties):
