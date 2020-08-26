@@ -369,6 +369,8 @@ class Notes_List_actions_blender_file(Operator):
             # ('ADD', "Add", "") 
             ))
 
+    by_index = bpy.props.IntProperty(options = {"SKIP_SAVE"}, default = -1 )
+
     @classmethod
     def description(cls, context, properties):
         if properties.action == 'REMOVE':
@@ -390,6 +392,7 @@ class Notes_List_actions_blender_file(Operator):
             item = scene.notes_list_blender_file[idx]
         except IndexError:
             pass
+
         else:
             if self.action == 'DOWN' and idx < len(scene.notes_list_blender_file) - 1:
                 scene.notes_list_blender_file.move(idx, idx+1)
@@ -399,13 +402,22 @@ class Notes_List_actions_blender_file(Operator):
                 scene.notes_list_blender_file.move(idx, idx-1)
                 scene.notes_list_blender_file_index -= 1
                 
-            elif self.action == 'REMOVE':
+
+        if self.action == 'REMOVE':
+            if self.by_index == -1 :
+
                 if idx == 0:
                     scene.notes_list_blender_file_index = 0
                 else:
                     scene.notes_list_blender_file_index -= 1
                 
                 scene.notes_list_blender_file.remove(idx)
+                
+            else:
+        
+                scene.notes_list_blender_file.remove(self.by_index)
+
+
 
         return {"FINISHED"}
 class Notes_List_actions_add_blender_file(Operator):
@@ -600,7 +612,7 @@ class Notes_List_PT_blender_file(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List  |  File (.blend) ', icon = 'FILE')
+        layout.label(text = 'Notes List    >   File (.blend) ', icon = 'FILE')
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
@@ -723,7 +735,7 @@ class Notes_List_PT_scene(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List', icon = 'FILE')
+        layout.label(text = 'Notes List    >   Scene', icon = 'FILE')
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
@@ -900,7 +912,7 @@ class Notes_List_PT(Panel):
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List', icon = 'FILE')
+        layout.label(text = 'Notes List   >   Object', icon = 'FILE')
 
     def draw(self, context):
         # if bpy.context.active_object != None:

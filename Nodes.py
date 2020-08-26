@@ -283,10 +283,12 @@ class Add_Nodes_Tree(bpy.types.Operator):
     #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
     #         {"subprogramIdentifier" : repr(network.identifier)})
 # itemsByIdentifier = {}
-# class NodeSearch(bpy.types.Operator):
-    # bl_idname = "an.node_search"
-    # bl_label = "Node Search"
-    # bl_options = {"REGISTER"}
+
+class Noter_NodeSearch(bpy.types.Operator):
+    bl_idname = "node.noter_node_search"
+    bl_label = "Node Search"
+    bl_options = {"REGISTER"}
+    bl_property = "my_search"
     # bl_property = "item"
 
     # def getSearchItems(self, context):
@@ -308,9 +310,25 @@ class Add_Nodes_Tree(bpy.types.Operator):
     #     context.window_manager.invoke_search_popup(self)
     #     return {"CANCELLED"}
 
-    # def execute(self, context):
-    #     itemsByIdentifier[self.item].insert()
-    #     return {"FINISHED"}
+    my_search: bpy.props.EnumProperty(
+        name="My Search",
+        items=(
+            ('FOO', "Foo", ""),
+            ('BAR', "Bar", ""),
+            ('BAZ', "Baz", ""),
+        ),
+            
+    )
+
+    def execute(self, context):
+        # itemsByIdentifier[self.item].insert()
+        self.report({'INFO'}, "Selected:" + self.my_search)
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+        context.window_manager.invoke_search_popup(self)
+        return {'RUNNING_MODAL'}
+        # return context.window_manager.invoke_search_popup(self)
 
 
 
@@ -1060,9 +1078,15 @@ def add_to_add_menu(self, context):
 
         if bool(context.space_data.edit_tree) ==  True:
 
+
+            layout.operator("node.noter_node_search", text = "Search", icon = 'VIEWZOOM')
+
+            # row = layout.row()
+            # row.operator('node.add_search', text = "Search...", icon = 'VIEWZOOM')
+            # row.operator_context = 'INVOKE_DEFAULT'
+
             factor = .5
 
-            # layout.operator('node.add_search', text = "Search...", icon = 'VIEWZOOM').use_transform = True
 
             layout.separator(factor = 1)
 
@@ -1159,6 +1183,7 @@ Nodes_blender_classes = (
     NODE_MT_add_menu_layout,
     NODE_MT_add_menu_othernotes,
     NODE_MT_add_menu_notes,
+    Noter_NodeSearch,
     
 )
 

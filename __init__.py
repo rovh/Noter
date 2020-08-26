@@ -532,6 +532,7 @@ class TEXT_PT_noter(Panel):
 
         box = column.box()
         col = box.column(align = 1)
+        col.operator("node.noter_node_search", text = "Search", icon = 'VIEWZOOM').use_transform = True
         col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
@@ -791,27 +792,27 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
 
             try:
                 if previous_index == index:
-                    add_button = False
+                    add_buttons = False
                 else:
-                    add_button = True
+                    add_buttons = True
 
             except UnboundLocalError:
-                add_button = True
+                add_buttons = True
 
             previous_index = index
 
 
            
             
-            if my_bool == False and add_button == True:
+            if my_bool == False and add_buttons == True:
                 add_ic = "BOOKMARKS"
                 row_info = row.row(align = 0)
                 row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
                 row_info.alignment = 'LEFT'
             
 
-            elif (add_button == False) or \
-                    (my_bool == True and add_button == True):
+            elif (add_buttons == False) or \
+                    (my_bool == True and add_buttons == True):
 
                 row_info = row.row(align = True)
                 row_info.label(icon = "BLANK1")
@@ -828,21 +829,26 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
 
 
 
-            if my_bool == True and add_button == True:
+            if my_bool == True and add_buttons == True:
                 add_ic = "CHECKBOX_DEHLT"
                 row_info = row.row(align = 0)
                 row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
                 row_info.alignment = 'RIGHT'
-
-            row_info.scale_x = .35
-
+            
+            
+            if add_buttons == True:
+                row = row.row()
+                operator = row.operator("notes_list_blender_file.list_action", icon='REMOVE', text="")
+                operator.by_index = index
+                operator.action = 'REMOVE'
+                row.scale_x = .35
+                
+                row_info.scale_x = .35
 
 
         else:
 
             row.label(text = i)
-        
-
       
 def calculate_width_menu(self, text):
 
