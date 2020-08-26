@@ -552,9 +552,6 @@ class NOTES_LIST_UL_items_blender_file(UIList):
             row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "CHECKBOX_DEHLT", emboss = 0).my_index = index
             row_info.alignment = 'RIGHT'
 
-            # row_info = row_header.row(align = 1)
-            # row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "SHADING_SOLID", emboss = 0).my_index = index
-            # row_info.alignment = 'CENTER'
         else:
             row_info = row_header.row(align = 1)
             row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "BOOKMARKS", emboss = 0).my_index = index

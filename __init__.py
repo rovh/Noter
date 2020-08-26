@@ -759,7 +759,7 @@ class Noter_Splash_Screen_Notes_List(Operator):
 
 
 
-def draw_text(self,  text,  add_ic = "NONE",  cycle_index = None):
+def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index = None):
     text_parts_list = text.split('\n')
     layout = self.layout
     box = layout.box()
@@ -769,26 +769,64 @@ def draw_text(self,  text,  add_ic = "NONE",  cycle_index = None):
     # column.separator(factor=.5)
     col = row.column(align = 1)
     for i in text_parts_list:
-        row = col.row(align = 0)
+        row = col.row(align = 1)
         row.scale_y = 0
 
+        if enable_list_mode == True:
+            index   = item_index
+            my_bool = item.bool   
+            text = i   
 
 
-        try:
-            if previous_index == cycle_index and cycle_index != None:
-                add_ic = "BLANK1"
-        except UnboundLocalError:
-            pass
+            try:
+                if previous_index == index:
+                    add_button = False
+                else:
+                    add_button = True
 
-        if bool(i) == False:
-            add_ic = "NONE"
+            except UnboundLocalError:
+                add_button = True
 
-        previous_index = cycle_index
+            previous_index = index
+                
+                
+            
+            if my_bool == False and add_button == True:
+                add_ic = "BOOKMARKS"
+                row_info = row.row(align = 0)
+                row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
+                row_info.alignment = 'LEFT'
+            
+            elif add_button == False:
+                row_info = row.row(align = True)
+                row_info.label(icon = "BLANK1")
+                row_info.alignment = 'LEFT'
+
+            
+            row.label(text = text)
+
+            if my_bool == True and add_button == True:
+                add_ic = "CHECKBOX_DEHLT"
+                row_info = row.row(align = 0)
+                row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
+                row_info.alignment = 'RIGHT'
+
+            row_info.scale_x = .35
 
 
 
+            
 
-        row.label(text = i, icon = add_ic)
+            # row.operator("notes_list_blender_file.list_action_bool", icon = "BOOKMARKS", emboss = 0).my_index = index
+            # row.label(text = i, icon = add_ic)
+
+            # if bool(i) == False:
+            #     add_ic = "NONE"
+
+
+        else:
+
+            row.label(text = i)
         
 
       
@@ -1009,18 +1047,11 @@ class Note_Pop_Up_Operator (Operator):
             notes_list_blender_file = bpy.data.scenes[custom_scene_name].notes_list_blender_file
 
             for index, item in enumerate(notes_list_blender_file):
+
                 text = item.text
-                my_bool = item.bool
-                
-
-                if my_bool == False:
-                    add_ic = "BOOKMARKS"
-                else:
-                    add_ic = "BLANK1"
-
                 
                 # layout.operator("notes_list_blender_file.list_action_bool", icon='BOOKMARKS', text="")
-                draw_text(self, text, add_ic = add_ic, cycle_index = index)
+                draw_text(self, text,  enable_list_mode = True , item = item, item_index = index)
                 # layout.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
                 # layout.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
                 # layout.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
