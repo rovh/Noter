@@ -529,8 +529,9 @@ class NOTES_LIST_UL_items_blender_file(UIList):
         except KeyError:
             scene = bpy.context.scene
 
-
         # scene = bpy.context.scene
+
+
         idx = scene.notes_list_blender_file_index
 
         try:
@@ -989,5 +990,5 @@ Notes_list_blender_classes = [
     Notes_List_PT_blender_file,
 ]
 
-if __name__ == "__main__":
-    register()
+# if __name__ == "__main__":
+#     register()

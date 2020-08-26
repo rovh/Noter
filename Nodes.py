@@ -1182,5 +1182,5 @@ Nodes_blender_classes = (
 #         unregister_class(cls)
 
 
-if __name__ == "__main__":
-    register()
+# if __name__ == "__main__":
+#     register()

@@ -759,7 +759,7 @@ class Noter_Splash_Screen_Notes_List(Operator):
 
 
 
-def draw_text(self, text):
+def draw_text(self,  text,  add_ic = "NONE",  cycle_index = None):
     text_parts_list = text.split('\n')
     layout = self.layout
     box = layout.box()
@@ -770,9 +770,28 @@ def draw_text(self, text):
     col = row.column(align = 1)
     for i in text_parts_list:
         row = col.row(align = 0)
-        row.label(text = i)
         row.scale_y = 0
 
+
+
+        try:
+            if previous_index == cycle_index and cycle_index != None:
+                add_ic = "BLANK1"
+        except UnboundLocalError:
+            pass
+
+        if bool(i) == False:
+            add_ic = "NONE"
+
+        previous_index = cycle_index
+
+
+
+
+        row.label(text = i, icon = add_ic)
+        
+
+      
 def calculate_width_menu(self, text):
 
     # from matplotlib.afm import AFM
@@ -792,7 +811,6 @@ def calculate_width_menu(self, text):
 
 
     return width_menu
-
 
 class Note_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
@@ -979,42 +997,74 @@ class Note_Pop_Up_Operator (Operator):
             pass
 
         if find == True:
+            # row = layout.row()
+
+
             layout.separator()
             layout.separator()
+
+
             layout.label(text = "Notes List:", icon = "PRESET")
 
-            try:
-                scene = bpy.data.scenes[custom_scene_name]
-            except KeyError:
-                scene = bpy.context.scene
+            notes_list_blender_file = bpy.data.scenes[custom_scene_name].notes_list_blender_file
+
+            for index, item in enumerate(notes_list_blender_file):
+                text = item.text
+                my_bool = item.bool
                 
-            rows = 3
-            row = layout.row()
-            row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
 
-        #     col = row.column(align=True)
-        #     col.scale_x = 1.1
-        #     col.scale_y = 1.2
+                if my_bool == False:
+                    add_ic = "BOOKMARKS"
+                else:
+                    add_ic = "BLANK1"
 
-        #     col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
-        #     col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
+                
+                # layout.operator("notes_list_blender_file.list_action_bool", icon='BOOKMARKS', text="")
+                draw_text(self, text, add_ic = add_ic, cycle_index = index)
+                # layout.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
+                # layout.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
+                # layout.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
+
+
+            layout.separator()
+            layout.separator()
+
+
+
+            # try:
+            #     scene = bpy.data.scenes[custom_scene_name]
+            # except KeyError:
+            #     scene = bpy.context.scene
+                
+            # # scene = bpy.context.scene
+
+            # rows = 3
+            # row = layout.row()
+            # row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
+
+            # col = row.column(align=True)
+            # col.scale_x = 1.1
+            # col.scale_y = 1.2
+
+            # col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
+            # col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
             
-        #     col.separator(factor = 0.4)
+            # col.separator(factor = 0.4)
 
-        #     col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
-        #     col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+            # col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
+            # col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
 
-        #     # col.separator(factor = 0.4)
+            # col.separator(factor = 0.4)
 
-        #     # col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
+            # col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
 
-        #     # col.separator(factor = 0.4)
+            # col.separator(factor = 0.4)
 
-        #     # col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
+            # col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
 
-        #     col.separator(factor = 0.4)
+            # col.separator(factor = 0.4)
 
-        #     col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
+            # col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
 
     def invoke(self, context, event): 
         # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
@@ -1398,6 +1448,9 @@ def load_handler(dummy):
         bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
     except RuntimeError:
         pass
+
+    # bpy.ops.window_manager.note_popup_operator('INVOKE_DEFAULT')
+
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
@@ -1620,6 +1673,9 @@ blender_classes = Notes_list_blender_classes + blender_classes
 
 def register():
 
+    # bpy.utils.register_class(NOTES_LIST_UL_items_blender_file),
+    
+
     for blender_class in blender_classes:
         bpy.utils.register_class(blender_class)
 
@@ -1660,10 +1716,7 @@ def register():
 
 
 
-    bpy.app.handlers.load_post.append(load_handler)
-
-
-
+    
 
     from bpy.utils import register_class
     for cls in Nodes_blender_classes:
@@ -1691,6 +1744,12 @@ def register():
 
     bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
 
+
+
+    bpy.app.handlers.load_post.append(load_handler)
+
+
+
 def unregister():
 
 
@@ -1711,6 +1770,9 @@ def unregister():
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
 
+    for blender_class in blender_classes:
+        bpy.utils.unregister_class(blender_class)
+
     from bpy.utils import unregister_class
     for cls in reversed(Nodes_blender_classes):
         unregister_class(cls)
@@ -1722,8 +1784,7 @@ def unregister():
     # if my_handler in bpy.app.handlers.load_post:
     #     bpy.app.handlers.load_post.remove(load_handler)
 
-    for blender_class in blender_classes:
-        bpy.utils.unregister_class(blender_class)
+    
 
     del bpy.types.Scene.colorProperty
     del bpy.types.Scene.label_node_text
