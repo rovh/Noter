@@ -83,6 +83,8 @@ class Noter_Actions(bpy.types.Operator):
         
 
 
+
+
         elif properties.action == 'scene':
             return "Assign text to the active scene"
         elif properties.action == 'scene_get':
@@ -96,12 +98,23 @@ class Noter_Actions(bpy.types.Operator):
             return "Export text from the scene list"
 
 
+
+
+
         elif properties.action == 'blender_file':
             return "Assign text to the .blend file"
         elif properties.action == 'blender_file_get':
             return "Get text from the .blend file"
         elif properties.action == 'blender_file_delete':
             return "Delete text in the .blend file"
+
+        elif properties.action == 'blender_file*':
+            return "Import text to the File(.blend) list"
+        elif properties.action == 'blender_file_get*':
+            return "Export text from the File(.blend) list"
+
+
+
 
 
         elif properties.action == 'blender':
@@ -112,12 +125,16 @@ class Noter_Actions(bpy.types.Operator):
             return "Delete text in Blender (Noter)"
 
 
+
+
+
         elif properties.action == 'splash_screen':
             return "Assign text to the Noter Splash Screen"
         elif properties.action == 'splash_screen_get':
             return "Get text from the Noter Splash Screen"
         elif properties.action == 'splash_screen_delete':
             return "Delete text in the Noter Splash Screen"
+
  
     def execute(self, context):    
 
@@ -508,11 +525,11 @@ class Noter_Actions(bpy.types.Operator):
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
 
-class Noter_Splash_Screen_Switch(Operator):
+class Noter_Splash_Screen_Bool_Switch(Operator):
     """Tooltip"""
     bl_idname = "window_manager.global_bool"
     bl_label = ""
-    bl_description = 'Display Noter splash screen on startup \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    bl_description = 'Display Noter Splash Screen on startup \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     bl_options = {'UNDO'}
 
@@ -637,8 +654,8 @@ class Noter_Text_Wrap_Words(Operator):
 class Noter_Splash_Screen_Notes_List(Operator):
     """Tooltip"""
     bl_idname = "window_manager.splash_screen_notes_list"
-    bl_label = "Wrap Words"
-    bl_description = 'Line text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    bl_label = "Display List"
+    bl_description = '\nDisplay File(.blend) List in Noter Splash Screen  \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     # bl_options = {'UNDO'}
 
@@ -1327,47 +1344,46 @@ class TEXT_PT_noter(Panel):
 
             col.separator(factor = 1)
 
-class PROPERTIES_PT_navigation_bar_add(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'NAVIGATION_BAR'
-    bl_label = "Navigation Bar"
-    bl_options = {'HIDE_HEADER'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text = "123123")
-
-        view = context.space_data
-
-        # layout.scale_x = 1.4
-        # layout.scale_y = 1.4
-        # layout.prop_tabs_enum(view, "context", icon_only=True)
-        # layout.
-
-class PROPERTIES_HT_header_add_menu(Panel):
-
+# class add__PROPERTIES_PT_navigation_bar(Panel):
     # bl_space_type = 'PROPERTIES'
     # bl_region_type = 'NAVIGATION_BAR'
     # bl_label = "Navigation Bar"
     # bl_options = {'HIDE_HEADER'}
 
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "my"
-    bl_label = "Navigation Bar"
+    # def draw(self, context):
+    #     layout = self.layout
+    #     layout.label(text = "123123")
+
+    #     view = context.space_data
+
+    #     # layout.scale_x = 1.4
+    #     # layout.scale_y = 1.4
+    #     # layout.prop_tabs_enum(view, "context", icon_only=True)
+    #     # layout.
+
+# class PROPERTIES_HT_header_add_menu(Panel):
+    # # bl_space_type = 'PROPERTIES'
+    # # bl_region_type = 'NAVIGATION_BAR'
+    # # bl_label = "Navigation Bar"
+    # # bl_options = {'HIDE_HEADER'}
+
+    # bl_space_type = 'PROPERTIES'
+    # bl_region_type = 'WINDOW'
+    # bl_context = "my"
+    # bl_label = "Navigation Bar"
 
 
 
-    def draw(self, context):
-        layout = self.layout
-        layout.label(icon = "PRESET")
+    # def draw(self, context):
+    #     layout = self.layout
+    #     layout.label(icon = "PRESET")
 
-        view = context.space_data
+    #     view = context.space_data
 
-        layout.scale_x = 1.4
-        layout.scale_y = 1.4
-        layout.label(icon = "PRESET")
-        # layout.prop_tabs_enum(view, "context", icon_only=True)
+    #     layout.scale_x = 1.4
+    #     layout.scale_y = 1.4
+    #     layout.label(icon = "PRESET")
+    #     # layout.prop_tabs_enum(view, "context", icon_only=True)
 
 
 
@@ -1710,8 +1726,8 @@ def add__TEXT_MT_format(self, context):
 
     # layout.menu("TEXT_MT_format_add_menu")
 
-    layout.operator("window_manager.wrap_words__create_lines_for_text", text = 'Line Text')
-    layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
+    layout.operator("window_manager.wrap_words__create_lines_for_text", text = 'Wrap Words')
+    layout.prop(scene, "line_width_characters", text = 'Number of Characters')
 
 
 
@@ -1728,7 +1744,7 @@ blender_classes = [
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
-    Noter_Splash_Screen_Switch,
+    Noter_Splash_Screen_Bool_Switch,
     TOPBAR_MT_notes,
     TEXT_PT_list_text,
     # TEXT_MT_format_add_menu,
@@ -1748,6 +1764,9 @@ blender_classes = Notes_list_blender_classes + blender_classes
 
 def register(): 
 
+    
+    """Main Classes"""
+
     for blender_class in blender_classes:
         bpy.utils.register_class(blender_class)
 
@@ -1758,19 +1777,24 @@ def register():
         # Could pass settings to operator properties here
         # kmi.properties.mode = (False, True, False)
 
+    
+
+
+
+    """Props"""
 
     bpy.types.Scene.splash_screen_notes_list = BoolProperty()
     bpy.types.Scene.splash_screen = BoolProperty()
 
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
-    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 50, description = "Name of the file from which the text will be taken or where the text will be displayed")
+    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number of characters', default = 50, description = "How many characters should be in a line")
 
 
 
 
 
     """Text Data"""
-    
+
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
     bpy.types.Scene.note_text_blender_file = StringProperty()
@@ -1781,7 +1805,7 @@ def register():
     
 
     """Notes List Properties"""
-    
+
     bpy.types.Object.notes_list_object = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Object.notes_list_object_index = IntProperty()
 
@@ -1838,6 +1862,7 @@ def register():
 
 def unregister():
 
+
     bpy.types.NODE_MT_node.remove(my_extra_draw_menu)
     try:
         bpy.types.TOPBAR_MT_app.remove(my_extra_draw_menu_2)
@@ -1846,17 +1871,18 @@ def unregister():
 
     bpy.types.TOPBAR_MT_file.remove(my_extra_draw_menu_3)
 
+
     bpy.types.TOPBAR_MT_editor_menus.remove(add__TOPBAR_MT_editor_menus)
-
     bpy.types.NODE_MT_add.remove(add__NODE_MT_add)
-
     bpy.types.TEXT_MT_format.remove(add__TEXT_MT_format)
 
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
 
+
     for blender_class in blender_classes:
         bpy.utils.unregister_class(blender_class)
+
 
     from bpy.utils import unregister_class
     for cls in reversed(Nodes_blender_classes):
