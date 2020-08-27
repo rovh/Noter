@@ -846,9 +846,12 @@ class Note_Pop_Up_Operator (Operator):
             'MONKEY',
             'SHADING_SOLID',
             'BRUSH_TEXFILL',
+            'RADIOBUT_ON',
+            'TOOL_SETTINGS',
         ]
 
         ic = random.choice(ic)
+        ic = 'RADIOBUT_ON'
                 
         def draw_word(self, context):
 
@@ -872,17 +875,19 @@ class Note_Pop_Up_Operator (Operator):
 
 
             column_text = row_text.column(align = 1)
-            column_text.scale_x = .8
+            column_text.scale_x = .9
             column_text.separator(factor = 1.8)
             label_draw(1)
 
+
+            # row_text.separator(factor = 1)
             column_text = row_text.column(align = 1)
             column_text.scale_x = .8
-            column_text.separator(factor = 3)
+            column_text.separator(factor = 3.5)
             label_draw(1)
 
             column_text = row_text.column(align = 1)
-            column_text.scale_x = .8
+            column_text.scale_x = .7
             column_text.separator(factor = 5)
             label_draw(1)
 
@@ -912,9 +917,11 @@ class Note_Pop_Up_Operator (Operator):
             label_draw(1)
             column_text.separator(factor = 3.5)
             label_draw(1)
+            column_text.scale_x = 1.1
 
             column_text = row_text.column(align = 1)
             column_text.scale_y = .5
+            column_text.scale_x = .5
             column_text.separator(factor = 5)
             label_draw(3)
 
@@ -952,10 +959,12 @@ class Note_Pop_Up_Operator (Operator):
             label_draw(5)
 
             column_text = row_text.column(align = 1)
+            column_text.separator(factor = .2 )
             column_text.scale_y = 1
             label_draw(3)
 
             column_text = row_text.column(align = 1)
+            column_text.separator(factor = .2 )
             column_text.scale_y = 1
             label_draw(3)
 
@@ -978,7 +987,6 @@ class Note_Pop_Up_Operator (Operator):
             pass
 
         if find == True:
-            # row = layout.row()
 
 
             layout.separator()
@@ -1000,8 +1008,7 @@ class Note_Pop_Up_Operator (Operator):
                 # layout.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
 
 
-            layout.separator()
-            layout.separator()
+            layout.separator(factor = .5)
 
 
 
@@ -1714,6 +1721,14 @@ def add__TOPBAR_MT_editor_menus(self, context):
 
     if preferences.add_custom_menu_to_header_bar_menu == True:
         layout = self.layout
+        
+        # find = False
+        # try:
+        #     find = bpy.data.scenes[custom_scene_name].note_text_blender_file
+        #     find = bool(find)
+        # except KeyError:
+        #     pass
+        
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
 def add__TEXT_MT_format(self, context):
