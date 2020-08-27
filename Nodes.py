@@ -357,6 +357,7 @@ class MyCustomTree(NodeTree):
     # type = 'COMPOSITING'
 
 
+
 # Custom socket type
 class MyCustomSocket(NodeSocket):
     # Description string
@@ -666,6 +667,11 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # image: bpy.props.CollectionProperty(type= bpy.types.Image)
     image: bpy.props.PointerProperty(type= bpy.types.Image)
 
+    # enum_image: bpy.props.EnumProperty(
+
+    # )
+
+
     # === Optional Functions ===
     # Initialization function, called when a new node is created.
     # This is the most common place to create the sockets for a node, as shown below.
@@ -684,24 +690,29 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     def init(self, context):
 
         # self.show_preview = True
+        # self.show_options = True
         # self.image = bpy.data.textures['Texture'].preview
         # self.show_texture = True
 
         # self.image = bpy.data.images['Camera.001']
         # self.image = bpy.data.images['Camera.001.png']
         # self.image = bpy.data.images['Camera.002.png'].pixels
-        # self.image = bpy.data.images['Untitled']
+        self.image = bpy.data.images['Untitled']
         # self.image = bpy.data.textures['Texture'].image
 
         # self.image = bpy.data.textures['Texture'].preview
-        
+        # self.image = bpy.data.scenes['Scene'].node_tree.nodes['Image'].image
+
         # print(123123)
-        # print(self.image)
+        print(self.image)
         # print()
 
         
         self.inputs.new('Noter_CustomSocketType', "")
         # self.inputs.new('CustomSocketType_2', "")
+        # self.inputs.new('NodeSocketInterface', "")
+        # self.inputs.new('NodeSocketInterfaceColor', "")
+        # self.inputs.new('NodeSocketColor', "")
         # self.inputs[0].display_shape = 'DIAMOND'
         
         # self.inputs.new('NodeSocketFloat', "World")
@@ -727,6 +738,15 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # Additional buttons displayed on the node.
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
+
+
+        # layout = self.layout
+        # pcoll = preview_collections["main"]
+
+        # row = layout.row()
+        # my_icon = pcoll["my_icon"]
+        # row.operator("render.render", icon_value = my_icon.icon_id)
+        # layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
         
         # self.show_preview = True
         # self.show_texture = True
@@ -750,9 +770,16 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # tex =  bpy.data.images['Camera.001']
         # col = layout.box().column()
 
-        # tex = context.texture
+        # tex = self
 
-        # layout.template_ID(self, 'name', new="", open="", unlink="", filter='ALL', live_icon=False, text="", text_ctxt="", translate=True)
+        # tex = context.texture
+        # layout.template_icon_view(tex, "image", show_labels=True, scale=6.0, scale_popup=5.0)
+
+        # layout.template_ID(self, 'image', new="", open="", unlink="", filter='ALL', live_icon=False, text="", text_ctxt="", translate=True)
+        
+        # layout.template_any_ID(tex, 'image', "Image")
+
+        # layout.template_path_builder(tex, 'image', "Image")
 
         # layout.template_preview(tex, show_buttons=False)
         # layout.template_preview(self, show_buttons=True)
@@ -760,14 +787,20 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # layout.template_ID(tex, "image", new="image.new", open="image.open")
         # layout.template_ID(self, "image", new="image.new", open="image.open")
 
+        # layout.template_image_layers(tex.image, tex.image_user)
+        
+        # layout.template_layers(tex, "image")
+
+        # layout.template_vectorscope(tex, "image")
+
         # layout.template_image(tex, "image", tex.image_user, compact=False, multiview=True)
-        # layout.template_image(self, "image")
+        # layout.template_image(self, "image", self.image.users)
 
         # layout.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
 
         # layout.template_ID_tabs(tex, "image", new="", menu="", filter='ALL')
 
-        # layout.template_icon( 37*12 , scale=2)
+        # layout.template_icon( 37*12 , scale=4)
 
         # layout.template_layers(tex, 'image', used_layers_data, used_layers_property, active_layer)
 
@@ -1249,6 +1282,22 @@ Nodes_blender_classes = (
 #     from bpy.utils import unregister_class
 #     for cls in reversed(classes):
 #         unregister_class(cls)
+
+
+# if __name__ == "__main__":
+#     register()
+
+
+
+
+# def register():
+
+    
+
+
+# def unregister():
+
+    
 
 
 # if __name__ == "__main__":

@@ -4,6 +4,8 @@ import os
 import pathlib
 import nodeitems_utils
 from copy import copy
+import bpy.utils.previews
+
 # import time
 
 # from .__init__ import draw_text
@@ -1721,8 +1723,94 @@ blender_classes = Notes_list_blender_classes + blender_classes
 # for i in blender_classes:
 #     print(i)
 
+import os
+
+
+
+class PreviewsExamplePanel(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Previews Example Panel"
+    bl_idname = "OBJECT_PT_previews"
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "object"
+
+    def draw(self, context):
+        layout = self.layout
+        # pcoll = preview_collections["main"]
+
+        # row = layout.row()
+        # my_icon = pcoll["my_icon"]
+        # row.operator("render.render", icon_value = my_icon.icon_id)
+        # layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
+
+        # import bpy.utils.previews
+        
+        pcoll_2_link = bpy.utils.previews
+        pcoll_2 = pcoll_2_link.new()
+        pcoll_2.load("my_icon_2",  bpy.data.images['Camera.png'].filepath_from_user(),   'IMAGE')
+        row = layout.row()
+        my_icon = pcoll_2["my_icon_2"]
+        layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
+
+        print(my_icon.icon_id)
+
+        pcoll_2_link.remove(pcoll_2)
+
+
+
+
+
+        # template_icon_view(data, property, show_labels=False, scale=6.0, scale_popup=5.0)
+
+        # my_icon.icon_id can be used in any UI function that accepts
+        # icon_value # try also setting text=""
+        # to get an icon only operator button
+
+
+# We can store multiple preview collections here,
+# however in this example we only store "main"
+preview_collections = {}
+
+
 
 def register():
+
+
+
+
+
+    # Note that preview collections returned by bpy.utils.previews
+    # are regular py objects - you can use them to store custom data.
+    # import bpy.utils.previews
+    pcoll = bpy.utils.previews.new()
+    pcoll_2 = bpy.utils.previews.new()
+
+    # path to the folder where the icon is
+    # the path is calculated relative to this py file inside the addon folder
+    my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+
+    # load a preview thumbnail of a file and store in the previews collection
+    # pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
+    pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
+    
+    print(os.path.join(my_icons_dir, "icon-image.png"), 12313123)
+    # print( str(bpy.data.images['Camera.png'].filepath)  )
+    # print( str(bpy.data.textures['Texture'].image)  )
+    # print( bpy.data.images['Camera.png'].filepath_from_user()  )
+
+    # pcoll.load(bpy.data.images['Untitled'])
+    # pcoll.load(bpy.data.textures['Texture'].image)
+
+    preview_collections["main"] = pcoll
+
+    bpy.utils.register_class(PreviewsExamplePanel)
+
+
+
+
+
+
 
     # bpy.utils.register_class(NOTES_LIST_UL_items_blender_file),
     
@@ -1802,6 +1890,22 @@ def register():
 
 
 def unregister():
+
+
+
+
+    for pcoll in preview_collections.values():
+        bpy.utils.previews.remove(pcoll)
+    preview_collections.clear()
+
+    bpy.utils.unregister_class(PreviewsExamplePanel)
+
+
+
+
+
+
+
 
 
     bpy.types.NODE_MT_node.remove(my_extra_draw_menu)
