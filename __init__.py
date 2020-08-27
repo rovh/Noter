@@ -135,7 +135,6 @@ class Noter_Actions(bpy.types.Operator):
         elif properties.action == 'splash_screen_delete':
             return "Delete text in the Noter Splash Screen"
 
- 
     def execute(self, context):    
 
         # t1 = time.perf_counter()
@@ -155,6 +154,8 @@ class Noter_Actions(bpy.types.Operator):
 
         action_type = action.split("_")
         action_type = action_type[0]
+
+
 
         if header_note == True:
             pass
@@ -252,15 +253,17 @@ class Noter_Actions(bpy.types.Operator):
                 pass
 
 
-
+        
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
-
-            text = "File was not found"
-            war = "ERROR"
-            self.report({war}, text)
-            return {'FINISHED'}
+            if action.count('delete'):
+                pass
+            else:
+                text = "File was not found"
+                war = "ERROR"
+                self.report({war}, text)
+                return {'FINISHED'}
 
 
 
@@ -1532,16 +1535,14 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.scale_x = 1.5
 
 
-
             box.separator(factor = .1)
-
 
 
             row = box.row(align = False)
             row = row.row(align = True)
 
             # row.prop(self, 'add_custom_menu_to_properties_menus', text = 'Add a new custom header menu to the topbar', toggle=True)
-            row.prop(self, 'add_elements_to_properties_menus', text = 'Add buttons to the existing topbar menus', toggle=True)
+            row.prop(self, 'add_elements_to_properties_menus', text = 'Add elements to the Properties Editor', toggle=True)
             row.alignment = 'LEFT'
             row.scale_x = 1.3
 
