@@ -5,10 +5,10 @@ import pathlib
 import nodeitems_utils
 from copy import copy
 import bpy.utils.previews
+import random
+from bpy.app.handlers import persistent
 
-# import time
 
-# from .__init__ import draw_text
 
 from bpy.types import (
     Panel,
@@ -29,14 +29,10 @@ from bpy.props import (
     )
 
 
-from bpy.app.handlers import persistent
 
 from .Notes_list import *
 from .Nodes import *
 
-import random
-
-# from . import Image
 
 
 bl_info = {
@@ -52,7 +48,12 @@ bl_info = {
     "tracker_url": "https://github.com/rovh/Noter/issues",
 }
 
+
 custom_scene_name = ".Noter"
+
+
+
+
 
 class Noter_Actions(bpy.types.Operator):
     """Tooltip"""
@@ -507,106 +508,6 @@ class Noter_Actions(bpy.types.Operator):
 
         # bpy.context.area.spaces.active.type = 'IMAGE_EDITOR'
 
-class TEXT_PT_noter(Panel):
-    bl_space_type = 'TEXT_EDITOR'
-    bl_region_type = 'UI'
-    bl_category = "Noter"
-    bl_label = "Noter"
-
-    def draw(self, context):
-        # noter = bpy.context.window_manager.noter
-        scene = bpy.context.scene
-        # preferences = bpy.context.preferences.addons[__name__].preferences
-        
-        
-        layout = self.layout
-        column = layout.column(align = 1)
-        column.scale_y = 1.3
-
-        column.prop(scene, "file_name", text = '')
-        
-
-        column.separator(factor = 1)
-
-        # box = column.box()
-        # box.label(text = "Header Note", icon = 'TOPBAR')
-
-
-        box = column.box()
-        col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
-
-
-        box = column.box()
-        col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Scene', icon = 'SCENE_DATA').action = "scene"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "scene_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "scene_delete"
-
-        box = column.box()
-        col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'FILE_FOLDER').action = "blender_file"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_file_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_file_delete"
-
-
-        box = column.box()
-        col = box.column(align = 1)
-        col.operator("window_manager.export_note_text", text = 'Blender (Noter)', icon = 'BLENDER').action = "blender"
-        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
-        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
-
-
-        box = column.box()
-        col = box.column(align = 1)
-        col.separator(factor = 1)
-        row = col.row(align = 1)
-        
-
-        find = False
-        try:
-            find = bpy.data.scenes[custom_scene_name].splash_screen
-        except KeyError:
-            pass
-
-        find_2 = False
-        try:
-            find_2 = bpy.data.scenes[custom_scene_name].splash_screen_notes_list
-        except KeyError:
-            pass
-
-        
-        
-        # find = False
-        # for i in bpy.data.scenes:
-        #     if i.splash_screen == True:
-        #         find = True
-        #         break
-
-
-        row.operator("window_manager.global_bool", text = 'Splash Screen', icon = 'WINDOW', depress= find)
-        row.alignment = 'RIGHT'
-        row.scale_x = .5
-
-        col.separator(factor = 1)
-
-        if find == True:
-            col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
-            col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
-            col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
-            
-            col.separator(factor = .5)
-
-            row = col.row(align = True)
-            row.operator("window_manager.splash_screen_notes_list", text = '', icon = 'PRESET', depress= find_2)
-            row.alignment = 'RIGHT'
-            row.scale_x = 1.2
-            row.scale_y = .9
-
-            col.separator(factor = 1)
-
 class Noter_Splash_Screen_Switch(Operator):
     """Tooltip"""
     bl_idname = "window_manager.global_bool"
@@ -639,11 +540,11 @@ class Noter_Splash_Screen_Switch(Operator):
 
         return {'FINISHED'}
 
-class Noter_Text_Lines_Create(Operator):
+class Noter_Text_Wrap_Words(Operator):
     """Tooltip"""
-    bl_idname = "window_manager.text_lines_create"
-    bl_label = "Create Text Lines"
-    bl_description = 'Line text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+    bl_idname = "window_manager.wrap_words__create_lines_for_text"
+    bl_label = "Wrap Words (Create Text Lines)"
+    bl_description = 'Create lines for the text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     # bl_options = {'UNDO'}
 
@@ -652,6 +553,7 @@ class Noter_Text_Lines_Create(Operator):
     def execute(self, context):
         file_name = bpy.context.scene.file_name
         line_width_characters = bpy.context.scene.line_width_characters
+        
         try:
             main_text = bpy.data.texts[file_name].as_string()
         except KeyError:
@@ -735,7 +637,7 @@ class Noter_Text_Lines_Create(Operator):
 class Noter_Splash_Screen_Notes_List(Operator):
     """Tooltip"""
     bl_idname = "window_manager.splash_screen_notes_list"
-    bl_label = "Create Text Lines"
+    bl_label = "Wrap Words"
     bl_description = 'Line text \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
     # bl_options = {'REGISTER', 'UNDO'}
     # bl_options = {'UNDO'}
@@ -1277,6 +1179,9 @@ class Note_Pop_Up_Operator_2 (Operator):
         # return {'FINISHED'}
 
 
+
+
+
 class OBJECT_PT_note (Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -1314,13 +1219,158 @@ class TEXT_PT_list_text (Panel):
         layout = self.layout
         
         row = layout.row()
-        row.operator('window_manager.text_lines_create', text = 'List Text')
+        row.operator('window_manager.wrap_words__create_lines_for_text', text = 'Wrap Words')
         row.scale_y = 1.5
         
         row = layout.row()
         row.prop(scene, "line_width_characters", text = '')
         row.scale_x = .4
         row.alignment = 'CENTER'
+
+class TEXT_PT_noter(Panel):
+    bl_space_type = 'TEXT_EDITOR'
+    bl_region_type = 'UI'
+    bl_category = "Noter"
+    bl_label = "Noter"
+
+    def draw(self, context):
+        # noter = bpy.context.window_manager.noter
+        scene = bpy.context.scene
+        # preferences = bpy.context.preferences.addons[__name__].preferences
+        
+        
+        layout = self.layout
+        column = layout.column(align = 1)
+        column.scale_y = 1.3
+
+        column.prop(scene, "file_name", text = '')
+        
+
+        column.separator(factor = 1)
+
+        # box = column.box()
+        # box.label(text = "Header Note", icon = 'TOPBAR')
+
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
+
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Scene', icon = 'SCENE_DATA').action = "scene"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "scene_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "scene_delete"
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'File (.blend)', icon = 'FILE_FOLDER').action = "blender_file"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_file_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_file_delete"
+
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.operator("window_manager.export_note_text", text = 'Blender (Noter)', icon = 'BLENDER').action = "blender"
+        col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "blender_get"
+        col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "blender_delete"
+
+
+        box = column.box()
+        col = box.column(align = 1)
+        col.separator(factor = 1)
+        row = col.row(align = 1)
+        
+
+        find = False
+        try:
+            find = bpy.data.scenes[custom_scene_name].splash_screen
+        except KeyError:
+            pass
+
+        find_2 = False
+        try:
+            find_2 = bpy.data.scenes[custom_scene_name].splash_screen_notes_list
+        except KeyError:
+            pass
+
+        
+        
+        # find = False
+        # for i in bpy.data.scenes:
+        #     if i.splash_screen == True:
+        #         find = True
+        #         break
+
+
+        row.operator("window_manager.global_bool", text = 'Splash Screen', icon = 'WINDOW', depress= find)
+        row.alignment = 'RIGHT'
+        row.scale_x = .5
+
+        col.separator(factor = 1)
+
+        if find == True:
+            col.operator("window_manager.export_note_text", text = 'Splash Screen', icon = 'WINDOW').action = "splash_screen"
+            col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "splash_screen_get"
+            col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "splash_screen_delete"
+            
+            col.separator(factor = .5)
+
+            row = col.row(align = True)
+            row.operator("window_manager.splash_screen_notes_list", text = '', icon = 'PRESET', depress= find_2)
+            row.alignment = 'RIGHT'
+            row.scale_x = 1.2
+            row.scale_y = .9
+
+            col.separator(factor = 1)
+
+class PROPERTIES_PT_navigation_bar_add(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'NAVIGATION_BAR'
+    bl_label = "Navigation Bar"
+    bl_options = {'HIDE_HEADER'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text = "123123")
+
+        view = context.space_data
+
+        # layout.scale_x = 1.4
+        # layout.scale_y = 1.4
+        # layout.prop_tabs_enum(view, "context", icon_only=True)
+        # layout.
+
+class PROPERTIES_HT_header_add_menu(Panel):
+
+    # bl_space_type = 'PROPERTIES'
+    # bl_region_type = 'NAVIGATION_BAR'
+    # bl_label = "Navigation Bar"
+    # bl_options = {'HIDE_HEADER'}
+
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "my"
+    bl_label = "Navigation Bar"
+
+
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(icon = "PRESET")
+
+        view = context.space_data
+
+        layout.scale_x = 1.4
+        layout.scale_y = 1.4
+        layout.label(icon = "PRESET")
+        # layout.prop_tabs_enum(view, "context", icon_only=True)
+
+
+
 
 
 # class Noter_Props (bpy.types.PropertyGroup):
@@ -1334,6 +1384,9 @@ class TEXT_PT_list_text (Panel):
     # note_text_blender_file: StringProperty()
 
     # note_text_splash_screen: StringProperty()
+
+
+
 
 
 class Noter_Preferences (bpy.types.AddonPreferences):
@@ -1481,7 +1534,36 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
 
         layout.separator(factor = 2)
-        
+
+
+
+
+
+
+class TOPBAR_MT_notes(bpy.types.Menu):
+    bl_label = "Notes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_AREA'
+        my_extra_draw_menu_3(self, context, "custom_menu_location")
+        my_extra_draw_menu_2(self, context, "custom_menu_location")
+
+# class TEXT_MT_format_add_menu(bpy.types.Menu):
+    # bl_label = "Line Text"
+
+    # def draw(self, context):
+    #     scene = bpy.context.scene
+
+    #     layout = self.layout
+
+    #     layout.operator("window_manager.wrap_words__create_lines_for_text", text = 'Line Text')
+    #     layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
+
+
+
+
 
 @persistent
 def load_handler(dummy):
@@ -1506,6 +1588,11 @@ def load_handler(dummy):
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
+
+
+
+
+
 
 def my_extra_draw_menu(self, context):
     layout = self.layout
@@ -1605,35 +1692,14 @@ def my_extra_draw_menu_3(self, context, mode = "normal_location"):
 
             # layout.separator()        
 
-class TOPBAR_MT_notes(bpy.types.Menu):
-    bl_label = "Notes"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_AREA'
-        my_extra_draw_menu_3(self, context, "custom_menu_location")
-        my_extra_draw_menu_2(self, context, "custom_menu_location")
-
-def add_to_the_topbar(self, context):
+def add__TOPBAR_MT_editor_menus(self, context):
     preferences = bpy.context.preferences.addons[__name__].preferences
 
     if preferences.add_custom_menu_to_header_bar_menu == True:
         layout = self.layout
         layout.menu("TOPBAR_MT_notes", text = "", icon = "FILE")
 
-# class TEXT_MT_format_add_menu(bpy.types.Menu):
-    # bl_label = "Line Text"
-
-    # def draw(self, context):
-    #     scene = bpy.context.scene
-
-    #     layout = self.layout
-
-    #     layout.operator("window_manager.text_lines_create", text = 'Line Text')
-    #     layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
-
-def add_to__TEXT_MT_format(self, context):
+def add__TEXT_MT_format(self, context):
 
     scene = bpy.context.scene
     
@@ -1644,55 +1710,12 @@ def add_to__TEXT_MT_format(self, context):
 
     # layout.menu("TEXT_MT_format_add_menu")
 
-    layout.operator("window_manager.text_lines_create", text = 'Line Text')
+    layout.operator("window_manager.wrap_words__create_lines_for_text", text = 'Line Text')
     layout.prop(scene, "line_width_characters", text = 'Line Text Characters')
 
-class PROPERTIES_PT_navigation_bar_add(Panel):
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'NAVIGATION_BAR'
-    bl_label = "Navigation Bar"
-    bl_options = {'HIDE_HEADER'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text = "123123")
-
-        view = context.space_data
-
-        # layout.scale_x = 1.4
-        # layout.scale_y = 1.4
-        # layout.prop_tabs_enum(view, "context", icon_only=True)
-        # layout.
-
-class PROPERTIES_HT_header_add_menu(Panel):
-
-    # bl_space_type = 'PROPERTIES'
-    # bl_region_type = 'NAVIGATION_BAR'
-    # bl_label = "Navigation Bar"
-    # bl_options = {'HIDE_HEADER'}
-
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "my"
-    bl_label = "Navigation Bar"
 
 
 
-    def draw(self, context):
-        layout = self.layout
-        layout.label(icon = "PRESET")
-
-        view = context.space_data
-
-        layout.scale_x = 1.4
-        layout.scale_y = 1.4
-        layout.label(icon = "PRESET")
-        # layout.prop_tabs_enum(view, "context", icon_only=True)
-
-
-# def add_to__PROPERTIES_HT_header(self, context):
-#     layout = self.layout
-    # layout.
 
 
 blender_classes = [
@@ -1701,7 +1724,7 @@ blender_classes = [
     Noter_Actions,
     Note_Pop_Up_Operator,
     Note_Pop_Up_Operator_2,
-    Noter_Text_Lines_Create,
+    Noter_Text_Wrap_Words,
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
@@ -1719,103 +1742,15 @@ blender_classes = [
 
 blender_classes = Notes_list_blender_classes + blender_classes
 
-# for i in blender_classes:
-#     print(i)
-
-import os
-
-
-
-class PreviewsExamplePanel(bpy.types.Panel):
-    """Creates a Panel in the Object properties window"""
-    bl_label = "Previews Example Panel"
-    bl_idname = "OBJECT_PT_previews"
-    bl_space_type = 'PROPERTIES'
-    bl_region_type = 'WINDOW'
-    bl_context = "object"
-
-    def draw(self, context):
-        layout = self.layout
-        # pcoll = preview_collections["main"]
-
-        # row = layout.row()
-        # my_icon = pcoll["my_icon"]
-        # row.operator("render.render", icon_value = my_icon.icon_id)
-        # layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
-
-        # import bpy.utils.previews
-        
-        # pcoll_2_link = bpy.utils.previews
-        # pcoll_2 = pcoll_2_link.new()
-        # pcoll_2.load("my_icon_2",  bpy.data.images['Camera.png'].filepath_from_user(),   'IMAGE')
-        # row = layout.row()
-        # my_icon = pcoll_2["my_icon_2"]
-        # layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
-
-        # print(my_icon.icon_id)
-
-        # pcoll_2_link.remove(pcoll_2)
 
 
 
 
-
-        # template_icon_view(data, property, show_labels=False, scale=6.0, scale_popup=5.0)
-
-        # my_icon.icon_id can be used in any UI function that accepts
-        # icon_value # try also setting text=""
-        # to get an icon only operator button
-
-
-# We can store multiple preview collections here,
-# however in this example we only store "main"
-preview_collections = {}
-
-
-
-def register():
-
-
-
-
-
-    # Note that preview collections returned by bpy.utils.previews
-    # are regular py objects - you can use them to store custom data.
-    # import bpy.utils.previews
-    # pcoll = bpy.utils.previews.new()
-    # pcoll_2 = bpy.utils.previews.new()
-
-    # path to the folder where the icon is
-    # the path is calculated relative to this py file inside the addon folder
-    # my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-
-    # load a preview thumbnail of a file and store in the previews collection
-    # pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
-    # pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
-    
-    # print(os.path.join(my_icons_dir, "icon-image.png"), 12313123)
-    # print( str(bpy.data.images['Camera.png'].filepath)  )
-    # print( str(bpy.data.textures['Texture'].image)  )
-    # print( bpy.data.images['Camera.png'].filepath_from_user()  )
-
-    # pcoll.load(bpy.data.images['Untitled'])
-    # pcoll.load(bpy.data.textures['Texture'].image)
-
-    # preview_collections["main"] = pcoll
-
-    bpy.utils.register_class(PreviewsExamplePanel)
-
-
-
-
-
-
-
-    # bpy.utils.register_class(NOTES_LIST_UL_items_blender_file),
-    
+def register(): 
 
     for blender_class in blender_classes:
         bpy.utils.register_class(blender_class)
+
 
     # if kc:
     #     km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
@@ -1823,12 +1758,6 @@ def register():
         # Could pass settings to operator properties here
         # kmi.properties.mode = (False, True, False)
 
-    # bpy.app.handlers.depsgraph_update_post.append(my_handler)
-    # bpy.app.handlers.on_scene_update_pre.append(my_handler)
-
-    # bpy.app.handlers.frame_change_post.append(my_handler)
-
-    # bpy.types.WindowManager.splash_screen = BoolProperty()
 
     bpy.types.Scene.splash_screen_notes_list = BoolProperty()
     bpy.types.Scene.splash_screen = BoolProperty()
@@ -1836,13 +1765,23 @@ def register():
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
     bpy.types.Scene.line_width_characters = IntProperty(name = 'Number', default = 50, description = "Name of the file from which the text will be taken or where the text will be displayed")
 
+
+
+
+
+    """Text Data"""
+    
     bpy.types.Object.note_text_object = StringProperty()
     bpy.types.Scene.note_text_scene = StringProperty()
     bpy.types.Scene.note_text_blender_file = StringProperty()
     bpy.types.Scene.note_text_splash_screen = StringProperty()
 
-    # bpy.types.WindowManager.noter = PointerProperty(type=Noter_Props)
 
+
+    
+
+    """Notes List Properties"""
+    
     bpy.types.Object.notes_list_object = CollectionProperty(type=Notes_List_Collection)
     bpy.types.Object.notes_list_object_index = IntProperty()
 
@@ -1856,21 +1795,29 @@ def register():
 
     
 
+    """Nodes (Nodes, Nodes Classes, Props)"""
+
     from bpy.utils import register_class
     for cls in Nodes_blender_classes:
         register_class(cls)
 
-    bpy.types.NODE_MT_add.prepend(add_to_add_menu)
-    bpy.types.TEXT_MT_format.append(add_to__TEXT_MT_format)
-
-
     bpy.types.Scene.colorProperty =  bpy.props.FloatVectorProperty(
         default = [1, 1, 1], subtype = "COLOR",
         soft_min = 0.0, soft_max = 1.0)
-
     bpy.types.Scene.label_node_text = bpy.props.StringProperty()
 
     nodeitems_utils.register_node_categories('NOTER_CUSTOM_NODES', node_categories)
+
+
+
+
+
+    """Append UI Elements"""
+
+    bpy.types.NODE_MT_add.prepend(add__NODE_MT_add)
+    bpy.types.TEXT_MT_format.append(add__TEXT_MT_format)
+    bpy.types.TOPBAR_MT_editor_menus.append(add__TOPBAR_MT_editor_menus)
+
 
     bpy.types.NODE_MT_node.append(my_extra_draw_menu)
     try:
@@ -1880,32 +1827,16 @@ def register():
 
     bpy.types.TOPBAR_MT_file.append(my_extra_draw_menu_3)
 
-    bpy.types.TOPBAR_MT_editor_menus.append(add_to_the_topbar)
+    
 
 
+
+    """Splash Screen Start"""
 
     bpy.app.handlers.load_post.append(load_handler)
 
 
-
 def unregister():
-
-
-
-
-    for pcoll in preview_collections.values():
-        bpy.utils.previews.remove(pcoll)
-    preview_collections.clear()
-
-    bpy.utils.unregister_class(PreviewsExamplePanel)
-
-
-
-
-
-
-
-
 
     bpy.types.NODE_MT_node.remove(my_extra_draw_menu)
     try:
@@ -1915,11 +1846,11 @@ def unregister():
 
     bpy.types.TOPBAR_MT_file.remove(my_extra_draw_menu_3)
 
-    bpy.types.TOPBAR_MT_editor_menus.remove(add_to_the_topbar)
+    bpy.types.TOPBAR_MT_editor_menus.remove(add__TOPBAR_MT_editor_menus)
 
-    bpy.types.NODE_MT_add.remove(add_to_add_menu)
+    bpy.types.NODE_MT_add.remove(add__NODE_MT_add)
 
-    bpy.types.TEXT_MT_format.remove(add_to__TEXT_MT_format)
+    bpy.types.TEXT_MT_format.remove(add__TEXT_MT_format)
 
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')

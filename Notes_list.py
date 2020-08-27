@@ -1,9 +1,5 @@
 import bpy
 
-# import __init__
-
-# from .__init__ import draw_text
-
 from bpy.types import (
         Panel,
         PropertyGroup,
@@ -21,19 +17,12 @@ from bpy.props import (
         CollectionProperty,
         )
 
-# from .__init__ import custom_scene_name
+from . import __name__ as addon_name
 
 custom_scene_name = ".Noter"
 
-from . import __name__ as addon_name
 
-# print(custom_scene_name)
-# def draw_text(text_parts_list):
-#     # col = column
-#     for i in text_parts_list:
-#         row = col.row(align = 1)
-#         row.label(text = i)
-#         row.scale_y = 0
+
 
 class Notes_List_actions(Operator):
     """Move items up and down, add and remove"""
@@ -353,7 +342,6 @@ class Notes_actions_bool_scene(Operator):
         return {"FINISHED"}
 
 
-
 class Notes_List_actions_blender_file(Operator):
     """Move items up and down, add and remove"""
     bl_idname = "notes_list_blender_file.list_action"
@@ -525,6 +513,7 @@ class Notes_actions_bool_blender_file(Operator):
 
 
         return {"FINISHED"}
+
 
 
 
@@ -959,6 +948,7 @@ class Notes_List_PT(Panel):
 
 
 
+
 class Notes_List_Collection(PropertyGroup):
 
     # unit: FloatProperty(
@@ -971,6 +961,8 @@ class Notes_List_Collection(PropertyGroup):
     #     precision = 6,)
     text: StringProperty()
     bool: BoolProperty()
+
+
 
 
 
@@ -997,7 +989,5 @@ Notes_list_blender_classes = [
     Notes_actions_bool_blender_file,
     NOTES_LIST_UL_items_blender_file,
     Notes_List_PT_blender_file,
-]
 
-# if __name__ == "__main__":
-#     register()
+]

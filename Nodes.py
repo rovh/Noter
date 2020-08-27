@@ -440,12 +440,38 @@ class MyCustomSocket_2(NodeSocket):
         # return (1.0, 0.4, 0.216, 1)
         # return (1, 1, 0.035, .9)
         return (0.8, 0.8, 0.03, 1.000000)
+
+class MyCustomSocket_3(NodeSocket):
+    # Description string
+    '''Custom node socket type'''
+    # Optional identifier string. If not explicitly defined, the python class name is used.
+    bl_idname = 'Noter_CustomSocketType_3'
+    # Label for nice name display
+    bl_label = "Custom Node Socket"
+
+    image: bpy.props.PointerProperty(type= bpy.types.Image)
+
+    # Enum items list
+    
+
+    # Optional function for drawing the socket input value
+    def draw(self, context, layout, node, text):
+        layout.label(text = '12312123')
+        pass
+
+    # Socket color
+    def draw_color(self, context, node):
+        return (0.8, 0.8, 0.03, 1.000000)
+
+
+
 # Mix-in class for all custom nodes in this tree type.
 # Defines a poll function to enable instantiation.
 class MyCustomTreeNode:
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname == 'Noter_CustomTreeType'
+        # return True
 
 # Derived from the Node base type.
 class MyCustomNode(Node, MyCustomTreeNode):
@@ -643,10 +669,10 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
   
-class MyCustomNode_2(Node, MyCustomTreeNode):
+class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
     # === Basics ===
     # Description string
-    '''A custom node'''
+    # '''A custom node'''
     # Optional identifier string. If not explicitly defined, the python class name is used.
     bl_idname = 'Noter_CustomNodeType_2'
     # Label for nice name display
@@ -654,6 +680,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # Icon identifier
     # bl_icon = 'SOUND'
     bl_width_default = 200
+    # bl_static_type = "UNDEFINED"
 
 
     # === Custom Properties ===
@@ -689,15 +716,17 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
     def init(self, context):
 
-        # self.show_preview = True
+        self.show_preview = True
         # self.show_options = True
         # self.image = bpy.data.textures['Texture'].preview
         # self.show_texture = True
 
         # self.image = bpy.data.images['Camera.001']
+        self.image = bpy.data.images['Camera.png']
+        # self.image = bpy.data.textures['Texture'].image
         # self.image = bpy.data.images['Camera.001.png']
         # self.image = bpy.data.images['Camera.002.png'].pixels
-        self.image = bpy.data.images['Untitled']
+        # self.image = bpy.data.images['Untitled']
         # self.image = bpy.data.textures['Texture'].image
 
         # self.image = bpy.data.textures['Texture'].preview
@@ -712,7 +741,9 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # self.inputs.new('CustomSocketType_2', "")
         # self.inputs.new('NodeSocketInterface', "")
         # self.inputs.new('NodeSocketInterfaceColor', "")
-        # self.inputs.new('NodeSocketColor', "")
+        # self.inputs.new('NodeSocketColor', "Image")
+        # self.inputs.new('Noter_CustomSocketType_3', "Image")
+        # self.inputs[1] = bpy.data.images['Camera.png']
         # self.inputs[0].display_shape = 'DIAMOND'
         
         # self.inputs.new('NodeSocketFloat', "World")
@@ -738,6 +769,9 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # Additional buttons displayed on the node.
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
+
+        pass
+
 
 
         # layout = self.layout
@@ -815,87 +849,87 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # except TypeError:
         #     pass
 
-        text = self.text
-        if text.count("\n") == 0:
-            layout.separator(factor = 1)
-            box = layout.box()
-            box.prop(self, "text", text = '')
-        else:
-            text_parts_list = text.split('\n')
-            layout.separator(factor = .5)
-            box = layout.box()
-            box = box.box()
-            col = box.column(align = 1)
-            for i in text_parts_list:
-                row = col.row(align = 1)
-                row.label(text = i)
-                row.scale_y = 0
+        # text = self.text
+        # if text.count("\n") == 0:
+        #     layout.separator(factor = 1)
+        #     box = layout.box()
+        #     box.prop(self, "text", text = '')
+        # else:
+        #     text_parts_list = text.split('\n')
+        #     layout.separator(factor = .5)
+        #     box = layout.box()
+        #     box = box.box()
+        #     col = box.column(align = 1)
+        #     for i in text_parts_list:
+        #         row = col.row(align = 1)
+        #         row.label(text = i)
+        #         row.scale_y = 0
 
-        draw_extra_count = self.draw_extra.count("+")
+        # draw_extra_count = self.draw_extra.count("+")
 
-        if draw_extra_count >= 1:
+        # if draw_extra_count >= 1:
 
-            layout.separator(factor = 2)
+        #     layout.separator(factor = 2)
 
-            row_header = layout.row()
+        #     row_header = layout.row()
 
-            ic = 'CHECKMARK' if self.mute else 'BLANK1'
+        #     ic = 'CHECKMARK' if self.mute else 'BLANK1'
 
-            row = row_header.row()
-            row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
-            row.alignment = 'LEFT'
-            if self.mute == True:
-                row.scale_y = 2.5
-                row.scale_x = 2.5
-            else:
-                row.scale_y = 1
-                row.scale_x = 1
+        #     row = row_header.row()
+        #     row.operator("node.noter_bool_operator",  icon = ic, text = '', depress = self.mute).name = self.name
+        #     row.alignment = 'LEFT'
+        #     if self.mute == True:
+        #         row.scale_y = 2.5
+        #         row.scale_x = 2.5
+        #     else:
+        #         row.scale_y = 1
+        #         row.scale_x = 1
 
-            if draw_extra_count >= 2:
+        #     if draw_extra_count >= 2:
 
-                row = row_header.row()
-                row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
-                row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
-                row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
-                row.alignment = 'RIGHT'
-                row.scale_y = 1.6
-                row.scale_x = 1.6
-
-
-    def update(self):
-
-        # self.show_preview = True
-        # self.show_texture = True
-
-        # # self.image = bpy.data.images['Camera.001']
-        # # self.image = bpy.data.images['Camera.001.png']
-        # self.image = bpy.data.textures['Texture']
-
-        # print(self.image)
-        # print(123123)
+        #         row = row_header.row()
+        #         row.operator("node.noter_operator",  icon = 'IMPORT', text = '').action = f"node*{self.name}"
+        #         row.operator("node.noter_operator",  icon = 'EXPORT', text = '').action = f"node_get*{self.name}"
+        #         row.operator("node.noter_operator",  icon = 'TRASH', text = '').action = f"node_delete*{self.name}"
+        #         row.alignment = 'RIGHT'
+        #         row.scale_y = 1.6
+        #         row.scale_x = 1.6
 
 
-        count = 0
-        for i in self.inputs:
-            if i.is_linked == True:
-                count += 1
-        free_inputs = len(self.inputs) - count
+    # def update(self):
+
+        # # self.show_preview = True
+        # # self.show_texture = True
+
+        # # # self.image = bpy.data.images['Camera.001']
+        # # # self.image = bpy.data.images['Camera.001.png']
+        # # self.image = bpy.data.textures['Texture']
+
+        # # print(self.image)
+        # # print(123123)
 
 
-        if free_inputs == 0:
-            self.inputs.new('Noter_CustomSocketType', "")
-            # self.inputs.new('CustomSocketType_2', "")
-        elif free_inputs > 1:
+        # count = 0
+        # for i in self.inputs:
+        #     if i.is_linked == True:
+        #         count += 1
+        # free_inputs = len(self.inputs) - count
 
-            for i in self.inputs:
 
-                if i.is_linked == False and free_inputs > 1:
-                    self.inputs.remove(i)
-                    free_inputs -= 1
-                elif i.is_linked == True:
-                    pass
-                else:
-                    break
+        # if free_inputs == 0:
+        #     self.inputs.new('Noter_CustomSocketType', "")
+        #     # self.inputs.new('CustomSocketType_2', "")
+        # elif free_inputs > 1:
+
+        #     for i in self.inputs:
+
+        #         if i.is_linked == False and free_inputs > 1:
+        #             self.inputs.remove(i)
+        #             free_inputs -= 1
+        #         elif i.is_linked == True:
+        #             pass
+        #         else:
+        #             break
     
 
 ### Node Categories ###
@@ -1107,7 +1141,7 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.type = "Noter_CustomNodeType"
 
 
-        props = layout.operator("node.add_node", text = "de", icon = 'NONE')
+        props = layout.operator("node.add_node", text = "cni", icon = 'NONE')
         props.use_transform = True
         props.type = "CompositorNodeImage"
 
@@ -1147,7 +1181,7 @@ class NODE_MT_add_menu_othernotes(bpy.types.Menu):
         
         insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("")}, 'LAYER_USED')
 
-def add_to_add_menu(self, context):
+def add__NODE_MT_add(self, context):
     if context.space_data.tree_type == 'Noter_CustomTreeType':
         layout = self.layout
 
@@ -1246,13 +1280,14 @@ Nodes_blender_classes = (
     # MyNodeCategory,
     MyCustomTree,
     MyCustomSocket,
+    MyCustomSocket_2,
+    MyCustomSocket_3,
     MyCustomNode,
     MyCustomNode_2,
     NodeOperators,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color_2,
     NODE_SPACE_PT_AnnotationDataPanel_2,
-    MyCustomSocket_2,
     Note_Node_Bool_Operator,
     Add_Nodes_Tree,
 
@@ -1263,42 +1298,3 @@ Nodes_blender_classes = (
     # Noter_NodeSearch,
     
 )
-
-
-
-
-
-# def register():
-#     from bpy.utils import register_class
-#     for cls in classes:
-#         register_class(cls)
-
-#     nodeitems_utils.register_node_categories('CUSTOM_NODES', node_categories)
-
-
-# def unregister():
-#     nodeitems_utils.unregister_node_categories('CUSTOM_NODES')
-
-#     from bpy.utils import unregister_class
-#     for cls in reversed(classes):
-#         unregister_class(cls)
-
-
-# if __name__ == "__main__":
-#     register()
-
-
-
-
-# def register():
-
-    
-
-
-# def unregister():
-
-    
-
-
-# if __name__ == "__main__":
-#     register()
