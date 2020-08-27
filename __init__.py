@@ -534,7 +534,6 @@ class TEXT_PT_noter(Panel):
 
         box = column.box()
         col = box.column(align = 1)
-        col.operator("node.noter_node_search", text = "Search", icon = 'VIEWZOOM').use_transform = True
         col.operator("window_manager.export_note_text", text = 'Object', icon = 'OBJECT_DATAMODE').action = "object"
         col.operator("window_manager.export_note_text", text = '', icon = 'FILE_TICK').action = "object_get"
         col.operator("window_manager.export_note_text", text = '', icon = 'TRASH').action = "object_delete"
@@ -1746,16 +1745,16 @@ class PreviewsExamplePanel(bpy.types.Panel):
 
         # import bpy.utils.previews
         
-        pcoll_2_link = bpy.utils.previews
-        pcoll_2 = pcoll_2_link.new()
-        pcoll_2.load("my_icon_2",  bpy.data.images['Camera.png'].filepath_from_user(),   'IMAGE')
-        row = layout.row()
-        my_icon = pcoll_2["my_icon_2"]
-        layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
+        # pcoll_2_link = bpy.utils.previews
+        # pcoll_2 = pcoll_2_link.new()
+        # pcoll_2.load("my_icon_2",  bpy.data.images['Camera.png'].filepath_from_user(),   'IMAGE')
+        # row = layout.row()
+        # my_icon = pcoll_2["my_icon_2"]
+        # layout.template_icon(icon_value = my_icon.icon_id, scale=15.0)
 
-        print(my_icon.icon_id)
+        # print(my_icon.icon_id)
 
-        pcoll_2_link.remove(pcoll_2)
+        # pcoll_2_link.remove(pcoll_2)
 
 
 
@@ -1783,18 +1782,18 @@ def register():
     # Note that preview collections returned by bpy.utils.previews
     # are regular py objects - you can use them to store custom data.
     # import bpy.utils.previews
-    pcoll = bpy.utils.previews.new()
-    pcoll_2 = bpy.utils.previews.new()
+    # pcoll = bpy.utils.previews.new()
+    # pcoll_2 = bpy.utils.previews.new()
 
     # path to the folder where the icon is
     # the path is calculated relative to this py file inside the addon folder
-    my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
+    # my_icons_dir = os.path.join(os.path.dirname(__file__), "icons")
 
     # load a preview thumbnail of a file and store in the previews collection
     # pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
-    pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
+    # pcoll.load("my_icon", os.path.join(my_icons_dir, "icon-image.png"), 'IMAGE')
     
-    print(os.path.join(my_icons_dir, "icon-image.png"), 12313123)
+    # print(os.path.join(my_icons_dir, "icon-image.png"), 12313123)
     # print( str(bpy.data.images['Camera.png'].filepath)  )
     # print( str(bpy.data.textures['Texture'].image)  )
     # print( bpy.data.images['Camera.png'].filepath_from_user()  )
@@ -1802,7 +1801,7 @@ def register():
     # pcoll.load(bpy.data.images['Untitled'])
     # pcoll.load(bpy.data.textures['Texture'].image)
 
-    preview_collections["main"] = pcoll
+    # preview_collections["main"] = pcoll
 
     bpy.utils.register_class(PreviewsExamplePanel)
 
