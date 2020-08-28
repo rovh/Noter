@@ -851,7 +851,7 @@ class Note_Pop_Up_Operator (Operator):
         ]
 
         ic = random.choice(ic)
-        ic = 'RADIOBUT_ON'
+        # ic = 'RADIOBUT_ON'
                 
         def draw_word(self, context):
 
@@ -990,7 +990,7 @@ class Note_Pop_Up_Operator (Operator):
 
 
             layout.separator()
-            layout.separator()
+            # layout.separator()
 
 
             layout.label(text = "Notes List:", icon = "PRESET")
