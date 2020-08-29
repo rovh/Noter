@@ -683,35 +683,60 @@ class Noter_Splash_Screen_Notes_List(Operator):
 
 
 
-def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index = None):
+def draw_text( self,  text,      enable_list_mode = False, item = None, item_index = None):
+    
     text_parts_list = text.split('\n')
+    if enable_list_mode == True:
+        multiple_strokes = True if text.count("\n") > 0 else False
+        # if text.count("\n") > 0:
+        #     multiple_strokes = True
+        # else:
+        #     multiple_strokes = False
+
     layout = self.layout
     box = layout.box()
-    row = box.row(align = 1)
+    row = box.row(align = 0)
+    # row = main_row.row()
+    # row.label(text = '00000')
+
+
+    # row = main_row.row()
+    # row.separator(factor = 7)
+
+    # row.label(text = '')
+
+    # row.label(icon = "BLANK1")
+    # row.label(icon = "BLANK1")
+    # row.label(icon = "BLANK1")
+
+    # row.separator_spacer()
+
+    # row = row.split(factor=0.5, align=False)
+
+    # row.ui_units_x = 10000
+    # row.scale_x = 2
     row.scale_x = 2.7
+    # row.scale_x = 10
     row.alignment = 'CENTER'
+    # main_row.alignment = 'CENTER'
     col = row.column(align = 1)
+    col.alignment = 'CENTER'
 
+    # col.label(text = '12121212')
 
-
-    if enable_list_mode == True:
-        if text.count("\n") > 0:
-            multiple_strokes = True
-        else:
-            multiple_strokes = False
+    # row = main_row.row()
+    # row.label(text = '00000')
+    # row.alignment = 'RIGHT'
 
 
     for i in text_parts_list:
-        row = col.row(align = 1)
+        row = col.row(align = 0)
         row.scale_y = 0
 
         if enable_list_mode == True:
             index   = item_index
             my_bool = item.bool   
             text = i   
-
-
-
 
             try:
                 if previous_index == index:
@@ -767,8 +792,6 @@ def draw_text( self,  text,  enable_list_mode = False,  item = None,  item_index
                 row.scale_x = .35
                 
                 row_info.scale_x = .35
-
-
         else:
 
             row.label(text = i)
