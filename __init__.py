@@ -680,7 +680,8 @@ class Noter_Splash_Screen_Notes_List(Operator):
         return {'FINISHED'}
 
 
-
+# pre_space = ""
+# for _ in range(68): pre_space += " "
 
 
 def draw_text( self,  text,      enable_list_mode = False, item = None, item_index = None):
@@ -693,40 +694,71 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
         # else:
         #     multiple_strokes = False
 
-    layout = self.layout
-    box = layout.box()
-    row = box.row(align = 0)
-    # row = main_row.row()
-    # row.label(text = '00000')
+    s = 1
+    # s = 0
+
+    if s == 1:
+        layout = self.layout
+        box = layout.box()
+        row = box.row(align = 0)
+        # row = box.row(align = 0)
+        # row = main_row.row()
+        # row.label(text = '00000')
 
 
-    # row = main_row.row()
-    # row.separator(factor = 7)
+        # row = main_row.row()
+        # row.separator(factor = 15)
 
-    # row.label(text = '')
+        # row.label(text = '')
 
-    # row.label(icon = "BLANK1")
-    # row.label(icon = "BLANK1")
-    # row.label(icon = "BLANK1")
+        # row.label(icon = "BLANK1")
+        # row.label(icon = "BLANK1")
+        # row.label(icon = "BLANK1")
 
-    # row.separator_spacer()
+        # row.separator_spacer()
 
-    # row = row.split(factor=0.5, align=False)
+        # row = row.split(factor=0.5, align=False)
 
-    # row.ui_units_x = 10000
-    # row.scale_x = 2
-    row.scale_x = 2.7
-    # row.scale_x = 10
-    row.alignment = 'CENTER'
-    # main_row.alignment = 'CENTER'
-    col = row.column(align = 1)
-    col.alignment = 'CENTER'
+        # row.ui_units_x = 10000
+        # row.scale_x = 2
+        # row.scale_x = 2.7
+        # row.scale_x = 4
+        # row.alignment = 'CENTER'
+        # row.label(text = ' ')
 
-    # col.label(text = '12121212')
+        # for _ in range(5): row.label(icon  = 'BLANK1')
 
-    # row = main_row.row()
-    # row.label(text = '00000')
-    # row.alignment = 'RIGHT'
+        # row.alignment = 'CENTER'
+        col = row.column(align = 0)
+        # col.alignment = 'CENTER'
+
+        # for text_part in text_parts_list:
+        #     text_part = len(text_part)
+
+        #     try: length = len(text_parts_list[0])
+        #     except: IndexError
+
+        #     if text_part > length:
+        #         length = text_part
+        # # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
+        # # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
+        # width_menu = length * .07
+        # width_menu = int(width_menu)
+        # print (width_menu)
+        
+        # row.scale_x = width_menu
+        # col.scale_x = width_menu
+
+    else:
+        layout = self.layout
+        box = layout.box()
+
+        row = box.row(align = 1)
+        row.scale_x = 2.7
+        # row.scale_x = 3
+        row.alignment = 'CENTER'
+        col = row.column(align = 1)
+
 
 
     for i in text_parts_list:
@@ -789,11 +821,12 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
                 operator = row.operator("notes_list_blender_file.list_action", icon='REMOVE', text="")
                 operator.by_index = index
                 operator.action = 'REMOVE'
-                row.scale_x = .35
+                # row.scale_x = .35
                 
                 row_info.scale_x = .35
         else:
-
+            global pre_space
+            # row.label(text = pre_space + i)
             row.label(text = i)
       
 def calculate_width_menu(self, text):
@@ -802,16 +835,21 @@ def calculate_width_menu(self, text):
     # afm = AFM(open(afm_filename, "rb"))
     # AFM.string_width_height('What the heck?')
 
+    # global pre_space
+    # pre_space_length = len(pre_space)
 
     text_parts_list = text.split('\n')
     length = 25
+    # length = 26 #+ pre_space_length
+
     for row in text_parts_list:
-        row = len(row)
+        row = len(row) #+ pre_space_length
         if row > length:
             length = row
-    # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
+    # 450 pixels = 50 symbols > 1  symbol = 9 pixels 
     # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
-    width_menu = length * 12
+    width_menu = length * 12 # old 
+    # width_menu = length * 11
 
 
     return width_menu
@@ -870,7 +908,6 @@ class Note_Pop_Up_Operator (Operator):
             'SHADING_SOLID',
             'BRUSH_TEXFILL',
             'RADIOBUT_ON',
-            'TOOL_SETTINGS',
         ]
 
         ic = random.choice(ic)
