@@ -689,86 +689,38 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
     text_parts_list = text.split('\n')
     if enable_list_mode == True:
         multiple_strokes = True if text.count("\n") > 0 else False
-        # if text.count("\n") > 0:
-        #     multiple_strokes = True
-        # else:
-        #     multiple_strokes = False
-
-    s = 1
-    # s = 0
-
-    if s == 1:
-        layout = self.layout
-        box = layout.box()
-        row = box.row(align = 0)
-        # row = box.row(align = 0)
-        # row = main_row.row()
-        # row.label(text = '00000')
 
 
-        # row = main_row.row()
-        # row.separator(factor = 15)
+    # layout = self.layout
+    # box = layout.box()
+    # row = box.row(align = 1)
+    # row.scale_x = 2.7
+    # # row.scale_x = 3
+    # row.alignment = 'CENTER'
+    # col = row.column(align = 1)
 
-        # row.label(text = '')
 
-        # row.label(icon = "BLANK1")
-        # row.label(icon = "BLANK1")
-        # row.label(icon = "BLANK1")
-
-        # row.separator_spacer()
-
-        # row = row.split(factor=0.5, align=False)
-
-        # row.ui_units_x = 10000
-        # row.scale_x = 2
-        # row.scale_x = 2.7
-        # row.scale_x = 4
-        # row.alignment = 'CENTER'
-        # row.label(text = ' ')
-
-        # for _ in range(5): row.label(icon  = 'BLANK1')
-
-        # row.alignment = 'CENTER'
-        col = row.column(align = 0)
-        # col.alignment = 'CENTER'
-
-        # for text_part in text_parts_list:
-        #     text_part = len(text_part)
-
-        #     try: length = len(text_parts_list[0])
-        #     except: IndexError
-
-        #     if text_part > length:
-        #         length = text_part
-        # # 450 pixels = 50 symbols > 1 symbol = 9 pixels 
-        # # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
-        # width_menu = length * .07
-        # width_menu = int(width_menu)
-        # print (width_menu)
-        
-        # row.scale_x = width_menu
-        # col.scale_x = width_menu
-
-    else:
-        layout = self.layout
-        box = layout.box()
-
-        row = box.row(align = 1)
-        row.scale_x = 2.7
-        # row.scale_x = 3
-        row.alignment = 'CENTER'
-        col = row.column(align = 1)
+    layout = self.layout
+    box = layout.box()
+    row = box.row(align = 0)
+    row.alignment = 'CENTER'
+    if enable_list_mode == True: row.alignment = 'EXPAND' #else row.alignment = 'EXPAND'
+    col = row.column(align = 0)
 
 
 
     for i in text_parts_list:
         row = col.row(align = 0)
         row.scale_y = 0
+        # row.scale_x = 2.7
+        # row.alignment = 'LEFT'
 
         if enable_list_mode == True:
-            index   = item_index
-            my_bool = item.bool   
-            text = i   
+            index   =  item_index
+            my_bool =  item.bool   
+            text    =  i
+            # row = row.row()
+            # row.alignment = 'LEFT'
 
             try:
                 if previous_index == index:
@@ -780,53 +732,66 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
                 add_buttons = True
 
             previous_index = index
-
-
-           
+            
             
             if my_bool == False and add_buttons == True:
                 add_ic = "BOOKMARKS"
-                row_info = row.row(align = 0)
+                # row_info = row.row(align = 0)
+                row_info = row
                 row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
-                row_info.alignment = 'LEFT'
+                # row_info.alignment = 'LEFT'
             
 
             elif (add_buttons == False) or \
                     (my_bool == True and add_buttons == True):
 
-                row_info = row.row(align = True)
+                # row_info = row.row(align = True)
+                row_info = row
                 row_info.label(icon = "BLANK1")
-                row_info.alignment = 'LEFT'
+                # row_info.alignment = 'LEFT'
                 
-                row_info.scale_x = .35
+                # row_info.scale_x = .35
 
 
-
+            # row_text = row.row()
+            row_text = row
             if multiple_strokes == True:
-                row.label(text = text)
+                row_text.label(text = text)
             else:
-                row.prop(item, "text", emboss=1, text = "")
+                row_text.prop(item, "text", emboss = 1, text = "", expand = True)
+            
+            # row_text.scale_x = 1000
+            # row.scale_x = 1000
+            # row.emboss = 'NONE'
 
 
 
             if my_bool == True and add_buttons == True:
                 add_ic = "CHECKBOX_DEHLT"
-                row_info = row.row(align = 0)
+                # row_info = row.row(align = 0)
+                row_info = row
                 row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
-                row_info.alignment = 'RIGHT'
+                # row_info.alignment = 'RIGHT'
             
             
             if add_buttons == True:
-                row = row.row()
+                # row = row.row()
                 operator = row.operator("notes_list_blender_file.list_action", icon='REMOVE', text="")
                 operator.by_index = index
                 operator.action = 'REMOVE'
                 # row.scale_x = .35
                 
-                row_info.scale_x = .35
+                # row_info.scale_x = .35
+
+            try: 
+                max_length
+            except UnboundLocalError:
+                max_length = 0
+
+            if max_length > len(text): max_length = len(text)
+
         else:
-            global pre_space
-            # row.label(text = pre_space + i)
+            row.alignment = 'LEFT'
             row.label(text = i)
       
 def calculate_width_menu(self, text):
@@ -888,42 +853,60 @@ class Note_Pop_Up_Operator (Operator):
         row.operator("window_manager.note_popup_operator_2",text='' , icon="MOUSE_LMB_DRAG").action = 'drag'
         row.alignment = 'RIGHT'
 
-
-        ic = ['MATCUBE',
+        #  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+        ic = [ 
+            'AUTO',
             'ANTIALIASED',
+
+            'BRUSH_TEXFILL',
+
+            'COLORSET_02_VEC',
             'COLLAPSEMENU',
-            'OUTLINER_DATA_LIGHTPROBE',
+
+            'FILE_BLEND',
+            'FUND',
+            'FREEZE',
+            'FILE_3D',
+            'FILE_VOLUME',
+
+            'LIGHTPROBE_PLANAR',
+
+            'MATCUBE',
+            'MATSPHERE',
+            'MONKEY',
             'MESH_CYLINDER',
             'META_PLANE',
-            'SOLO_ON',
-            'FILE_BLEND',
+            'MESH_CAPSULE',
+
+            'OUTLINER_DATA_LIGHTPROBE',
             'OUTLINER_OB_POINTCLOUD',
-            'SEQ_CHROMA_SCOPE',
-            'MATSPHERE',
-            'AUTO',
-            'FREEZE',
-            'FUND',
-            'COLORSET_02_VEC',
-            'MONKEY',
-            'SHADING_SOLID',
-            'BRUSH_TEXFILL',
+
             'RADIOBUT_ON',
+
+            'SOLO_ON',
+            'SEQ_CHROMA_SCOPE',
+            'SHADING_SOLID',
         ]
 
         ic = random.choice(ic)
-        # ic = 'RADIOBUT_ON'
+        # ic = 'LIGHTPROBE_PLANAR'
                 
         def draw_word(self, context):
+            # global ic
 
             def label_draw(length):
+                # global ic
                 for _ in range(0, length):
                     column_text.label(icon = ic)
+                
+                
 
             layout = self.layout
 
             row_text = layout.row(align = 1)
             # row_text.scale_y = 0.2
             row_text.scale_x = 0.6
+            row_text.alignment = "CENTER"
 
             row_text.separator(factor = 2)
 
@@ -1039,7 +1022,6 @@ class Note_Pop_Up_Operator (Operator):
             draw_text(self, text)
 
 
-
         find = False
         try:
             find = bpy.data.scenes[custom_scene_name].splash_screen_notes_list
@@ -1119,9 +1101,22 @@ class Note_Pop_Up_Operator (Operator):
         if bpy.data.scenes.find(custom_scene_name) == -1:
             bpy.data.scenes.new(custom_scene_name)
 
+
+        notes_list_blender_file = bpy.data.scenes[custom_scene_name].notes_list_blender_file
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
+
+
+        for item in notes_list_blender_file:
+            item_text = item.text
+            if len(text) == 0:
+                text += item_text
+            else:
+                text += "\n" + item_text
+
+        
         width_menu = calculate_width_menu(self, text)
         
+
 
         self.location_cursor = False
         if self.location_cursor == True:
