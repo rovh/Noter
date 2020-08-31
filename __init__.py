@@ -695,7 +695,6 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
     # box = layout.box()
     # row = box.row(align = 1)
     # row.scale_x = 2.7
-    # # row.scale_x = 3
     # row.alignment = 'CENTER'
     # col = row.column(align = 1)
 
@@ -712,8 +711,6 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
     for i in text_parts_list:
         row = col.row(align = 0)
         row.scale_y = 0
-        # row.scale_x = 2.7
-        # row.alignment = 'LEFT'
 
         if enable_list_mode == True:
             index   =  item_index
@@ -794,27 +791,27 @@ def draw_text( self,  text,      enable_list_mode = False, item = None, item_ind
             row.alignment = 'LEFT'
             row.label(text = i)
       
-def calculate_width_menu(self, text):
+def calculate_width_menu(self, text, scale_factor = 12):
 
     # from matplotlib.afm import AFM
     # afm = AFM(open(afm_filename, "rb"))
     # AFM.string_width_height('What the heck?')
 
-    # global pre_space
-    # pre_space_length = len(pre_space)
 
     text_parts_list = text.split('\n')
     length = 25
-    # length = 26 #+ pre_space_length
 
     for row in text_parts_list:
-        row = len(row) #+ pre_space_length
+        row = len(row)
         if row > length:
             length = row
+
     # 450 pixels = 50 symbols > 1  symbol = 9 pixels 
     # 550 pixels = 50 symbols > 1 symbol = 11 pixels 
-    width_menu = length * 12 # old 
-    # width_menu = length * 11
+    width_menu = length * scale_factor
+
+    
+
 
 
     return width_menu
@@ -854,11 +851,13 @@ class Note_Pop_Up_Operator (Operator):
         row.alignment = 'RIGHT'
 
         #  ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        ic = [ 
+        ic_list = [ 
             'AUTO',
             'ANTIALIASED',
 
             'BRUSH_TEXFILL',
+            'BRUSH_TEXDRAW',
+            'BRUSH_SOFTEN',
 
             'COLORSET_02_VEC',
             'COLLAPSEMENU',
@@ -878,7 +877,7 @@ class Note_Pop_Up_Operator (Operator):
             'META_PLANE',
             'MESH_CAPSULE',
 
-            'OUTLINER_DATA_LIGHTPROBE',
+            # 'OUTLINER_DATA_LIGHTPROBE',
             'OUTLINER_OB_POINTCLOUD',
 
             'RADIOBUT_ON',
@@ -888,17 +887,14 @@ class Note_Pop_Up_Operator (Operator):
             'SHADING_SOLID',
         ]
 
-        ic = random.choice(ic)
-        # ic = 'LIGHTPROBE_PLANAR'
+        ic  = random.choice(ic_list)
+        # ic = 'OUTLINER_DATA_LIGHTPROBE'
                 
         def draw_word(self, context):
-            # global ic
-
+            
             def label_draw(length):
-                # global ic
                 for _ in range(0, length):
-                    column_text.label(icon = ic)
-                
+                    column_text.label(icon = ic)                
                 
 
             layout = self.layout
@@ -1110,11 +1106,12 @@ class Note_Pop_Up_Operator (Operator):
             item_text = item.text
             if len(text) == 0:
                 text += item_text
+                scale_factor = 13
             else:
                 text += "\n" + item_text
 
         
-        width_menu = calculate_width_menu(self, text)
+        width_menu = calculate_width_menu(self, text, scale_factor = scale_factor)
         
 
 
