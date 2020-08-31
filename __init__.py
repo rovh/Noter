@@ -815,7 +815,7 @@ def calculate_width_menu(self, text, scale_factor = 12):
     return width_menu
     
 
-class Note_Pop_Up_Operator (Operator):
+class Splash_Screen_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
 
@@ -858,8 +858,9 @@ class Note_Pop_Up_Operator (Operator):
             'BRUSH_TEXDRAW',
             'BRUSH_SOFTEN',
 
-            'COLORSET_02_VEC',
-            'COLLAPSEMENU',
+            # 'COLORSET_02_VEC',
+            # 'COLLAPSEMENU',
+            'CONSTRAINT',
 
             'FILE_BLEND',
             'FUND',
@@ -879,15 +880,18 @@ class Note_Pop_Up_Operator (Operator):
             # 'OUTLINER_DATA_LIGHTPROBE',
             'OUTLINER_OB_POINTCLOUD',
 
+            'PLAY',
+
             'RADIOBUT_ON',
 
             'SOLO_ON',
             'SEQ_CHROMA_SCOPE',
             'SHADING_SOLID',
+            'SNAP_VOLUME',
         ]
 
         ic  = random.choice(ic_list)
-        # ic = 'OUTLINER_DATA_LIGHTPROBE'
+        # ic = 'SNAP_VOLUME'
                 
         def draw_word(self, context):
             
@@ -1099,21 +1103,21 @@ class Note_Pop_Up_Operator (Operator):
 
         notes_list_blender_file = bpy.data.scenes[custom_scene_name].notes_list_blender_file
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
-
-        scale_factor = 12
+        
+        item_text = ""
         for item in notes_list_blender_file:
-            item_text = item.text
+            item_text_part = item.text
             if len(text) == 0:
-                text += item_text
-                scale_factor = 13
+                item_text += item_text_part
             else:
-                text += "\n" + item_text
-    
-
-        
-        width_menu = calculate_width_menu(self, text, scale_factor = scale_factor)
+                item_text += "\n" + item_text_part
         
 
+        width_menu_list = calculate_width_menu(self, item_text, scale_factor = 13)
+        
+        width_menu = calculate_width_menu(self, text )
+
+        width_menu = max( width_menu, width_menu_list )
 
         self.location_cursor = False
         if self.location_cursor == True:
@@ -1144,7 +1148,7 @@ class Note_Pop_Up_Operator (Operator):
 
         # return {'FINISHED'}
 
-class Note_Pop_Up_Operator_2 (Operator):
+class Note_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator_2"
     bl_label = "Noter Pop-up Menu"
 
@@ -1806,8 +1810,8 @@ blender_classes = [
     TEXT_PT_noter,
     # Noter_Props,
     Noter_Actions,
+    Splash_Screen_Pop_Up_Operator,
     Note_Pop_Up_Operator,
-    Note_Pop_Up_Operator_2,
     Noter_Text_Wrap_Words,
     OBJECT_PT_note,
     SCENE_PT_note,
