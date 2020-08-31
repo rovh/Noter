@@ -812,9 +812,8 @@ def calculate_width_menu(self, text, scale_factor = 12):
 
     
 
-
-
     return width_menu
+    
 
 class Note_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
@@ -1101,7 +1100,7 @@ class Note_Pop_Up_Operator (Operator):
         notes_list_blender_file = bpy.data.scenes[custom_scene_name].notes_list_blender_file
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
 
-
+        scale_factor = 12
         for item in notes_list_blender_file:
             item_text = item.text
             if len(text) == 0:
@@ -1109,6 +1108,7 @@ class Note_Pop_Up_Operator (Operator):
                 scale_factor = 13
             else:
                 text += "\n" + item_text
+    
 
         
         width_menu = calculate_width_menu(self, text, scale_factor = scale_factor)
