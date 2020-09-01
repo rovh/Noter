@@ -5,6 +5,9 @@ from bpy.app.translations import pgettext_iface as iface_
 # import time
 
 
+
+
+
 class NodeOperators(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_operator"
@@ -47,8 +50,6 @@ class NodeOperators(bpy.types.Operator):
                 return "Write label text from the label text of the active node or active frame"
             elif properties.action == 'label_all':
                 return "Write label text in the selected node (nodes) or selected frame (frames)"
-
-        
 
     @classmethod
     def poll(cls, context):
@@ -270,6 +271,8 @@ class Add_Nodes_Tree(bpy.types.Operator):
         return {'FINISHED'}
 
 
+
+# class Noter_NodeSearch(bpy.types.Operator):
 # def iterSingleNodeItems():
     # for node in iterAnimationNodeClasses():
     #     if not node.onlySearchTags:
@@ -282,9 +285,7 @@ class Add_Nodes_Tree(bpy.types.Operator):
     # for network in getSubprogramNetworks():
     #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
     #         {"subprogramIdentifier" : repr(network.identifier)})
-itemsByIdentifier = {}
-
-class Noter_NodeSearch(bpy.types.Operator):
+# itemsByIdentifier = {}
     bl_idname = "node.noter_node_search"
     bl_label = "Node Search"
     bl_options = {"REGISTER"}
@@ -338,7 +339,6 @@ class Noter_NodeSearch(bpy.types.Operator):
         return {'RUNNING_MODAL'}
         # return context.window_manager.invoke_search_popup(self)
 
-    
 
 
 
@@ -355,6 +355,8 @@ class MyCustomTree(NodeTree):
     bl_icon = 'FILE'
 
     # type = 'COMPOSITING'
+
+
 
 
 
@@ -465,6 +467,9 @@ class MyCustomSocket_3(NodeSocket):
 
 
 
+
+
+
 # Mix-in class for all custom nodes in this tree type.
 # Defines a poll function to enable instantiation.
 class MyCustomTreeNode:
@@ -473,7 +478,6 @@ class MyCustomTreeNode:
         return ntree.bl_idname == 'Noter_CustomTreeType'
         # return True
 
-# Derived from the Node base type.
 class MyCustomNode(Node, MyCustomTreeNode):
     # === Basics ===
     # Description string
@@ -605,7 +609,6 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 row.scale_y = 1.6
                 row.scale_x = 1.6
 
-
     def update(self):
 
         count = 0
@@ -669,7 +672,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # Optional: custom label
     # Explicit user label overrides this, but here we can define a label dynamically
   
-class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
+class MyCustomNode_2(Node, MyCustomTreeNode):
     # === Basics ===
     # Description string
     # '''A custom node'''
@@ -695,7 +698,6 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
     image: bpy.props.PointerProperty(type= bpy.types.Image)
 
     # enum_image: bpy.props.EnumProperty(
-
     # )
 
 
@@ -716,13 +718,13 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
 
     def init(self, context):
 
-        self.show_preview = True
+        # self.show_preview = True
         # self.show_options = True
         # self.image = bpy.data.textures['Texture'].preview
         # self.show_texture = True
 
         # self.image = bpy.data.images['Camera.001']
-        self.image = bpy.data.images['Camera.png']
+        # self.image = bpy.data.images['Camera.png']
         # self.image = bpy.data.textures['Texture'].image
         # self.image = bpy.data.images['Camera.001.png']
         # self.image = bpy.data.images['Camera.002.png'].pixels
@@ -733,7 +735,7 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
         # self.image = bpy.data.scenes['Scene'].node_tree.nodes['Image'].image
 
         # print(123123)
-        print(self.image)
+        # print(self.image)
         # print()
 
         
@@ -770,10 +772,6 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        pass
-
-
-
         # layout = self.layout
         # pcoll = preview_collections["main"]
 
@@ -785,11 +783,20 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
         # self.show_preview = True
         # self.show_texture = True
 
+        layout.template_ID(self, "image", new="image.new", open="image.open")
+
         # self.image = bpy.data.images['Camera.001']
         # self.image = bpy.data.images['Camera.001.png']
         # self.image = bpy.data.textures['Texture']
-        
 
+        # row = layout.row()
+        # row.operator( "node.noter_image_action", text = "Image" )
+        # layout.operator("node.noter_image"
+
+        # layout.operator("node.noter_bool_operator",  icon = "DOT", text = 'Image')
+        layout.operator("scene.noter_image",  icon = "DOT", text = 'Image').my_image_name = self.image.name
+        
+        # print(self.image.name)
 
         # try:
 
@@ -930,7 +937,7 @@ class MyCustomNode_2(bpy.types.Node, MyCustomTreeNode):
         #             pass
         #         else:
         #             break
-    
+
 
 ### Node Categories ###
 # Node categories are a python system for automatically
@@ -948,6 +955,10 @@ class MyNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'Noter_CustomTreeType'
+
+
+
+
 
 class NODE_PT_active_node_generic(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
@@ -1120,15 +1131,15 @@ class NODE_SPACE_PT_AnnotationDataPanel_2(bpy.types.Panel):
 
 
 
-def insertNode(layout, type, text, settings = {}, icon = "NONE"):
-    operator = layout.operator("node.add_node", text = text, icon = icon)
-    operator.type = type
-    operator.use_transform = True
-    for name, value in settings.items():
-        item = operator.settings.add()
-        item.name = name
-        item.value = value
-    return operator
+# def insertNode(layout, type, text, settings = {}, icon = "NONE"):
+    # operator = layout.operator("node.add_node", text = text, icon = icon)
+    # operator.type = type
+    # operator.use_transform = True
+    # for name, value in settings.items():
+    #     item = operator.settings.add()
+    #     item.name = name
+    #     item.value = value
+    # return operator
 
 class NODE_MT_add_menu_notes(bpy.types.Menu):
     bl_label = "Note"
@@ -1284,6 +1295,7 @@ Nodes_blender_classes = (
     MyCustomSocket_3,
     MyCustomNode,
     MyCustomNode_2,
+    # Noter_Image,
     NodeOperators,
     NODE_PT_active_node_generic,
     NODE_PT_active_node_color_2,

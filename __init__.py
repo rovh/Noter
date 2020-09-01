@@ -679,12 +679,54 @@ class Noter_Splash_Screen_Notes_List(Operator):
         
         return {'FINISHED'}
 
+class Noter_Image(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "scene.noter_image"
+    bl_label = "Noter Image"
+    bl_description = "Mute or unmute current node"
+    # bl_property = "my_image"
 
-# pre_space = ""
-# for _ in range(68): pre_space += " "
+    # my_bool: bpy.props.FloatProperty()
+    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
+    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
+    # my_bool: bpy.props.StringProperty()
+    # name: bpy.props.StringProperty()
+
+    # my_image: bpy.props.PointerProperty(type= bpy.types.Image)
+    my_image_name: bpy.props.StringProperty()
+
+    # @classmethod
+    # def poll(cls, context):
+    #     space = context.space_data
+    #     return space.type == 'NODE_EDITOR'
 
 
-def draw_text( self,  text,      enable_list_mode = False, item = None, item_index = None):
+    def execute(self, context):
+
+        custom_image_name = "Noter Node"
+
+        # if bpy.data.images.find(custom_image_name) == -1:
+        #     pass
+        # else:
+        #     bpy.data.images.remove( bpy.data.images[custom_image_name] )
+        
+        
+        # image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
+        # image.name = custom_image_name
+
+        # bpy.context.space_data.image = image     
+
+        # bpy.data.images[custom_image_name] = bpy.data.images[self.my_image_name]
+
+        
+        return {'FINISHED'}
+
+
+
+
+
+
+def draw_text( self,  text,  enable_list_mode = False, item = None, item_index = None):
     
     text_parts_list = text.split('\n')
     if enable_list_mode == True:
@@ -814,7 +856,6 @@ def calculate_width_menu(self, text, scale_factor = 12):
 
     return width_menu
     
-
 class Splash_Screen_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
@@ -845,7 +886,6 @@ class Splash_Screen_Pop_Up_Operator (Operator):
     def draw(self, context):
         layout = self.layout
         row = layout.row()
-        # row.label(text='' , icon="MOUSE_LMB_DRAG")
         row.operator("window_manager.note_popup_operator_2",text='' , icon="MOUSE_LMB_DRAG").action = 'drag'
         row.alignment = 'RIGHT'
 
@@ -1805,7 +1845,6 @@ def add__TEXT_MT_format(self, context):
 
 
 
-
 blender_classes = [
     TEXT_PT_noter,
     # Noter_Props,
@@ -1823,6 +1862,9 @@ blender_classes = [
     Noter_Splash_Screen_Notes_List,
     # PROPERTIES_HT_header_add_menu,
     # PROPERTIES_PT_navigation_bar_add,
+    Noter_Image,
+
+    # Noter_Image,
 
     
 
