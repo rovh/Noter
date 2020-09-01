@@ -498,6 +498,10 @@ class MyCustomNode(Node, MyCustomTreeNode):
     text: bpy.props.StringProperty()
     my_bool: bpy.props.BoolProperty()
     draw_extra: bpy.props.StringProperty(default = "++")
+    
+    image_bool: bpy.props.BoolProperty()
+
+    image: bpy.props.PointerProperty(type= bpy.types.Image)
 
     # === Optional Functions ===
     # Initialization function, called when a new node is created.
@@ -544,24 +548,25 @@ class MyCustomNode(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        # try:
+        if self.image_bool == True:
 
-        #     image = bpy.types.Image(file_format='PNG')
-        #     image.file_format = 'PNG'
-        #     image.filepath = 'C:\\Users\\Standardbenutzer\\Desktop\\bla.png'
-            
-        #     sima = context.space_data
+            row = layout.row()
+            row.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
+            # row.template_ID(self, "image", new="image.new", open="image.open")
+            row.scale_y = 1.4
 
-        #     tex = bpy.data.textures['.hidden']
-        #     col = layout.box().column()
-        #     col.template_preview(tex, show_buttons=True,)
+            try:
+                layout.separator()
 
-        #     col.template_ID(sima, "image", new="image.new", open="image.open")
+                self.image.name
 
-        # except KeyError:
-        #     pass
-        # except TypeError:
-        #     pass
+                row = layout.row()
+                row.label(icon = "IMAGE_DATA")
+                row.operator("scene.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
+                row.scale_y = 1.7
+
+            except AttributeError:
+                pass
 
         text = self.text
         if text.count("\n") == 0:
@@ -1173,13 +1178,30 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.use_transform = True
         props.type = "Noter_CustomNodeType"
 
-        props = layout.operator("node.add_node", text = "123", icon = 'NONE')
-        props.use_transform = True
-        props.type = "Noter_CustomNodeType_2"
+        layout.separator(factor = .1)
+
+        insertNode(layout, "Noter_CustomNodeType", "Image Node", {  "draw_extra" : repr("++"),  "image_bool" : repr( True )   }, 'IMAGE_DATA')
+
+
+        # props = layout.operator("node.add_node", text = "Image Node", icon = 'IMAGE_DATA')
+        # props.use_transform = True
+        # props.type = "Noter_CustomNodeType"
 
         # props = layout.operator("node.add_node", text = "cni", icon = 'NONE')
         # props.use_transform = True
         # props.type = "CompositorNodeImage"
+
+class NODE_MT_add_menu_othernotes(bpy.types.Menu):
+    bl_label = "Other Notes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons", {"draw_extra" : repr("+")}, 'OUTLINER_DATA_POINTCLOUD')
+        
+        layout.separator(factor = .1)
+
+        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("")}, 'LAYER_USED')
 
 class NODE_MT_add_menu_layout(bpy.types.Menu):
     bl_label = "Layout"
@@ -1192,20 +1214,12 @@ class NODE_MT_add_menu_layout(bpy.types.Menu):
         props = layout.operator("node.add_node", text = "Reroute", icon = 'REC')
         props.use_transform = True
         props.type = "NodeReroute"
+
+        layout.separator(factor = .1)
         
         props = layout.operator("node.add_node", text = "Frame", icon = 'MATPLANE')
         props.use_transform = True
         props.type = "NodeFrame"
-
-class NODE_MT_add_menu_othernotes(bpy.types.Menu):
-    bl_label = "Other Notes"
-
-    def draw(self, context):
-        layout = self.layout
-
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons", {"draw_extra" : repr("+")}, 'OUTLINER_DATA_POINTCLOUD')
-        
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("")}, 'LAYER_USED')
 
 def add__NODE_MT_add(self, context):
     if context.space_data.tree_type == 'Noter_CustomTreeType':
@@ -1281,6 +1295,9 @@ node_categories = [
         
         NodeItem("Noter_CustomNodeType", label="Note Nodes"
         ),
+
+        NodeItem("Noter_CustomNodeType_2", label="Image Node"
+        ),
         
         NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
             "draw_extra": repr("+"),
@@ -1295,7 +1312,6 @@ node_categories = [
 
         NodeItem("NodeFrame", label="Frame"
         ),
-    
 
     ]
     ),
