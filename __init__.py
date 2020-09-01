@@ -1885,8 +1885,9 @@ blender_classes = Notes_list_blender_classes + blender_classes
 
 
 
-def register(): 
+def register():
 
+    # bpy.types.Scene.Noter_images =  bpy.props.PointerProperty(type= bpy.types.Image)
     
     """Main Classes"""
 

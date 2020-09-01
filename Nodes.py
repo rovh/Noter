@@ -772,13 +772,12 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
-        
+        # img = bpy.context.scene.Noter_images
+
         row = layout.row()
         row.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
         # row.template_ID(self, "image", new="image.new", open="image.open")
         row.scale_y = 1.4
-
-
 
         try:
             layout.separator()
@@ -787,7 +786,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
             row = layout.row()
             row.label(icon = "IMAGE_DATA")
-            row.operator("scene.noter_image",  icon = "EXPORT", text = 'Image').my_image_name = self.image.name
+            row.operator("scene.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
             row.scale_y = 1.7
 
         except AttributeError:
@@ -1152,15 +1151,17 @@ class NODE_SPACE_PT_AnnotationDataPanel_2(bpy.types.Panel):
 
 
 
-# def insertNode(layout, type, text, settings = {}, icon = "NONE"):
-    # operator = layout.operator("node.add_node", text = text, icon = icon)
-    # operator.type = type
-    # operator.use_transform = True
-    # for name, value in settings.items():
-    #     item = operator.settings.add()
-    #     item.name = name
-    #     item.value = value
-    # return operator
+
+
+def insertNode(layout, type, text, settings = {}, icon = "NONE"):
+    operator = layout.operator("node.add_node", text = text, icon = icon)
+    operator.type = type
+    operator.use_transform = True
+    for name, value in settings.items():
+        item = operator.settings.add()
+        item.name = name
+        item.value = value
+    return operator
 
 class NODE_MT_add_menu_notes(bpy.types.Menu):
     bl_label = "Note"
@@ -1172,16 +1173,13 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
         props.use_transform = True
         props.type = "Noter_CustomNodeType"
 
-
-        props = layout.operator("node.add_node", text = "cni", icon = 'NONE')
-        props.use_transform = True
-        props.type = "CompositorNodeImage"
-
         props = layout.operator("node.add_node", text = "123", icon = 'NONE')
         props.use_transform = True
         props.type = "Noter_CustomNodeType_2"
 
-        # bpy.ops.node.add_node(type="CompositorNodeImage", use_transform=True)
+        # props = layout.operator("node.add_node", text = "cni", icon = 'NONE')
+        # props.use_transform = True
+        # props.type = "CompositorNodeImage"
 
 class NODE_MT_add_menu_layout(bpy.types.Menu):
     bl_label = "Layout"
@@ -1198,10 +1196,6 @@ class NODE_MT_add_menu_layout(bpy.types.Menu):
         props = layout.operator("node.add_node", text = "Frame", icon = 'MATPLANE')
         props.use_transform = True
         props.type = "NodeFrame"
-
-        # props = layout.operator("node.add_node", text = "Frame")
-        # props.use_transform = True
-        # props.type = "ShaderNodeAttribute"
 
 class NODE_MT_add_menu_othernotes(bpy.types.Menu):
     bl_label = "Other Notes"
