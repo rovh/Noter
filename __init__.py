@@ -703,12 +703,15 @@ class Noter_Image(bpy.types.Operator):
 
     def execute(self, context):
 
-        custom_image_name = "Noter Node"
+        custom_image_name = "Noter Node Image"
 
-        # if bpy.data.images.find(custom_image_name) == -1:
-        #     pass
-        # else:
-        #     bpy.data.images.remove( bpy.data.images[custom_image_name] )
+        if bpy.data.images.find(custom_image_name) == -1:
+            image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
+            image.name = custom_image_name
+        else:
+            bpy.data.images[custom_image_name].filepath = bpy.data.images[self.my_image_name].filepath
+            
+            # bpy.data.images.remove( bpy.data.images[custom_image_name] )
         
         
         # image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
@@ -719,6 +722,12 @@ class Noter_Image(bpy.types.Operator):
         # bpy.data.images[custom_image_name] = bpy.data.images[self.my_image_name]
 
         
+
+        # bpy.data.textures.new( custom_image_name, "IMAGE")
+
+
+
+
         return {'FINISHED'}
 
 

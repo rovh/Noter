@@ -273,71 +273,71 @@ class Add_Nodes_Tree(bpy.types.Operator):
 
 
 # class Noter_NodeSearch(bpy.types.Operator):
-# def iterSingleNodeItems():
-    # for node in iterAnimationNodeClasses():
-    #     if not node.onlySearchTags:
-    #         yield SingleNodeInsertionItem(node.bl_idname, node.bl_label)
-    #     for customSearch in node.getSearchTags():
-    #         if isinstance(customSearch, tuple):
-    #             yield SingleNodeInsertionItem(node.bl_idname, customSearch[0], customSearch[1])
-    #         else:
-    #             yield SingleNodeInsertionItem(node.bl_idname, customSearch)
-    # for network in getSubprogramNetworks():
-    #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
-    #         {"subprogramIdentifier" : repr(network.identifier)})
-# itemsByIdentifier = {}
-    bl_idname = "node.noter_node_search"
-    bl_label = "Node Search"
-    bl_options = {"REGISTER"}
-    bl_property = "my_search"
-    # bl_property = "item"
+# # def iterSingleNodeItems():
+#     # for node in iterAnimationNodeClasses():
+#     #     if not node.onlySearchTags:
+#     #         yield SingleNodeInsertionItem(node.bl_idname, node.bl_label)
+#     #     for customSearch in node.getSearchTags():
+#     #         if isinstance(customSearch, tuple):
+#     #             yield SingleNodeInsertionItem(node.bl_idname, customSearch[0], customSearch[1])
+#     #         else:
+#     #             yield SingleNodeInsertionItem(node.bl_idname, customSearch)
+#     # for network in getSubprogramNetworks():
+#     #     yield SingleNodeInsertionItem("an_InvokeSubprogramNode", network.name,
+#     #         {"subprogramIdentifier" : repr(network.identifier)})
+# # itemsByIdentifier = {}
+#     bl_idname = "node.noter_node_search"
+#     bl_label = "Node Search"
+#     bl_options = {"REGISTER"}
+#     bl_property = "my_search"
+#     # bl_property = "item"
 
-    # def getSearchItems(self, context):
-    #     itemsByIdentifier.clear()
-    #     items = []
-    #     for item in itertools.chain(iterSingleNodeItems()):
-    #         itemsByIdentifier[item.identifier] = item
-    #         items.append((item.identifier, item.searchTag, ""))
-    #     return items
+#     # def getSearchItems(self, context):
+#     #     itemsByIdentifier.clear()
+#     #     items = []
+#     #     for item in itertools.chain(iterSingleNodeItems()):
+#     #         itemsByIdentifier[item.identifier] = item
+#     #         items.append((item.identifier, item.searchTag, ""))
+#     #     return items
 
-    # item: bpy.props.EnumProperty(items = getSearchItems)
+#     # item: bpy.props.EnumProperty(items = getSearchItems)
 
-    # # @classmethod
-    # # def poll(cls, context):
-    # #     try: return context.space_data.node_tree.bl_idname == "an_AnimationNodeTree"
-    # #     except: return False
+#     # # @classmethod
+#     # # def poll(cls, context):
+#     # #     try: return context.space_data.node_tree.bl_idname == "an_AnimationNodeTree"
+#     # #     except: return False
 
-    # def invoke(self, context, event):
-    #     context.window_manager.invoke_search_popup(self)
-    #     return {"CANCELLED"}
+#     # def invoke(self, context, event):
+#     #     context.window_manager.invoke_search_popup(self)
+#     #     return {"CANCELLED"}
 
-    my_search: bpy.props.EnumProperty(
-        name="My Search",
-        items=(
-            ('FOO', "Foo", ""),
-            ('BAR', "Bar", ""),
-            ('BAZ', "Baz", ""),
-        ),
+#     my_search: bpy.props.EnumProperty(
+#         name="My Search",
+#         items=(
+#             ('FOO', "Foo", ""),
+#             ('BAR', "Bar", ""),
+#             ('BAZ', "Baz", ""),
+#         ),
             
-    )
+#     )
 
     
 
-    @classmethod
-    def poll(cls, context):
-        try: return context.space_data.node_tree.bl_idname == "Noter_CustomTreeType"
-        except: return False
+#     @classmethod
+#     def poll(cls, context):
+#         try: return context.space_data.node_tree.bl_idname == "Noter_CustomTreeType"
+#         except: return False
 
-    def execute(self, context):
-        self.my_searchA
-        # self.report({'INFO'}, "Selected:" + self.my_search)
-        return {"FINISHED"}
+#     def execute(self, context):
+#         self.my_searchA
+#         # self.report({'INFO'}, "Selected:" + self.my_search)
+#         return {"FINISHED"}
 
-    def invoke(self, context, event):
-        context.window_manager.invoke_search_popup(self)
-        # return {"CANCELLED"}
-        return {'RUNNING_MODAL'}
-        # return context.window_manager.invoke_search_popup(self)
+#     def invoke(self, context, event):
+#         context.window_manager.invoke_search_popup(self)
+#         # return {"CANCELLED"}
+#         return {'RUNNING_MODAL'}
+#         # return context.window_manager.invoke_search_popup(self)
 
 
 
@@ -772,6 +772,27 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
     # def draw_buttons_ext(self, context, layout):
     def draw_buttons(self, context, layout):
 
+        
+        row = layout.row()
+        row.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
+        # row.template_ID(self, "image", new="image.new", open="image.open")
+        row.scale_y = 1.4
+
+
+
+        try:
+            layout.separator()
+
+            self.image.name
+
+            row = layout.row()
+            row.label(icon = "IMAGE_DATA")
+            row.operator("scene.noter_image",  icon = "EXPORT", text = 'Image').my_image_name = self.image.name
+            row.scale_y = 1.7
+
+        except AttributeError:
+            pass
+
         # layout = self.layout
         # pcoll = preview_collections["main"]
 
@@ -783,7 +804,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # self.show_preview = True
         # self.show_texture = True
 
-        layout.template_ID(self, "image", new="image.new", open="image.open")
+        
 
         # self.image = bpy.data.images['Camera.001']
         # self.image = bpy.data.images['Camera.001.png']
@@ -794,8 +815,8 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
         # layout.operator("node.noter_image"
 
         # layout.operator("node.noter_bool_operator",  icon = "DOT", text = 'Image')
-        layout.operator("scene.noter_image",  icon = "DOT", text = 'Image').my_image_name = self.image.name
         
+
         # print(self.image.name)
 
         # try:
@@ -822,7 +843,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
         # layout.template_path_builder(tex, 'image', "Image")
 
-        # layout.template_preview(tex, show_buttons=False)
+        # layout.template_preview(self, show_buttons=False)
         # layout.template_preview(self, show_buttons=True)
 
         # layout.template_ID(tex, "image", new="image.new", open="image.open")
