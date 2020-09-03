@@ -550,9 +550,13 @@ class MyCustomNode(Node, MyCustomTreeNode):
         text = self.text
         draw_extra_count = self.draw_extra.count("+")
 
+
         if self.image_bool == True:
 
-            row = layout.row()
+            box = layout.box()
+            col = box.column( align = 1)
+
+            row = col.row(align = 1)
             row.template_ID_preview(self, "image", new="image.new", open="image.open", hide_buttons = False)
             # row.template_ID(self, "image", new="image.new", open="image.open")
             row.scale_y = 1.4
@@ -561,16 +565,16 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
                 self.image.name
 
-                layout.separator()
-                row = layout.row()
+                # layout.separator()
+                row = col.row(align = 1)
                 row.label( icon = "IMAGE_DATA" )
                 row.operator("scene.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
                 row.scale_y = 1.7
 
-                layout.separator()
-
             except AttributeError:
                 pass
+
+            layout.separator(factor = 4)
 
         
         if draw_extra_count >= 1:
@@ -1220,7 +1224,7 @@ class NODE_MT_add_menu_image_notes(bpy.types.Menu):
 
         # layout.operator_context = 'INVOKE_AREA'
         
-        insertNode(layout, "Noter_CustomNodeType", "Image Node", {  "draw_extra" : repr("+++"),  "image_bool" : repr( True )   }, 'IMAGE_DATA')
+        insertNode(layout, "Noter_CustomNodeType", "Image Note Node", {  "draw_extra" : repr("+++"),  "image_bool" : repr( True )   }, 'IMAGE_DATA')
         
         layout.separator(factor = separator_factor_for_menus)
 
