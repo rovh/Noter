@@ -679,87 +679,6 @@ class Noter_Splash_Screen_Notes_List(Operator):
         
         return {'FINISHED'}
 
-class Noter_Image_Action(bpy.types.Operator):
-    """Tooltip"""
-    bl_idname = "scene.noter_image"
-    bl_label = "Noter Image"
-    bl_description = "Mute or unmute current node"
-    # bl_property = "my_image"
-
-    # my_bool: bpy.props.FloatProperty()
-    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
-    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
-    # my_bool: bpy.props.StringProperty()
-    # name: bpy.props.StringProperty()
-
-    # my_image: bpy.props.PointerProperty(type= bpy.types.Image)
-    my_image_name: bpy.props.StringProperty()
-
-    # @classmethod
-    # def poll(cls, context):
-    #     space = context.space_data
-    #     return space.type == 'NODE_EDITOR'
-
-
-    def execute(self, context):
-
-        custom_image_name = "Noter Node Image"
-
-        # if self.my_image_name == "Render Result":
-            # self.my_image_name = f"\\{self.my_image_name}"
-            # self.my_image_name = f"{bpy.context.scene.render.filepath}{self.my_image_name}"
-
-
-        # if self.my_image_name == "Render Result":
-        #     # filepath = s = os.path.dirname(bpy.data.images['Render Result'].filepath)
-        #     filepath = os.path.join( bpy.context.blend_data.filepath, self.my_image_name )
-        # else:
-        #     filepath  bpy.data.images[self.my_image_name].filepath
-
-
-        filepath = bpy.data.images[self.my_image_name].filepath
-
-        if filepath == "" :
-            text = "You need to choose an image not from Blender"
-            war = "WARNING"
-            self.report({war}, text)
-
-            return {'FINISHED'}
-
-
-        # bpy.data.images[self.my_image_name].use_fake_user = True
-
-        # print(filepath)
-
-
-        if bpy.data.images.find(custom_image_name) == -1:
-            image = bpy.data.images.load( filepath )
-            image.name = custom_image_name
-        else:
-            bpy.data.images[custom_image_name].filepath = filepath
-            
-
-
-
-
-
-        # bpy.data.images.remove( bpy.data.images[custom_image_name] )
-        
-        # image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
-        # image.name = custom_image_name
-
-        # bpy.context.space_data.image = image     
-
-        # bpy.data.images[custom_image_name] = bpy.data.images[self.my_image_name]
-
-        
-
-        # bpy.data.textures.new( custom_image_name, "IMAGE")
-
-
-
-
-        return {'FINISHED'}
 
 
 
@@ -1960,8 +1879,6 @@ blender_classes = [
     Noter_Splash_Screen_Notes_List,
     # PROPERTIES_HT_header_add_menu,
     # PROPERTIES_PT_navigation_bar_add,
-    Noter_Image_Action,
-
     # Noter_Image,
 
     

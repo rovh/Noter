@@ -248,14 +248,18 @@ class Choose_or_Add_Nodes_Tree(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_add_nodes_tree"
     bl_label = ""
-    bl_description = "Mute or unmute current node"
+    bl_description = ""
 
-    # my_bool: bpy.props.FloatProperty()
-    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
-    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
-    # my_bool: bpy.props.StringProperty()
     name: bpy.props.StringProperty()
     new: bpy.props.BoolProperty()
+
+    @classmethod
+    def description(cls, context, properties):
+
+        if properties.new == True:
+            return "Create New Node Tree"
+        else:
+            return "Choose Node Tree"
 
     @classmethod
     def poll(cls, context):
@@ -268,6 +272,89 @@ class Choose_or_Add_Nodes_Tree(bpy.types.Operator):
             context.space_data.node_tree = bpy.data.node_groups.new("", 'Noter_CustomTreeType')
         else:
             context.space_data.node_tree = bpy.data.node_groups[ self.name ]
+
+
+
+
+        return {'FINISHED'}
+
+class Noter_Image_Action(bpy.types.Operator):
+    """Tooltip"""
+    bl_idname = "node.noter_image"
+    bl_label = "Noter Image"
+    bl_description = 'Display the image in "Image Editor"\
+        \n\nIn "Image Editor" choose an image named "Noter Node Image" and after click "View Image" button'
+    # bl_property = "my_image"
+
+    # my_bool: bpy.props.FloatProperty()
+    # my_bool: bpy.props.CollectionProperty(type = MyCustomNode)
+    # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
+    # my_bool: bpy.props.StringProperty()
+    # name: bpy.props.StringProperty()
+
+    # my_image: bpy.props.PointerProperty(type= bpy.types.Image)
+    my_image_name: bpy.props.StringProperty()
+
+    # @classmethod
+    # def poll(cls, context):
+    #     space = context.space_data
+    #     return space.type == 'NODE_EDITOR'
+
+
+    def execute(self, context):
+
+        custom_image_name = "Noter Node Image"
+
+        # if self.my_image_name == "Render Result":
+            # self.my_image_name = f"\\{self.my_image_name}"
+            # self.my_image_name = f"{bpy.context.scene.render.filepath}{self.my_image_name}"
+
+
+        # if self.my_image_name == "Render Result":
+        #     # filepath = s = os.path.dirname(bpy.data.images['Render Result'].filepath)
+        #     filepath = os.path.join( bpy.context.blend_data.filepath, self.my_image_name )
+        # else:
+        #     filepath  bpy.data.images[self.my_image_name].filepath
+
+
+        filepath = bpy.data.images[self.my_image_name].filepath
+
+        if filepath == "" :
+            text = "You need to choose an image not from Blender"
+            war = "WARNING"
+            self.report({war}, text)
+
+            return {'FINISHED'}
+
+
+        # bpy.data.images[self.my_image_name].use_fake_user = True
+
+        # print(filepath)
+
+
+        if bpy.data.images.find(custom_image_name) == -1:
+            image = bpy.data.images.load( filepath )
+            image.name = custom_image_name
+        else:
+            bpy.data.images[custom_image_name].filepath = filepath
+            
+
+
+
+
+
+        # bpy.data.images.remove( bpy.data.images[custom_image_name] )
+        
+        # image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
+        # image.name = custom_image_name
+
+        # bpy.context.space_data.image = image     
+
+        # bpy.data.images[custom_image_name] = bpy.data.images[self.my_image_name]
+
+        
+
+        # bpy.data.textures.new( custom_image_name, "IMAGE")
 
 
 
@@ -575,7 +662,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
                 # layout.separator()
                 row = col.row(align = 1)
                 # row.label( icon = "IMAGE_DATA" )
-                row.operator("scene.noter_image",  icon = "FILE_REFRESH", text = 'View Image').my_image_name = self.image.name
+                row.operator("node.noter_image",  icon = "FILE_REFRESH", text = 'View Image').my_image_name = self.image.name
                 row.scale_y = 1.5
 
             except AttributeError:
@@ -818,7 +905,7 @@ class MyCustomNode_2(Node, MyCustomTreeNode):
 
             row = layout.row()
             row.label(icon = "IMAGE_DATA")
-            row.operator("scene.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
+            row.operator("node.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
             row.scale_y = 1.7
 
         except AttributeError:
@@ -1408,6 +1495,8 @@ Nodes_blender_classes = (
     NODE_SPACE_PT_AnnotationDataPanel_2,
     Note_Node_Bool_Operator,
     Choose_or_Add_Nodes_Tree,
+    Noter_Image_Action,
+
 
 
     NODE_MT_add_menu_layout,
