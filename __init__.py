@@ -791,13 +791,15 @@ def draw_text( self,  text,\
 
         else:
             ic = "NONE"
-
-            if i.count("@"):
-                i = i.replace("@", "")
-                # ic = "BOOKMARKS"
-                # ic = "RADIOBUT_ON"
-                # ic = "DECORATE_KEYFRAME"
-                ic = "DISCLOSURE_TRI_RIGHT"
+            symbols = [ "@", "*", "-", "+" ]
+            
+            for symbol in symbols:
+                if i.count(symbol):
+                    i = i.replace( symbol, "")
+                    # ic = "BOOKMARKS"
+                    # ic = "RADIOBUT_ON"
+                    # ic = "DECORATE_KEYFRAME"
+                    ic = "DISCLOSURE_TRI_RIGHT"
 
 
             row.alignment = 'LEFT'
