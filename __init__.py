@@ -679,7 +679,7 @@ class Noter_Splash_Screen_Notes_List(Operator):
         
         return {'FINISHED'}
 
-class Noter_Image(bpy.types.Operator):
+class Noter_Image_Action(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "scene.noter_image"
     bl_label = "Noter Image"
@@ -705,14 +705,45 @@ class Noter_Image(bpy.types.Operator):
 
         custom_image_name = "Noter Node Image"
 
+        # if self.my_image_name == "Render Result":
+            # self.my_image_name = f"\\{self.my_image_name}"
+            # self.my_image_name = f"{bpy.context.scene.render.filepath}{self.my_image_name}"
+
+
+        # if self.my_image_name == "Render Result":
+        #     # filepath = s = os.path.dirname(bpy.data.images['Render Result'].filepath)
+        #     filepath = os.path.join( bpy.context.blend_data.filepath, self.my_image_name )
+        # else:
+        #     filepath  bpy.data.images[self.my_image_name].filepath
+
+
+        filepath = bpy.data.images[self.my_image_name].filepath
+
+        if filepath == "" :
+            text = "You need to choose an image not from Blender"
+            war = "WARNING"
+            self.report({war}, text)
+
+            return {'FINISHED'}
+
+
+        # bpy.data.images[self.my_image_name].use_fake_user = True
+
+        # print(filepath)
+
+
         if bpy.data.images.find(custom_image_name) == -1:
-            image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
+            image = bpy.data.images.load( filepath )
             image.name = custom_image_name
         else:
-            bpy.data.images[custom_image_name].filepath = bpy.data.images[self.my_image_name].filepath
+            bpy.data.images[custom_image_name].filepath = filepath
             
-            # bpy.data.images.remove( bpy.data.images[custom_image_name] )
-        
+
+
+
+
+
+        # bpy.data.images.remove( bpy.data.images[custom_image_name] )
         
         # image = bpy.data.images.load( bpy.data.images[self.my_image_name].filepath )
         # image.name = custom_image_name
@@ -734,8 +765,9 @@ class Noter_Image(bpy.types.Operator):
 
 
 
-
-def draw_text( self,  text,  enable_list_mode = False, item = None, item_index = None):
+def draw_text( self,  text,\
+                    centering = False, \
+                        enable_list_mode = False, item = None, item_index = None):
     
     text_parts_list = text.split('\n')
     if enable_list_mode == True:
@@ -753,8 +785,8 @@ def draw_text( self,  text,  enable_list_mode = False, item = None, item_index =
     layout = self.layout
     box = layout.box()
     row = box.row(align = 0)
-    row.alignment = 'CENTER'
-    if enable_list_mode == True: row.alignment = 'EXPAND' #else row.alignment = 'EXPAND'
+    if centering == True: row.alignment = 'CENTER'
+    # if enable_list_mode == True: row.alignment = 'EXPAND'
     col = row.column(align = 0)
 
 
@@ -839,9 +871,19 @@ def draw_text( self,  text,  enable_list_mode = False, item = None, item_index =
             if max_length > len(text): max_length = len(text)
 
         else:
+            ic = "NONE"
+
+            if i.count("@"):
+                i = i.replace("@", "")
+                # ic = "BOOKMARKS"
+                # ic = "RADIOBUT_ON"
+                # ic = "DECORATE_KEYFRAME"
+                ic = "DISCLOSURE_TRI_RIGHT"
+
+
             row.alignment = 'LEFT'
-            row.label(text = i)
-      
+            row.label(text = i, icon = ic )
+
 def calculate_width_menu(self, text, scale_factor = 12):
 
     # from matplotlib.afm import AFM
@@ -864,7 +906,7 @@ def calculate_width_menu(self, text, scale_factor = 12):
     
 
     return width_menu
-    
+
 class Splash_Screen_Pop_Up_Operator (Operator):
     bl_idname = "window_manager.note_popup_operator"
     bl_label = "Noter Splash Screen"
@@ -1067,7 +1109,8 @@ class Splash_Screen_Pop_Up_Operator (Operator):
         text = bpy.data.scenes[custom_scene_name].note_text_splash_screen
         if bool(text) == True:
             layout.separator()
-            draw_text(self, text)
+
+            draw_text(self, text, centering = True)
 
 
         find = False
@@ -1092,7 +1135,7 @@ class Splash_Screen_Pop_Up_Operator (Operator):
                 text = item.text
                 
                 # layout.operator("notes_list_blender_file.list_action_bool", icon='BOOKMARKS', text="")
-                draw_text(self, text,  enable_list_mode = True , item = item, item_index = index)
+                draw_text(self, text,  centering = False, enable_list_mode = True , item = item, item_index = index)
                 # layout.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
                 # layout.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
                 # layout.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
@@ -1230,7 +1273,7 @@ class Note_Pop_Up_Operator (Operator):
             with open(file_folder_path, encoding='utf-8') as f:
                 note_text_blender_json = json.load(f)
 
-            draw_text(self, note_text_blender_json)
+            draw_text(self, note_text_blender_json, centering = True)
 
         elif action == 'blender_file':
 
@@ -1247,14 +1290,10 @@ class Note_Pop_Up_Operator (Operator):
             #         break
 
 
-            draw_text(self, note_text_blender_file)
+            draw_text(self, note_text_blender_file, centering = True)
 
     def invoke(self, context, event): 
-        # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
-        # settings = bpy.context.preferences.addons[__name__].preferences
-        # bool_warning_global = settings.bool_warning_global
-        # height = bpy.context.area.spaces.data.height
-        # width = bpy.context.area.spaces.data.width
+        preferences = bpy.context.preferences.addons[__name__].preferences
         height = bpy.context.window.height
         width = bpy.context.window.width
 
@@ -1285,30 +1324,22 @@ class Note_Pop_Up_Operator (Operator):
         if location_cursor == True:
             return context.window_manager.invoke_props_dialog(self, width = width_menu)
         else:
+
             x = event.mouse_x
             y = event.mouse_y 
 
-            location_x = width * .5
-            location_y = height * .75
-            # location_x = 300
-            # location_y = 550
+            location_x = width  * preferences.pop_up_menus_location_x
+            location_y = height * preferences.pop_up_menus_location_y
 
             bpy.context.window.cursor_warp(location_x , location_y)
 
-            # bpy.context.window.cursor_warp(x + move_x, y + move_y)
-
 
             invoke = context.window_manager.invoke_props_dialog(self, width = width_menu)
-            # invoke = context.window_manager.invoke_popup(self, width=250)
-            # return context.window_manager.invoke_popup(self)
-            # return context.window_manager.invoke_props_popup(self, event)
-            # return context.window_manager.invoke_confirm(self, event)
-
+  
             bpy.context.window.cursor_warp(x , y)
 
             return invoke
 
-        # return {'FINISHED'}
 
 
 
@@ -1525,7 +1556,6 @@ class Noter_Preferences (bpy.types.AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    note_text_blender: StringProperty()
 
     splash_screen: BoolProperty(
             name="bool",
@@ -1533,11 +1563,22 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             default=False,
             )
 
-    splash_screen_location_x: FloatProperty(name="123", default = 0.5, precision = 6, \
-        min = 0, max = 1.0, description = "123")
+    splash_screen_location_x: FloatProperty(name="X Axis Position", default = 0.5, precision = 6, \
+        min = 0, max = 1.0, description = "X Axis Position")
 
-    splash_screen_location_y: FloatProperty(name="123", default = 0.9, precision = 6, \
-        min = 0, max = 1.0, description = "123")
+    splash_screen_location_y: FloatProperty(name="Y Axis Position", default = 0.9, precision = 6, \
+        min = 0, max = 1.0, description = "Y Axis Position")
+
+
+    pop_up_menus_location_x: FloatProperty(name="X Axis Position", default = 0.5, precision = 6, \
+        min = 0, max = 1.0, description = "X Axis Position")
+
+    pop_up_menus_location_y: FloatProperty(name="Y Axis Position", default = 0.75, precision = 6, \
+        min = 0, max = 1.0, description = "Y Axis Position")
+
+
+
+
 
     use_file_path: bpy.props.EnumProperty(
         items=(
@@ -1545,11 +1586,16 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             ('NAME', "Name", "")),
         default = 'NAME')
 
+
+
     preference_type: bpy.props.EnumProperty(
         items=(
-            ('SPLASH_SCREEN', "Splash Screen", ""),
-            ('INTERFACE', "Interface", "")),
-        default = 'SPLASH_SCREEN')
+            ('POP_UP_MENUS',  "Pop-up Menus",  "" ,  "WINDOW",  1),
+            ('INTERFACE'   ,  "Interface"   ,  "" ,  "IMAGE_BACKGROUND",  2)
+        ),
+        default = 'POP_UP_MENUS')
+
+
 
     add_custom_menu_to_header_bar_menu: bpy.props.BoolProperty(
         name="bool",
@@ -1563,12 +1609,6 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         default=True,
         )
 
-    # add_custom_menu_to_properties_menus: bpy.props.BoolProperty(
-        # name="bool",
-        # description="",
-        # default=True,
-        # )
-
     add_elements_to_properties_menus: bpy.props.BoolProperty(
         name="bool",
         description="",
@@ -1576,26 +1616,26 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         )
 
 
-    # use_opened_file_path: BoolProperty(
-            # name="bool",
-            # description="",
-            # default=False,
-            # )
+
 
     def draw(self, context):
         layout = self.layout
         layout.separator(factor = .5)
 
-        column = layout.column(align = True)
+        column = layout.column(align = 0)
+
+        
         
         row = column.row(align = True)
         row.prop(self, 'preference_type', expand = True)
         row.scale_y = 1.2
 
+        column.separator(factor = 1)
+
         box = column.box()
 
 
-        if self.preference_type == "SPLASH_SCREEN":
+        if self.preference_type == "POP_UP_MENUS":
 
             box.label(text = 'Splash Screen Position')
 
@@ -1633,18 +1673,66 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             
             col_2.prop(self, 'splash_screen_location_y', text = 'Y')
 
+
+
+
+            box.separator(factor = .1)
+
+
+            box = layout.box()
+
+            box.separator(factor = .1)
+
+            box.label(text = 'Pop-up Menus Position')
+
+
+            row_main = box.row(align = 0)
+
+            col_1 = row_main.column(align = 1)
+            col_1.separator(factor = 4)
+
+            row = col_1.row(align = 1)
+
+            row.label(icon = 'BACK')
+            row.label(icon = 'TOPBAR')
+            row.label(icon = 'FORWARD')
+            row.alignment = 'CENTER'
+
+            col_1.separator(factor = 2.7)
+
+            col_1.prop(self, 'pop_up_menus_location_x', text = 'X')
+
+
+
+            row_main.separator(factor = 3)
+
+
+
+            col_2 = row_main.column(align = 1)
+            row = col_2.row(align = 1)
+            row.alignment = 'CENTER'
+
+            col_sub = row.column(align = 1)
+            col_sub.label(icon = 'SORT_DESC')
+            col_sub.label(icon = 'TOPBAR')
+            col_sub.label(icon = 'SORT_ASC')
+            
+            col_2.prop(self, 'pop_up_menus_location_y', text = 'Y')
+
             box.separator(factor = .1)
 
         elif self.preference_type == "INTERFACE":
+            
             box.label(text = 'Interface')
 
             row = box.row(align = False)
             row = row.row(align = True)
-
+                
             row.prop(self, 'add_custom_menu_to_header_bar_menu', text = 'Add a new custom header menu to the topbar', toggle=True)
             row.prop(self, 'add_elements_to_menus', text = 'Add buttons to the existing topbar menus', toggle=True)
             row.alignment = 'LEFT'
             row.scale_x = 1.5
+            row.scale_y = 1.1
 
 
             box.separator(factor = .1)
@@ -1657,6 +1745,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.prop(self, 'add_elements_to_properties_menus', text = 'Add elements to the Properties Editor', toggle=True)
             row.alignment = 'LEFT'
             row.scale_x = 1.3
+            row.scale_y = 1.1
 
 
 
@@ -1871,7 +1960,7 @@ blender_classes = [
     Noter_Splash_Screen_Notes_List,
     # PROPERTIES_HT_header_add_menu,
     # PROPERTIES_PT_navigation_bar_add,
-    Noter_Image,
+    Noter_Image_Action,
 
     # Noter_Image,
 
@@ -1911,7 +2000,7 @@ def register():
     bpy.types.Scene.splash_screen = BoolProperty()
 
     bpy.types.Scene.file_name = StringProperty(name = 'Name of the file',default = 'Text', description = "Name of the file from which the text will be taken or where the text will be displayed")
-    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number of characters', default = 50, description = "How many characters should be in a line")
+    bpy.types.Scene.line_width_characters = IntProperty(name = 'Number of characters', default = 40, description = "How many characters should be in a line")
 
 
 

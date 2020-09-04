@@ -244,7 +244,7 @@ class Note_Node_Bool_Operator(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class Add_Nodes_Tree(bpy.types.Operator):
+class Choose_or_Add_Nodes_Tree(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "node.noter_add_nodes_tree"
     bl_label = ""
@@ -255,6 +255,7 @@ class Add_Nodes_Tree(bpy.types.Operator):
     # name: bpy.props.PointerProperty(type = MyCustomTreeNode)
     # my_bool: bpy.props.StringProperty()
     name: bpy.props.StringProperty()
+    new: bpy.props.BoolProperty()
 
     @classmethod
     def poll(cls, context):
@@ -263,8 +264,13 @@ class Add_Nodes_Tree(bpy.types.Operator):
 
     def execute(self, context):
 
+        if  self.new == True:
+            context.space_data.node_tree = bpy.data.node_groups.new("", 'Noter_CustomTreeType')
+        else:
+            context.space_data.node_tree = bpy.data.node_groups[ self.name ]
 
-        context.space_data.node_tree = bpy.data.node_groups.new("", 'Noter_CustomTreeType')
+
+
 
         return {'FINISHED'}
 
@@ -554,6 +560,7 @@ class MyCustomNode(Node, MyCustomTreeNode):
         if self.image_bool == True:
 
             box = layout.box()
+            box = box.box()
             col = box.column( align = 1)
 
             row = col.row(align = 1)
@@ -567,14 +574,14 @@ class MyCustomNode(Node, MyCustomTreeNode):
 
                 # layout.separator()
                 row = col.row(align = 1)
-                row.label( icon = "IMAGE_DATA" )
-                row.operator("scene.noter_image",  icon = "EXPORT", text = 'View Image').my_image_name = self.image.name
-                row.scale_y = 1.7
+                # row.label( icon = "IMAGE_DATA" )
+                row.operator("scene.noter_image",  icon = "FILE_REFRESH", text = 'View Image').my_image_name = self.image.name
+                row.scale_y = 1.5
 
             except AttributeError:
                 pass
 
-            layout.separator(factor = 4)
+            layout.separator(factor = 6)
 
         
         if draw_extra_count >= 1:
@@ -1202,11 +1209,11 @@ class NODE_MT_add_menu_notes(bpy.types.Menu):
 
         layout.separator(factor = separator_factor_for_menus)
 
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons", {"draw_extra" : repr("++")}, 'OUTLINER_DATA_POINTCLOUD')
+        insertNode(layout, "Noter_CustomNodeType", "Note Node ( w/o some buttons )", {"draw_extra" : repr("++")}, 'OUTLINER_DATA_POINTCLOUD')
         
         layout.separator(factor = separator_factor_for_menus)
 
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {"draw_extra" : repr("+")}, 'LAYER_USED')
+        insertNode(layout, "Noter_CustomNodeType", "Note Node ( w/o All buttons )", {"draw_extra" : repr("+")}, 'LAYER_USED')
 
         # props = layout.operator("node.add_node", text = "Image Node", icon = 'IMAGE_DATA')
         # props.use_transform = True
@@ -1228,11 +1235,11 @@ class NODE_MT_add_menu_image_notes(bpy.types.Menu):
         
         layout.separator(factor = separator_factor_for_menus)
 
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons", {  "draw_extra" : repr("++"),  "image_bool" : repr( True )   }, 'OUTLINER_DATA_POINTCLOUD')
+        insertNode(layout, "Noter_CustomNodeType", "Image Note Node ( w/o some buttons )", {  "draw_extra" : repr("++"),  "image_bool" : repr( True )   }, 'OUTLINER_DATA_POINTCLOUD')
 
         layout.separator(factor = separator_factor_for_menus)
 
-        insertNode(layout, "Noter_CustomNodeType", "Without extra buttons +", {  "draw_extra" : repr("+"),  "image_bool" : repr( True )   }, 'LAYER_USED')
+        insertNode(layout, "Noter_CustomNodeType", "Image Note Node ( w/o All buttons )", {  "draw_extra" : repr("+"),  "image_bool" : repr( True )   }, 'LAYER_USED')
         
         # layout.separator(factor = separator_factor_for_menus)
 
@@ -1272,7 +1279,6 @@ def add__NODE_MT_add(self, context):
     if context.space_data.tree_type == 'Noter_CustomTreeType':
         layout = self.layout
 
-
         if bool(context.space_data.edit_tree) ==  True:
 
 
@@ -1303,9 +1309,21 @@ def add__NODE_MT_add(self, context):
             layout.separator(factor = 1)
 
         else:
+
             row = layout.row()
-            row.scale_y = 2
-            row.operator('node.noter_add_nodes_tree', text = "Create New Node Tree", icon = 'ADD')
+            row.scale_y = 1.7
+            row.operator('node.noter_add_nodes_tree', text = "Create New Node Tree", icon = 'ADD').new = True
+
+            node_groups = bpy.data.node_groups.values()
+
+            for node_group in node_groups:
+
+                layout.separator()
+
+                row = layout.row()
+                row.scale_y = 1
+                row.operator('node.noter_add_nodes_tree', text = node_group.name, icon = 'NODETREE').name = node_group.name
+            
 
             layout.separator(factor = 1)
 
@@ -1313,6 +1331,39 @@ def add__NODE_MT_add(self, context):
 
 # all categories in a list
 node_categories = [
+
+    MyNodeCategory('OTHERNODES', "All Nodes", items=[
+        
+        NodeItem("Noter_CustomNodeType", label="Note Nodes"
+        ),
+        
+        NodeItem("Noter_CustomNodeType", label="Note Node ( w/o some buttons )", settings={
+            "draw_extra": repr("++"),
+        }),
+
+        NodeItem("Noter_CustomNodeType", label="Note Node ( w/o All buttons )", settings={
+            "draw_extra": repr("+"),
+        }),
+
+        NodeItem("Noter_CustomNodeType", label="Image Note Node", settings={
+            "image_bool": repr(True)
+        }),
+
+        NodeItem("Noter_CustomNodeType", label="Image Note Node ( w/o some buttons )", settings={
+            "draw_extra": repr("++"), "image_bool": repr(True)
+        }),
+
+        NodeItem("Noter_CustomNodeType", label="Image Note Node ( w/o All buttons )", settings={
+            "draw_extra": repr("+"), "image_bool": repr(True)
+        }),
+
+        NodeItem("NodeReroute", label="Reroute"
+        ),
+
+        NodeItem("NodeFrame", label="Frame"
+        ),
+
+    ]),
 
     # identifier, label, items list
     # # MyNodeCategory('SOMENODES', "Some Nodes", NodeItem("Noter_CustomNodeType") ),
@@ -1340,31 +1391,6 @@ node_categories = [
     #     }),
     # ]),
 
-    MyNodeCategory('OTHERNODES', "All Nodes", items=[
-        
-        NodeItem("Noter_CustomNodeType", label="Note Nodes"
-        ),
-
-        NodeItem("Noter_CustomNodeType_2", label="Image Node"
-        ),
-        
-        NodeItem("Noter_CustomNodeType", label="Without extra buttons", settings={
-            "draw_extra": repr("+"),
-        }),
-
-        NodeItem("Noter_CustomNodeType", label="Without extra buttons +", settings={
-            "draw_extra": repr(""),
-        }),
-
-        NodeItem("NodeReroute", label="Reroute"
-        ),
-
-        NodeItem("NodeFrame", label="Frame"
-        ),
-
-    ]
-    ),
-
 ]
 
 Nodes_blender_classes = (
@@ -1381,7 +1407,7 @@ Nodes_blender_classes = (
     NODE_PT_active_node_color_2,
     NODE_SPACE_PT_AnnotationDataPanel_2,
     Note_Node_Bool_Operator,
-    Add_Nodes_Tree,
+    Choose_or_Add_Nodes_Tree,
 
 
     NODE_MT_add_menu_layout,
