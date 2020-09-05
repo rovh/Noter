@@ -49,7 +49,7 @@ bl_info = {
 }
 
 
-custom_scene_name = ".Noter"
+custom_scene_name = ".Noter_Data"
 
 
 
@@ -683,7 +683,6 @@ class Noter_Splash_Screen_Notes_List(Operator):
 
 
 
-
 def draw_text( self,  text,\
                     centering = False, \
                         enable_list_mode = False, item = None, item_index = None):
@@ -693,19 +692,11 @@ def draw_text( self,  text,\
         multiple_strokes = True if text.count("\n") > 0 else False
 
 
-    # layout = self.layout
-    # box = layout.box()
-    # row = box.row(align = 1)
-    # row.scale_x = 2.7
-    # row.alignment = 'CENTER'
-    # col = row.column(align = 1)
-
 
     layout = self.layout
     box = layout.box()
     row = box.row(align = 0)
     if centering == True: row.alignment = 'CENTER'
-    # if enable_list_mode == True: row.alignment = 'EXPAND'
     col = row.column(align = 0)
 
 
@@ -713,6 +704,29 @@ def draw_text( self,  text,\
     for i in text_parts_list:
         row = col.row(align = 0)
         row.scale_y = 0
+
+
+
+
+        ic = "NONE"
+        symbols = [ "@", "*", "-", "+" ]
+        for character in i:
+            if character == " ":
+                pass
+            else:
+                first_character = character
+
+                if first_character in symbols:
+                    i = i.replace( first_character, "", 1)
+                    # ic = "BOOKMARKS"
+                    # ic = "RADIOBUT_ON"
+                    # ic = "DECORATE_KEYFRAME"
+                    ic = "DISCLOSURE_TRI_RIGHT"
+
+                break
+
+
+
 
         if enable_list_mode == True:
             index   =  item_index
@@ -755,9 +769,9 @@ def draw_text( self,  text,\
             # row_text = row.row()
             row_text = row
             if multiple_strokes == True:
-                row_text.label(text = text)
+                row_text.label(text = text, icon = ic)
             else:
-                row_text.prop(item, "text", emboss = 1, text = "", expand = True)
+                row_text.prop(item, "text", emboss = 1, text = "", expand = True, icon = ic )
             
             # row_text.scale_x = 1000
             # row.scale_x = 1000
@@ -790,16 +804,7 @@ def draw_text( self,  text,\
             if max_length > len(text): max_length = len(text)
 
         else:
-            ic = "NONE"
-            symbols = [ "@", "*", "-", "+" ]
             
-            for symbol in symbols:
-                if i.count(symbol):
-                    i = i.replace( symbol, "")
-                    # ic = "BOOKMARKS"
-                    # ic = "RADIOBUT_ON"
-                    # ic = "DECORATE_KEYFRAME"
-                    ic = "DISCLOSURE_TRI_RIGHT"
 
 
             row.alignment = 'LEFT'
@@ -1260,7 +1265,6 @@ class Note_Pop_Up_Operator (Operator):
             bpy.context.window.cursor_warp(x , y)
 
             return invoke
-
 
 
 
