@@ -19,7 +19,149 @@ from bpy.props import (
 
 from . import __name__ as addon_name
 
-custom_scene_name = ".Noter"
+
+def draw_text( self,  text,\
+                    centering = False, \
+                        enable_list_mode = False, item = None, item_index = None):
+    
+    text_parts_list = text.split('\n')
+    if enable_list_mode == True:
+        multiple_strokes = True if text.count("\n") > 0 else False
+
+
+
+    layout = self.layout
+    box = layout.box()
+    row = box.row(align = 0)
+    text_centering = bpy.context.preferences.addons[__name__].preferences.text_centering
+    if centering == True and text_centering == True: row.alignment = 'CENTER'
+    col = row.column(align = 0)
+
+
+    for i in text_parts_list:
+        row = col.row(align = 1)
+        row.scale_y = 0.85
+
+
+
+
+        ic = "NONE"
+        symbols = [ "@", "*", "-", "+" ]
+        for character in i:
+            if character == " ":
+                pass
+            else:
+                first_character = character
+
+                if first_character in symbols:
+                    i = i.replace( first_character, "", 1)
+                    # ic = "BOOKMARKS"
+                    # ic = "RADIOBUT_ON"
+                    # ic = "DECORATE_KEYFRAME"
+                    ic = "DISCLOSURE_TRI_RIGHT"
+
+                break
+
+
+
+
+        if enable_list_mode == True:
+            index   =  item_index
+            my_bool =  item.bool   
+            text    =  i
+            # row = row.row()
+            # row.alignment = 'LEFT'
+
+            try:
+                if previous_index == index:
+                    add_buttons = False
+                else:
+                    add_buttons = True
+
+            except UnboundLocalError:
+                add_buttons = True
+
+            previous_index = index
+            
+            
+            if my_bool == False and add_buttons == True:
+                add_ic = "BOOKMARKS"
+                # row_info = row.row(align = 0)
+                row_info = row
+                row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
+                # row_info.alignment = 'LEFT'
+            
+
+            elif (add_buttons == False) or \
+                    (my_bool == True and add_buttons == True):
+
+                # row_info = row.row(align = True)
+                row_info = row
+                row_info.label(icon = "BLANK1")
+                # row_info.alignment = 'LEFT'
+                
+                # row_info.scale_x = .35
+
+
+            # row_text = row.row()
+            row_text = row
+            if ic != "NONE":
+                label = row_text.row(align = 1)
+                label.label(icon = ic )
+                label.scale_x = 0.7
+
+            if multiple_strokes == True:
+                row_text.label(text = text)
+            else:
+                row_text.prop(item, "text", emboss = 1, text = "", expand = True )
+            
+            # row_text.scale_x = 1000
+            # row.scale_x = 1000
+            # row.emboss = 'NONE'
+
+
+
+            if my_bool == True and add_buttons == True:
+                add_ic = "CHECKBOX_DEHLT"
+                # row_info = row.row(align = 0)
+                row_info = row
+                row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = add_ic, emboss = 0).my_index = index
+                # row_info.alignment = 'RIGHT'
+            
+            
+            if add_buttons == True:
+                # row = row.row()
+                operator = row.operator("notes_list_blender_file.list_action", icon='REMOVE', text="")
+                operator.by_index = index
+                operator.action = 'REMOVE'
+                # row.scale_x = .35
+                
+                # row_info.scale_x = .35
+
+            try: 
+                max_length
+            except UnboundLocalError:
+                max_length = 0
+
+            if max_length > len(text): max_length = len(text)
+
+        else:
+            
+
+            if ic != "NONE":
+                label = row.row(align = 1)
+                label.label(icon = ic )
+                label.scale_x = 0.6
+
+
+            row.alignment = 'LEFT'
+            row.label(text = i)
+            # row.label(text = i, icon = ic )
+
+
+
+
+custom_scene_name = ".Noter_Data"
 
 
 
@@ -565,6 +707,7 @@ class NOTES_LIST_UL_items_blender_file(UIList):
 
 
         if multiple_strokes == True:
+            # draw_text(self, item.text )
             text_parts_list = item.text.split('\n')
             # self.draw_text(text_parts_list)
             column.separator(factor=.5)

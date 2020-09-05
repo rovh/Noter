@@ -696,9 +696,9 @@ def draw_text( self,  text,\
     layout = self.layout
     box = layout.box()
     row = box.row(align = 0)
-    if centering == True: row.alignment = 'CENTER'
+    text_centering = bpy.context.preferences.addons[__name__].preferences.text_centering
+    if centering == True and text_centering == True: row.alignment = 'CENTER'
     col = row.column(align = 0)
-
 
 
     for i in text_parts_list:
@@ -768,10 +768,15 @@ def draw_text( self,  text,\
 
             # row_text = row.row()
             row_text = row
+            if ic != "NONE":
+                label = row_text.row(align = 1)
+                label.label(icon = ic )
+                label.scale_x = 0.7
+
             if multiple_strokes == True:
-                row_text.label(text = text, icon = ic)
+                row_text.label(text = text)
             else:
-                row_text.prop(item, "text", emboss = 1, text = "", expand = True, icon = ic )
+                row_text.prop(item, "text", emboss = 1, text = "", expand = True )
             
             # row_text.scale_x = 1000
             # row.scale_x = 1000
@@ -806,10 +811,10 @@ def draw_text( self,  text,\
         else:
             
 
-
-            label = row.row(align = 1)
-            label.label(icon = ic )
-            label.scale_x = 0.6
+            if ic != "NONE":
+                label = row.row(align = 1)
+                label.label(icon = ic )
+                label.scale_x = 0.6
 
 
             row.alignment = 'LEFT'
@@ -1113,11 +1118,7 @@ class Splash_Screen_Pop_Up_Operator (Operator):
             # col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
 
     def invoke(self, context, event): 
-        # bool_warning = bpy.data.scenes[bpy.context.scene.name_full].bool_warning
         preferences = bpy.context.preferences.addons[__name__].preferences
-        # bool_warning_global = settings.bool_warning_global
-        # height = bpy.context.area.spaces.data.height
-        # width = bpy.context.area.spaces.data.width
         height = bpy.context.window.height
         width = bpy.context.window.width
 
@@ -1515,7 +1516,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         min = 0, max = 1.0, description = "Y Axis Position")
 
 
-
+    
 
 
     use_file_path: bpy.props.EnumProperty(
@@ -1555,10 +1556,17 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
 
 
-    pop_up_menus_scale_factor_width: IntProperty(name="Y Axis Position", default = 12, description = "")
+    pop_up_menus_scale_factor_width: IntProperty(name="", default = 12,\
+        description = "For ordinary Text")
 
-    pop_up_menus_scale_factor_width_for_list: IntProperty(name="Y Axis Position", default = 13, description = "")
+    pop_up_menus_scale_factor_width_for_list: IntProperty(name="", default = 13,\
+        description = "For Text in lists")
 
+    info_scale_factor: BoolProperty(name = "Trinket / Empty",\
+        description = "\nNoter automatically calculates the width for the menu to fit the text into the menu.\
+            \nFor this, a number is used as a factor")
+
+    text_centering: BoolProperty(default = True )
 
     def draw(self, context):
         layout = self.layout
@@ -1572,15 +1580,50 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         row.prop(self, 'preference_type', expand = True)
         row.scale_y = 1.2
 
-        column.separator(factor = 1)
+        column.separator(factor = 2)
 
         box = column.box()
 
 
         if self.preference_type == "POP_UP_MENUS":
 
-            box.label(text = 'Splash Screen Position')
 
+            box.label(text = "Pop-up Menus Width Scale Factor", icon = "ARROW_LEFTRIGHT")
+
+            box.separator(factor = .1)
+
+            custom_bool = box.row()
+            custom_bool.prop(self, 'info_scale_factor', text = '', icon = "INFO")
+            custom_bool.scale_x = 1.3
+
+
+            row = box.row()
+            row.prop(self, 'pop_up_menus_scale_factor_width', text = 'For Pop-up Menus Text')
+            # row.scale_x = .5
+            row.alignment = "LEFT"
+
+ 
+            row = box.row()
+            row.prop(self, 'pop_up_menus_scale_factor_width_for_list', text = 'For Splash Screen List')
+            # row.scale_x = .5
+            row.alignment = "LEFT"
+
+
+
+
+
+            box.separator(factor = .3)
+            box = layout.box()
+            box.label(text = "Text Center Alignment", icon = "ALIGN_CENTER")
+            box.prop(self, "text_centering", text = " Text Centering", icon = "NONE")
+
+
+
+
+
+            box = layout.box()
+
+            box.label(text = 'Splash Screen Position', icon = "ORIENTATION_VIEW")
 
             row_main = box.row(align = 0)
 
@@ -1618,14 +1661,18 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
 
 
+
             box.separator(factor = .1)
+
+
+
 
 
             box = layout.box()
 
             box.separator(factor = .1)
 
-            box.label(text = 'Pop-up Menus Position')
+            box.label(text = 'Pop-up Menus Position', icon = "ORIENTATION_VIEW")
 
 
             row_main = box.row(align = 0)
@@ -1661,8 +1708,9 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             
             col_2.prop(self, 'pop_up_menus_location_y', text = 'Y')
 
-            box.separator(factor = .1)
 
+            box.separator(factor = .1)
+            
         elif self.preference_type == "INTERFACE":
             
             box.label(text = 'Interface')
@@ -1688,6 +1736,9 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.alignment = 'LEFT'
             row.scale_x = 1.3
             row.scale_y = 1.1
+
+
+            box.separator(factor = 1.5)
 
 
 
