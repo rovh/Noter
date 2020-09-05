@@ -702,8 +702,8 @@ def draw_text( self,  text,\
 
 
     for i in text_parts_list:
-        row = col.row(align = 0)
-        row.scale_y = 0
+        row = col.row(align = 1)
+        row.scale_y = 0.85
 
 
 
@@ -807,14 +807,20 @@ def draw_text( self,  text,\
             
 
 
+            label = row.row(align = 1)
+            label.label(icon = ic )
+            label.scale_x = 0.6
+
+
             row.alignment = 'LEFT'
-            row.label(text = i, icon = ic )
+            row.label(text = i)
+            # row.label(text = i, icon = ic )
 
 def calculate_width_menu(self, text, scale_factor = 12):
 
     # from matplotlib.afm import AFM
     # afm = AFM(open(afm_filename, "rb"))
-    # AFM.string_width_height('What the heck?')
+    # AFM.string_width_height('What the?')
 
 
     text_parts_list = text.split('\n')
@@ -1131,11 +1137,17 @@ class Splash_Screen_Pop_Up_Operator (Operator):
                 item_text += "\n" + item_text_part
         
 
-        width_menu_list = calculate_width_menu(self, item_text, scale_factor = 13)
-        
-        width_menu = calculate_width_menu(self, text )
+
+        scale_factor = preferences.pop_up_menus_scale_factor_width_for_list # by default it's 13
+        width_menu_list = calculate_width_menu(self, item_text, scale_factor = scale_factor)
+
+        scale_factor = preferences.pop_up_menus_scale_factor_width # by default it's 12
+        width_menu = calculate_width_menu(self, text , scale_factor = scale_factor) 
 
         width_menu = max( width_menu, width_menu_list )
+
+
+
 
         self.location_cursor = False
         if self.location_cursor == True:
@@ -1239,7 +1251,8 @@ class Note_Pop_Up_Operator (Operator):
             text = bpy.data.scenes[custom_scene_name].note_text_blender_file
 
         try:
-            width_menu = calculate_width_menu(self, text)
+            scale_factor = preferences.pop_up_menus_scale_factor_width
+            width_menu = calculate_width_menu(self, text, scale_factor = scale_factor)
         except UnboundLocalError:
             width_menu = 300
 
@@ -1541,6 +1554,10 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         )
 
 
+
+    pop_up_menus_scale_factor_width: IntProperty(name="Y Axis Position", default = 12, description = "")
+
+    pop_up_menus_scale_factor_width_for_list: IntProperty(name="Y Axis Position", default = 13, description = "")
 
 
     def draw(self, context):
