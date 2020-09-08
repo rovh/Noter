@@ -760,7 +760,6 @@ def draw_text( self,  text,\
                 label = row.row(align = 1)
                 if add_space == True:
                     label.label(icon = "BLANK1")
-                    # label.separator(factor = 2)
                     label.label(icon = ic)
                 else: 
                     label.label(icon = ic )
@@ -1567,7 +1566,10 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             ('KEYFRAME_HLT'         ,  "",  "" ,  "KEYFRAME_HLT",          11),            
             
         ),
-        default = 'LAYER_ACTIVE')
+        default = 'LAYER_ACTIVE',
+        description = "The icon to be used instead of the sign",
+        name = "Line of text"
+        )
 
     symbol_for_the_syntax_2: EnumProperty(
         items=(
@@ -1578,7 +1580,10 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             ('HANDLETYPE_FREE_VEC'  ,  "",  "" ,  "HANDLETYPE_FREE_VEC",   5),
             ('KEYFRAME'             ,  "",  "" ,  "KEYFRAME",              6),
         ),
-        default = 'LAYER_USED')
+        default = 'LAYER_USED',
+        description = "The icon to be used instead of the sign for subline of text",
+        name = "Subline of text"
+        )
 
 
 
@@ -1593,7 +1598,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
     preference_type: EnumProperty(
         items=(
             ('POP_UP_MENUS',  "Pop-up Menus",  "" ,  "WINDOW",  1),
-            ('INTERFACE'   ,  "Interface"   ,  "" ,  "IMAGE_BACKGROUND",  2)
+            ('INTERFACE'   ,  "Interface"   ,  "" ,  "DESKTOP",  2)
         ),
         default = 'POP_UP_MENUS')
 
@@ -1776,7 +1781,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             
         elif self.preference_type == "INTERFACE":
             
-            box.label(text = 'Interface')
+            box.label(text = 'Interface', icon = "DESKTOP")
 
             row = box.row(align = False)
             row = row.row(align = True)
@@ -1807,7 +1812,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
             box = column.box()
 
-            box.label(text = "Symbol")
+            box.label(text = "The symbol for the syntax", icon = "ANCHOR_LEFT")
 
             row = box.row(align = 0)
             row.prop(self, 'symbol_for_the_syntax_1', expand = True)
