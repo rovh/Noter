@@ -711,11 +711,10 @@ def draw_text( self,  text,\
         ic = "NONE"
         count = 0
         add_space = False
-        symbols = [ "*", "-", "+",   "@", ">", "/", "#", "!" ]
+        symbols = [ "*", "-", "+",   "@", ">", "/", "#", "!", "%", "?"]
         for character in i:
             if character == " ":
                 count += 1
-                pass
             else:
                 first_character = character
 
@@ -747,6 +746,12 @@ def draw_text( self,  text,\
 
                     elif first_character == "!":
                         ic = "ERROR"
+
+                    elif first_character == "%":
+                        ic = "INFO"
+
+                    elif first_character == "?":
+                        ic = "QUESTION"
                 
                 break
 
