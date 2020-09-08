@@ -408,6 +408,8 @@ class Notes_List_actions_blender_file(Operator):
         
                 scene.notes_list_blender_file.remove(self.by_index)
 
+            bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
+
 
 
         return {"FINISHED"}
@@ -513,7 +515,14 @@ class Notes_actions_bool_blender_file(Operator):
         else:
             scene.notes_list_blender_file[idx].bool = True
             scene.notes_list_blender_file.move(idx, len(scene.notes_list_blender_file) - 1)
+        
 
+        # bpy.context.region.tag_redraw()
+        # context.area.tag_redraw()
+        # bpy.context.scene.update()
+
+        bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
+        print("Warning because of Noter")
 
         return {"FINISHED"}
 

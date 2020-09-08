@@ -432,8 +432,6 @@ class Noter_Actions(bpy.types.Operator):
 
                 bpy.data.scenes[custom_scene_name].note_text_splash_screen = ''
 
-                # for i in bpy.data.scenes:
-                #     i.note_text_splash_screen = ""  
             else:
                 item = self.item_object(context)
                 item.text = ""
@@ -568,8 +566,6 @@ class Noter_Text_Wrap_Words(Operator):
     # bl_options = {'REGISTER', 'UNDO'}
     # bl_options = {'UNDO'}
 
-
-    
     def execute(self, context):
         file_name = bpy.context.scene.file_name
         line_width_characters = bpy.context.scene.line_width_characters
@@ -679,6 +675,23 @@ class Noter_Splash_Screen_Notes_List(Operator):
         
         return {'FINISHED'}
 
+class Clear_Text_Data_Block(Operator):
+    """Tooltip"""
+    bl_idname = "text.clear_text_data_block"
+    bl_label = "Clear Text"
+    bl_description = 'Clear Text Data Block \n\n You can also assign shortcut \n How to do it: > right-click on this button > Assign Shortcut'
+
+    
+    def execute(self, context):
+
+        try:
+            name = bpy.context.space_data.text.name
+            bpy.data.texts[name].clear()
+        except AttributeError:
+            pass
+            
+        return {'FINISHED'}
+
 
 
 
@@ -759,6 +772,7 @@ def draw_text( self,  text,\
             if ic != "NONE":
                 label = row.row(align = 1)
                 if add_space == True:
+                    label.separator(factor = 1.5)
                     label.label(icon = "BLANK1")
                     label.label(icon = ic)
                 else: 
@@ -1610,18 +1624,23 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         default=False,
         )
     
-    add_elements_to_menus: bpy.props.BoolProperty(
+    add_elements_to_menus: BoolProperty(
         name="bool",
         description="",
         default=True,
         )
 
-    add_elements_to_properties_menus: bpy.props.BoolProperty(
+    add_elements_to_properties_menus: BoolProperty(
         name="bool",
         description="",
         default=True,
         )
 
+    add_button_to_TEXT_MT_editor_menus: BoolProperty(
+        name="bool",
+        description="",
+        default = True,
+        )
 
 
     pop_up_menus_scale_factor_width: IntProperty(name="", default = 12,\
@@ -1781,7 +1800,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             
         elif self.preference_type == "INTERFACE":
             
-            box.label(text = 'Interface', icon = "DESKTOP")
+            box.label(text = 'Interface Elements', icon = "DESKTOP")
 
             row = box.row(align = False)
             row = row.row(align = True)
@@ -1804,7 +1823,26 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row.scale_x = 1.3
             row.scale_y = 1.1
 
+
+            box.separator(factor = .1)
+
+
+            row = box.row(align = False)
+            row = row.row(align = True)
+
+            row.prop(self, 'add_button_to_TEXT_MT_editor_menus', text = 'Add "Clear Text" operator button', toggle=True)
+            row.alignment = 'LEFT'
+            row.scale_x = 1.3
+            row.scale_y = 1.1
+
+
+
+
             box.separator(factor = 1.5)
+
+
+
+
 
 
 
@@ -1887,7 +1925,6 @@ def load_handler(dummy):
     # bpy.ops.screen.animation_play()
     # bpy.app.handlers.load_post.remove(load_handler)
     # bpy.app.handlers.load_post.remove(load_handler)
-
 
 
 
@@ -2020,6 +2057,23 @@ def add__TEXT_MT_format(self, context):
     layout.operator("window_manager.wrap_words__create_lines_for_text", text = 'Wrap Words')
     layout.prop(scene, "line_width_characters", text = 'Number of Characters')
 
+def add__TEXT_MT_edit(self, context):
+
+    layout= self.layout
+
+    layout.operator("text.clear_text_data_block", text = 'Clear Text')
+
+def add__TEXT_MT_editor_menus(self, context):
+    add_button_to_TEXT_MT_editor_menus = bpy.context.preferences.addons[__name__].preferences.add_button_to_TEXT_MT_editor_menus
+    
+    if add_button_to_TEXT_MT_editor_menus == True:
+
+        layout = self.layout
+
+        row = layout.row(align = 0)
+        row.operator("text.clear_text_data_block", text = '', icon = "TRASH")
+        row.scale_x = 2.5
+
 
 
 
@@ -2031,6 +2085,7 @@ blender_classes = [
     Splash_Screen_Pop_Up_Operator,
     Note_Pop_Up_Operator,
     Noter_Text_Wrap_Words,
+    Clear_Text_Data_Block,
     OBJECT_PT_note,
     SCENE_PT_note,
     Noter_Preferences,
@@ -2132,7 +2187,9 @@ def register():
 
     bpy.types.NODE_MT_add.prepend(add__NODE_MT_add)
     bpy.types.TEXT_MT_format.append(add__TEXT_MT_format)
+    bpy.types.TEXT_MT_edit.append(add__TEXT_MT_edit)
     bpy.types.TOPBAR_MT_editor_menus.append(add__TOPBAR_MT_editor_menus)
+    bpy.types.TEXT_MT_editor_menus.append(add__TEXT_MT_editor_menus)
 
 
     bpy.types.NODE_MT_node.append(my_extra_draw_menu)
@@ -2167,6 +2224,8 @@ def unregister():
     bpy.types.TOPBAR_MT_editor_menus.remove(add__TOPBAR_MT_editor_menus)
     bpy.types.NODE_MT_add.remove(add__NODE_MT_add)
     bpy.types.TEXT_MT_format.remove(add__TEXT_MT_format)
+    bpy.types.TEXT_MT_edit.remove(add__TEXT_MT_edit)
+    bpy.types.TEXT_MT_editor_menus.remove(add__TEXT_MT_editor_menus)
 
 
     nodeitems_utils.unregister_node_categories('NOTER_CUSTOM_NODES')
