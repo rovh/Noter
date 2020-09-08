@@ -709,24 +709,55 @@ def draw_text( self,  text,\
 
 
         ic = "NONE"
-        symbols = [ "@", "*", "-", "+" ]
+        count = 0
+        add_space = False
+        symbols = [ "*", "-", "+",   "@", ">", "/", "#", "!" ]
         for character in i:
             if character == " ":
+                count += 1
                 pass
             else:
                 first_character = character
 
                 if first_character in symbols:
-                    i = i.replace( first_character, "", 1)
-                    # ic = "BOOKMARKS"
-                    # ic = "RADIOBUT_ON"
-                    # ic = "DECORATE_KEYFRAME"
-                    ic = "DISCLOSURE_TRI_RIGHT"
 
+                    i = i.replace( first_character, "", 1)
+
+                    if first_character in symbols[0:3]:
+                        if count >= 4:
+                            ic = "LAYER_USED"
+                            add_space = True
+                            i = i.replace( " ", "", count)
+                        else:
+                            ic = "LAYER_ACTIVE"
+
+                    elif first_character == "@":
+                        ic = "RADIOBUT_ON"
+
+                    elif first_character == ">":
+                        ic = "DISCLOSURE_TRI_RIGHT"                        
+
+                    elif first_character == "/":
+                        # ic = "GREASEPENCIL"
+                        ic = "OUTLINER_DATA_GP_LAYER"
+
+                    elif first_character == "#":
+                        ic = "EDITMODE_HLT"
+
+                    elif first_character == "!":
+                        ic = "ERROR"
+                
                 break
 
-
-
+        def add_text_syntax(self, row, icon):
+            if ic != "NONE":
+                label = row.row(align = 1)
+                if add_space == True:
+                    label.label(icon = "BLANK1")
+                    label.label(icon = ic)
+                else: 
+                    label.label(icon = ic )
+                label.scale_x = 0.7
 
         if enable_list_mode == True:
             index   =  item_index
@@ -766,21 +797,23 @@ def draw_text( self,  text,\
                 # row_info.scale_x = .35
 
 
-            # row_text = row.row()
             row_text = row
-            if ic != "NONE":
-                label = row_text.row(align = 1)
-                label.label(icon = ic )
-                label.scale_x = 0.7
+
+            add_text_syntax(self, row_text, ic)
+
+            # if ic != "NONE":
+            #     label = row_text.row(align = 1)
+            #     if add_space == True:
+            #         label.label(icon = ic, text = "000" )
+            #     else: 
+            #         label.label(icon = ic )
+            #     label.scale_x = 0.7
 
             if multiple_strokes == True:
                 row_text.label(text = text)
             else:
                 row_text.prop(item, "text", emboss = 1, text = "", expand = True )
-            
-            # row_text.scale_x = 1000
-            # row.scale_x = 1000
-            # row.emboss = 'NONE'
+
 
 
 
@@ -810,12 +843,7 @@ def draw_text( self,  text,\
 
         else:
             
-
-            if ic != "NONE":
-                label = row.row(align = 1)
-                label.label(icon = ic )
-                label.scale_x = 0.6
-
+            add_text_syntax(self, row, ic)
 
             row.alignment = 'LEFT'
             row.label(text = i)
