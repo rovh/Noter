@@ -724,12 +724,14 @@ def draw_text( self,  text,\
                     i = i.replace( first_character, "", 1)
 
                     if first_character in symbols[0:3]:
+                        symbol_for_the_syntax_1 = bpy.context.preferences.addons[__name__].preferences.symbol_for_the_syntax_1
+                        symbol_for_the_syntax_2 = bpy.context.preferences.addons[__name__].preferences.symbol_for_the_syntax_2
                         if count >= 4:
-                            ic = "LAYER_USED"
+                            ic = symbol_for_the_syntax_2
                             add_space = True
                             i = i.replace( " ", "", count)
                         else:
-                            ic = "LAYER_ACTIVE"
+                            ic = symbol_for_the_syntax_1
 
                     elif first_character == "@":
                         ic = "RADIOBUT_ON"
@@ -738,7 +740,6 @@ def draw_text( self,  text,\
                         ic = "DISCLOSURE_TRI_RIGHT"                        
 
                     elif first_character == "/":
-                        # ic = "GREASEPENCIL"
                         ic = "OUTLINER_DATA_GP_LAYER"
 
                     elif first_character == "#":
@@ -754,6 +755,7 @@ def draw_text( self,  text,\
                 label = row.row(align = 1)
                 if add_space == True:
                     label.label(icon = "BLANK1")
+                    # label.separator(factor = 2)
                     label.label(icon = ic)
                 else: 
                     label.label(icon = ic )
@@ -1544,10 +1546,38 @@ class Noter_Preferences (bpy.types.AddonPreferences):
         min = 0, max = 1.0, description = "Y Axis Position")
 
 
-    
+
+    symbol_for_the_syntax_1: EnumProperty(
+        items=(
+            ('LAYER_ACTIVE'         ,  "",  "" ,  "LAYER_ACTIVE",          1),
+            ('DISCLOSURE_TRI_RIGHT' ,  "",  "" ,  "DISCLOSURE_TRI_RIGHT",  2),
+            ('DISCLOSURE_TRI_DOWN'  ,  "",  "" ,  "DISCLOSURE_TRI_DOWN",   3),
+            ('TRIA_RIGHT'           ,  "",  "" ,  "TRIA_RIGHT",            4),
+            ('TRIA_DOWN'            ,  "",  "" ,  "TRIA_DOWN",             5),
+            ('RIGHTARROW'           ,  "",  "" ,  "RIGHTARROW",            6),
+            ('DOWNARROW_HLT'        ,  "",  "" ,  "DOWNARROW_HLT",         7),
+            ('KEYTYPE_KEYFRAME_VEC' ,  "",  "" ,  "KEYTYPE_KEYFRAME_VEC",  8),
+            ('KEYTYPE_BREAKDOWN_VEC',  "",  "" ,  "KEYTYPE_BREAKDOWN_VEC", 9),
+            ('KEYTYPE_EXTREME_VEC'  ,  "",  "" ,  "KEYTYPE_EXTREME_VEC",   10),            
+            ('KEYFRAME_HLT'         ,  "",  "" ,  "KEYFRAME_HLT",          11),            
+            
+        ),
+        default = 'LAYER_ACTIVE')
+
+    symbol_for_the_syntax_2: EnumProperty(
+        items=(
+            ('LAYER_USED'           ,  "",  "" ,  "LAYER_USED",            1),
+            ('RIGHTARROW_THIN'      ,  "",  "" ,  "RIGHTARROW_THIN",       2),
+            ('DISCLOSURE_TRI_RIGHT' ,  "",  "" ,  "DISCLOSURE_TRI_RIGHT",  3),
+            ('TRIA_RIGHT'           ,  "",  "" ,  "TRIA_RIGHT",            4),
+            ('HANDLETYPE_FREE_VEC'  ,  "",  "" ,  "HANDLETYPE_FREE_VEC",   5),
+            ('KEYFRAME'             ,  "",  "" ,  "KEYFRAME",              6),
+        ),
+        default = 'LAYER_USED')
 
 
-    use_file_path: bpy.props.EnumProperty(
+
+    use_file_path: EnumProperty(
         items=(
             ('OPENED', "Opened", ""),
             ('NAME', "Name", "")),
@@ -1555,7 +1585,7 @@ class Noter_Preferences (bpy.types.AddonPreferences):
 
 
 
-    preference_type: bpy.props.EnumProperty(
+    preference_type: EnumProperty(
         items=(
             ('POP_UP_MENUS',  "Pop-up Menus",  "" ,  "WINDOW",  1),
             ('INTERFACE'   ,  "Interface"   ,  "" ,  "IMAGE_BACKGROUND",  2)
@@ -1759,14 +1789,34 @@ class Noter_Preferences (bpy.types.AddonPreferences):
             row = box.row(align = False)
             row = row.row(align = True)
 
-            # row.prop(self, 'add_custom_menu_to_properties_menus', text = 'Add a new custom header menu to the topbar', toggle=True)
             row.prop(self, 'add_elements_to_properties_menus', text = 'Add elements to the Properties Editor', toggle=True)
             row.alignment = 'LEFT'
             row.scale_x = 1.3
             row.scale_y = 1.1
 
+            box.separator(factor = 1.5)
+
+
+
+
+
+            box = column.box()
+
+            box.label(text = "Symbol")
+
+            row = box.row(align = 0)
+            row.prop(self, 'symbol_for_the_syntax_1', expand = True)
+            row.scale_y = 1.2
+            row.scale_x = 1.7
+
+            row = box.row(align = 0)
+            row.prop(self, 'symbol_for_the_syntax_2', expand = True)
+            row.scale_y = 1.2
+            row.scale_x = 1.7
+
 
             box.separator(factor = 1.5)
+
 
 
 
