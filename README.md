@@ -22,7 +22,7 @@ With Noter you can:
 
 Noter can be divided into several parts:
 
-* <a href="#version">Version</a>
+* <a href="#version_review">Version Review</a>
 * <a href="#main_panel">Main Panel</a>
 * <a href="#splash_screen">Splash Screen</a>
 * <a href="#notes_tree">Notes Tree</a>
@@ -32,7 +32,7 @@ Noter can be divided into several parts:
 
 ---
 
-## <a name="versions">Version</a>
+## <a name="version_review">Version Review</a>
 
 <a href="https://drive.google.com/file/d/1RhE3c2v5PimIsyQAtwFrXwpxKkMyiU7t/preview" target="_self">
 <img src="https://drive.google.com/uc?id=13GurVT8n-5c3BOIbsqXrA9TFEYzlbQAk" width=50% height=50% alt = "Video" style="border-radius: 30px">
