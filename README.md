@@ -32,7 +32,7 @@ Noter can be divided into several parts:
 
 ## <a name="versions">Version</a>
 
-<a href="https://drive.google.com/file/d/1iLbnHZaA4FgbqWaHYwNxOZAYpditLvU8/preview" target="_self">
+<a href="https://drive.google.com/file/d/1VzHv8gXM80A81AbMwlFUPmNoLcKLfUXo/preview" target="_self">
 <img src="https://drive.google.com/uc?id=13GurVT8n-5c3BOIbsqXrA9TFEYzlbQAk" width=50% height=50% alt = "Video" style="border-radius: 30px">
 </a>
 
@@ -43,8 +43,8 @@ location : Text Editor > Sidebar > Noter Tab
 
 At the top is the string for the file name. The default value is "Text".
 
-<a href="https://drive.google.com/file/d/1VzHv8gXM80A81AbMwlFUPmNoLcKLfUXo/preview" target="_self">
-<img src="https://drive.google.com/uc?id=1VzHv8gXM80A81AbMwlFUPmNoLcKLfUXo" width=50% height=50% alt = "Video" style="border-radius: 30px">
+<a href="https://drive.google.com/file/d/1iLbnHZaA4FgbqWaHYwNxOZAYpditLvU8/preview" target="_self">
+<img src="https://drive.google.com/uc?id=1O75lKkJTEh75S7mN_vYhetghH0JN6D_k" width=50% height=50% alt = "Video" style="border-radius: 30px">
 </a>
 
 ---
