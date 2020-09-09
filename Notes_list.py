@@ -1,7 +1,5 @@
 import bpy
 
-# from .__init__ import draw_text
-
 from bpy.types import (
         Panel,
         PropertyGroup,
@@ -19,12 +17,15 @@ from bpy.props import (
         CollectionProperty,
         )
 
-# def draw_text(text_parts_list):
-#     # col = column
-#     for i in text_parts_list:
-#         row = col.row(align = 1)
-#         row.label(text = i)
-#         row.scale_y = 0
+from . import __name__ as addon_name
+
+
+
+
+custom_scene_name = ".Noter_Data"
+
+
+
 
 class Notes_List_actions(Operator):
     """Move items up and down, add and remove"""
@@ -344,6 +345,317 @@ class Notes_actions_bool_scene(Operator):
         return {"FINISHED"}
 
 
+class Notes_List_actions_blender_file(Operator):
+    """Move items up and down, add and remove"""
+    bl_idname = "notes_list_blender_file.list_action"
+    bl_label = ""
+    bl_description = "Move items up and down or remove"
+    bl_options = {'REGISTER'}
+
+    action: bpy.props.EnumProperty(
+        items=(
+            ('UP', "Up", ""),
+            ('DOWN', "Down", ""),
+            ('REMOVE', "Remove", ""),
+            # ('ADD', "Add", "") 
+            ))
+
+    by_index: bpy.props.IntProperty(options = {"SKIP_SAVE"}, default = -1 )
+
+    @classmethod
+    def description(cls, context, properties):
+        if properties.action == 'REMOVE':
+            return "Remove"
+        elif properties.action == 'UP':
+            return "Up"
+        elif properties.action == 'DOWN':
+            return "Down"
+
+    def invoke(self, context, event):
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
+        scene = bpy.data.scenes[custom_scene_name]
+        idx = scene.notes_list_blender_file_index
+
+        try:
+            item = scene.notes_list_blender_file[idx]
+        except IndexError:
+            pass
+
+        else:
+            if self.action == 'DOWN' and idx < len(scene.notes_list_blender_file) - 1:
+                scene.notes_list_blender_file.move(idx, idx+1)
+                scene.notes_list_blender_file_index += 1
+
+            elif self.action == 'UP' and idx >= 1:
+                scene.notes_list_blender_file.move(idx, idx-1)
+                scene.notes_list_blender_file_index -= 1
+                
+
+        if self.action == 'REMOVE':
+            if self.by_index == -1 :
+
+                if idx == 0:
+                    scene.notes_list_blender_file_index = 0
+                else:
+                    scene.notes_list_blender_file_index -= 1
+                
+                scene.notes_list_blender_file.remove(idx)
+                
+            else:
+        
+                scene.notes_list_blender_file.remove(self.by_index)
+
+            bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
+
+
+
+        return {"FINISHED"}
+class Notes_List_actions_add_blender_file(Operator):
+    """Move items up and down, add and remove"""
+    bl_idname = "notes_list_blender_file.list_action_add"
+    bl_label = ""
+    bl_description = "Add item"
+    bl_options = {'REGISTER'}
+    # bl_options = {'BLOCKING'}
+    # bl_options = {'INTERNAL'}
+
+    # def draw(self, context):
+    #     layout = self.layout
+
+    #     layout.prop(self, "text_input", text = "Name")
+
+    # def invoke(self, context, event):
+    #     self.unit_input = bpy.context.window_manager.setprecisemesh.length
+    #     return context.window_manager.invoke_props_dialog(self)
+
+
+    @classmethod
+    def description(cls, context, properties):
+        return "Add"
+
+    def execute(self, context):
+
+        scene = bpy.data.scenes[custom_scene_name]
+        idx = scene.notes_list_blender_file_index
+
+        try:
+            item = scene.notes_list_blender_file[idx]
+        except IndexError:
+            pass
+
+        item = scene.notes_list_blender_file.add()
+
+        scene.notes_list_blender_file_index = len(scene.notes_list_blender_file) - 1
+
+        return {"FINISHED"}
+
+    def invoke(self, context, event):
+
+        if bpy.data.scenes.find(custom_scene_name) == -1:
+            bpy.data.scenes.new(custom_scene_name)
+
+        return self.execute(context)
+class Notes_List_clearList_blender_file(Operator):
+    """Clear all items of the list"""
+    bl_idname = "notes_list_blender_file.clear_list"
+    bl_label = "Clear List"
+    bl_description = "Clear all items of the list"
+    bl_options = {'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+
+        return bool(scene.notes_list_blender_file)
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_confirm(self, event)
+
+    def execute(self, context):
+        scene = bpy.data.scenes[custom_scene_name]
+        if bool(scene.notes_list_blender_file):
+            scene.notes_list_blender_file.clear()
+            self.report({'INFO'}, "All items removed")
+        else:
+            self.report({'INFO'}, "Nothing to remove")
+        return{'FINISHED'}
+class Notes_actions_bool_blender_file(Operator):
+    """Move items up and down, add and remove"""
+    bl_idname = "notes_list_blender_file.list_action_bool"
+    bl_label = ""
+    bl_description = "Checkmark"
+    bl_options = {'REGISTER'}
+
+    my_index: IntProperty()
+
+    def execute(self, context):
+
+        # bpy.context.scene.notes_list_blender_file_index = self.my_index
+
+        scene = bpy.data.scenes[custom_scene_name]
+        # idx = scene.notes_list_blender_file_index
+        idx = self.my_index
+
+        try:
+            item = scene.notes_list_blender_file[idx]
+        except IndexError:
+            pass
+
+        
+        if scene.notes_list_blender_file[idx].bool == True:
+            scene.notes_list_blender_file[idx].bool = False
+            if len(scene.notes_list_blender_file) > 1:
+                scene.notes_list_blender_file.move(idx, 0)
+        else:
+            scene.notes_list_blender_file[idx].bool = True
+            scene.notes_list_blender_file.move(idx, len(scene.notes_list_blender_file) - 1)
+        
+
+        # bpy.context.region.tag_redraw()
+        # context.area.tag_redraw()
+        # bpy.context.scene.update()
+
+        bpy.ops.wm.redraw_timer(type = "DRAW_WIN_SWAP", iterations = 1)
+        print("Warning because of Noter")
+
+        return {"FINISHED"}
+
+
+
+
+
+class NOTES_LIST_UL_items_blender_file(UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        
+        # draw_text(self)
+
+
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+
+        # scene = bpy.context.scene
+
+
+        idx = scene.notes_list_blender_file_index
+
+        try:
+            item = scene.notes_list_blender_file[index]
+        except IndexError:
+            pass
+
+
+        column_main = layout.column(align = 1)
+        box = column_main.box()
+        column = box.column(align = 1)
+        row_header = column.row(align = 1)
+        row_header.scale_y = .8
+
+
+        if scene.notes_list_blender_file[index].bool == True:
+            row_info = row_header.row(align = 1)
+            row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "CHECKBOX_DEHLT", emboss = 0).my_index = index
+            row_info.alignment = 'RIGHT'
+
+        else:
+            row_info = row_header.row(align = 1)
+            row_info.operator("notes_list_blender_file.list_action_bool", text = "", icon = "BOOKMARKS", emboss = 0).my_index = index
+            row_info.alignment = 'LEFT'
+
+        if item.text.count("\n") > 0:
+            multiple_strokes = True
+        else:
+            multiple_strokes = False
+
+
+        if multiple_strokes == True:
+            # draw_text(self, item.text )
+            text_parts_list = item.text.split('\n')
+            # self.draw_text(text_parts_list)
+            column.separator(factor=.5)
+            col = column
+            for i in text_parts_list:
+                row = col.row(align = 1)
+                row.label(text = i)
+                row.scale_y = 0
+        else:
+            column.separator(factor=.6)
+            column.prop(item, "text", emboss=1, text = "")
+        
+        column_main.separator(factor=1.1)
+class Notes_List_PT_blender_file(Panel):
+    """Adds a custom panel to the TEXT_EDITOR"""
+
+    bl_idname = 'BLENDERFILE_PT_presets'
+    bl_label = " "
+    bl_options = {'DEFAULT_CLOSED'}
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    # bl_context = "scene"
+    bl_context = "world"
+    bl_order = -1
+
+    @classmethod
+    def poll(cls, context):
+        preferences = bpy.context.preferences.addons[addon_name].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
+            # and bpy.context.scene.mode in {'EDIT'}
+
+    def draw_header(self, context):
+        layout = self.layout
+        layout.label(text = 'Notes List    >   File (.blend) ', icon = 'FILE')
+        # layout.label(icon = 'LINENUMBERS_ON')
+
+    def draw(self, context):
+
+            
+        layout = self.layout
+
+        try:
+            scene = bpy.data.scenes[custom_scene_name]
+        except KeyError:
+            scene = bpy.context.scene
+            
+
+        rows = 3
+        row = layout.row()
+        row.template_list("NOTES_LIST_UL_items_blender_file", "", scene, "notes_list_blender_file", scene, "notes_list_blender_file_index", rows=rows)
+
+        col = row.column(align=True)
+        col.scale_x = 1.1
+        col.scale_y = 1.2
+
+        col.operator("notes_list_blender_file.list_action_add", icon='ADD', text="")
+        col.operator("notes_list_blender_file.list_action", icon='REMOVE', text="").action = 'REMOVE'
+        
+        col.separator(factor = 0.4)
+
+        col.operator("notes_list_blender_file.list_action", icon='TRIA_UP', text="").action = 'UP'
+        col.operator("notes_list_blender_file.list_action", icon='TRIA_DOWN', text="").action = 'DOWN'
+
+        col.separator(factor = 0.4)
+
+        col.operator('window_manager.export_note_text', text = '', icon = 'IMPORT').action = 'blender_file*'
+
+        col.separator(factor = 0.4)
+
+        col.operator('window_manager.export_note_text', text = '', icon = 'EXPORT').action = 'blender_file_get*'
+
+        col.separator(factor = 0.4)
+
+        col.operator("notes_list_blender_file.clear_list", icon="TRASH", text = "")
+
 
 class NOTES_LIST_UL_items_scene(UIList):
 
@@ -415,12 +727,17 @@ class Notes_List_PT_scene(Panel):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.scene != None\
+        preferences = bpy.context.preferences.addons[addon_name].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
+
             # and bpy.context.scene.mode in {'EDIT'}
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List', icon = 'FILE')
+        layout.label(text = 'Notes List    >   Scene', icon = 'FILE')
         # layout.label(icon = 'LINENUMBERS_ON')
 
     def draw(self, context):
@@ -465,8 +782,7 @@ class Notes_List_PT_scene(Panel):
         # row.operator("presets_angle.remove_duplicates", icon="GHOST_ENABLED")
 
 
-
-class NOTES_LIST_UL_items(UIList):
+class NOTES_LIST_UL_items_object(UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         
@@ -573,7 +889,7 @@ class NOTES_LIST_UL_items(UIList):
         # row.scale_y = 1.1
         # row.scale_x = 1.1
         # row.label(text=item.name, icon=custom_icon) # avoids renaming the item by accident
-class Notes_List_PT(Panel):
+class Notes_List_PT_object(Panel):
     """Adds a custom panel to the TEXT_EDITOR"""
 
     bl_idname = 'OBJECT_PT_presets'
@@ -588,13 +904,17 @@ class Notes_List_PT(Panel):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object != None\
+        preferences = bpy.context.preferences.addons[addon_name].preferences
+        
+        check =  preferences.add_elements_to_properties_menus
+
+        return bpy.context.scene != None and check
             # and bpy.context.active_object.mode in {'EDIT'}
 
 
     def draw_header(self, context):
         layout = self.layout
-        layout.label(text = 'Notes List', icon = 'FILE')
+        layout.label(text = 'Notes List   >   Object', icon = 'FILE')
 
     def draw(self, context):
         # if bpy.context.active_object != None:
@@ -605,7 +925,7 @@ class Notes_List_PT(Panel):
 
         rows = 3
         row = layout.row()
-        row.template_list("NOTES_LIST_UL_items", "", act_obj, "notes_list_object", act_obj, "notes_list_object_index", rows=rows)
+        row.template_list("NOTES_LIST_UL_items_object", "", act_obj, "notes_list_object", act_obj, "notes_list_object_index", rows=rows)
 
         col = row.column(align=True)
         col.scale_x = 1.1
@@ -639,6 +959,9 @@ class Notes_List_PT(Panel):
         # row.operator("presets_angle.remove_duplicates", icon="GHOST_ENABLED")
 
 
+
+
+
 class Notes_List_Collection(PropertyGroup):
 
     # unit: FloatProperty(
@@ -653,13 +976,16 @@ class Notes_List_Collection(PropertyGroup):
     bool: BoolProperty()
 
 
+
+
+
 Notes_list_blender_classes = [
     Notes_List_Collection,
     
     Notes_List_actions,
     Notes_List_actions_add,
-    NOTES_LIST_UL_items,
-    Notes_List_PT,
+    NOTES_LIST_UL_items_object,
+    Notes_List_PT_object,
     Notes_actions_bool,
     Notes_List_clearList,
 
@@ -669,7 +995,12 @@ Notes_list_blender_classes = [
     Notes_actions_bool_scene,
     NOTES_LIST_UL_items_scene,
     Notes_List_PT_scene,
-]
 
-if __name__ == "__main__":
-    register()
+    Notes_List_actions_blender_file,
+    Notes_List_actions_add_blender_file,
+    Notes_List_clearList_blender_file,
+    Notes_actions_bool_blender_file,
+    NOTES_LIST_UL_items_blender_file,
+    Notes_List_PT_blender_file,
+
+]
