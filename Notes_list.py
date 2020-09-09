@@ -782,7 +782,7 @@ class Notes_List_PT_scene(Panel):
         # row.operator("presets_angle.remove_duplicates", icon="GHOST_ENABLED")
 
 
-class NOTES_LIST_UL_items_object(UIList):
+class NOTES_LIST_UL_items(UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         
@@ -889,7 +889,7 @@ class NOTES_LIST_UL_items_object(UIList):
         # row.scale_y = 1.1
         # row.scale_x = 1.1
         # row.label(text=item.name, icon=custom_icon) # avoids renaming the item by accident
-class Notes_List_PT_object(Panel):
+class Notes_List_PT(Panel):
     """Adds a custom panel to the TEXT_EDITOR"""
 
     bl_idname = 'OBJECT_PT_presets'
@@ -925,7 +925,7 @@ class Notes_List_PT_object(Panel):
 
         rows = 3
         row = layout.row()
-        row.template_list("NOTES_LIST_UL_items_object", "", act_obj, "notes_list_object", act_obj, "notes_list_object_index", rows=rows)
+        row.template_list("NOTES_LIST_UL_items", "", act_obj, "notes_list_object", act_obj, "notes_list_object_index", rows=rows)
 
         col = row.column(align=True)
         col.scale_x = 1.1
@@ -984,8 +984,8 @@ Notes_list_blender_classes = [
     
     Notes_List_actions,
     Notes_List_actions_add,
-    NOTES_LIST_UL_items_object,
-    Notes_List_PT_object,
+    NOTES_LIST_UL_items,
+    Notes_List_PT,
     Notes_actions_bool,
     Notes_List_clearList,
 
