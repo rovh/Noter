@@ -9,13 +9,15 @@ With Noter you can:
 
 * Annotate a specific object, scene or file(.blend).
 
-* Create notes lists for the object or scene.
+* Create notes lists for the object, scene or file(.blend).
 
 * Save the text in the Blender itself so that it will be available in any file(.blend).
 
 * Create notes tree using nodes. Thus, you can do something like a schema that will represent a chain of actions, for example, for one user or for the second if you work in a team.
 
 * Enable Noter Splash Screen for file(.blend) so as not to forget if there is anything unfinished left when you open a file(.blend).
+
+* Adds operators for working on text
 
 
 Noter can be divided into several parts:
